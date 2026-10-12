@@ -1,0 +1,829 @@
+// Palm reading: upload, CV analysis, and line results.
+
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import {
+  ArrowLeftIcon,
+  CameraIcon,
+  CheckIcon,
+  HandIcon,
+  RetryIcon,
+  ScanIcon,
+  SparkleIcon,
+  UploadIcon,
+} from "@/components/icons";
+import CameraCaptureModal from "@/components/palm/CameraCaptureModal";
+import PalmVisualizer from "@/components/palm/PalmVisualizer";
+import {
+  PalmFingerStructure,
+  PalmLinesList,
+  PalmMountProfiles,
+} from "@/components/palm/PalmAnalysisDetails";
+import { useAuth } from "@/hooks/useAuth";
+import { analyzePalm } from "@/services/palm";
+import { downloadReportPdf, downloadReportExcel } from "@/services/reports";
+import RecommendationsSection from "@/components/recommendations/RecommendationsSection";
+import { generateRecommendations } from "@/services/recommendations";
+import { interpretPalmDirect } from "@/services/readings";
+import LoadingSpinner from "@/components/ai/LoadingSpinner";
+import ChatBot from "@/components/ai/ChatBot";
+import { Button, Spinner } from "@/components/ui";
+import { useRoleGuard } from "@/hooks/useRoleGuard";
+
+const MAX_SIZE_MB = 10;
+
+const ELEMENT_THEMES = {
+  Earth: {
+    badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    gradient: "from-emerald-50/80 via-teal-50/30 to-white",
+    border: "border-emerald-200/80",
+    accent: "text-emerald-700",
+  },
+  Air: {
+    badge: "bg-sky-50 text-sky-700 border-sky-200",
+    gradient: "from-sky-50/80 via-indigo-50/30 to-white",
+    border: "border-sky-200/80",
+    accent: "text-sky-700",
+  },
+  Fire: {
+    badge: "bg-amber-50 text-amber-700 border-amber-200",
+    gradient: "from-amber-50/80 via-rose-50/30 to-white",
+    border: "border-amber-200/80",
+    accent: "text-amber-700",
+  },
+  Water: {
+    badge: "bg-cyan-50 text-cyan-700 border-cyan-200",
+    gradient: "from-cyan-50/80 via-blue-50/30 to-white",
+    border: "border-cyan-200/80",
+    accent: "text-cyan-700",
+  },
+};
+
+export default function PalmReadingPage() {
+  const blocked = useRoleGuard();
+  const { user } = useAuth();
+  const inputRef = useRef(null);
+
+  const [file, setFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [dragging, setDragging] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [activeLineId, setActiveLineId] = useState(null);
+
+  // States: 'empty' | 'preview' | 'loading' | 'success' | 'error'
+  const [stage, setStage] = useState("empty");
+  const [loadingStep, setLoadingStep] = useState(0);
+  const [error, setError] = useState(null);
+  const [result, setResult] = useState(null);
+  const [downloadingReport, setDownloadingReport] = useState(null);
+  // AI interpretation states (non-blocking)
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState(null);
+  // Chat state
+  const [chatMessages, setChatMessages] = useState([]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
+  if (blocked) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <Spinner label="Returning to your dashboard…" />
+      </div>
+    );
+  }
+
+  function pickFile(selected) {
+    setError(null);
+    if (!selected) return;
+
+    if (selected.size > MAX_SIZE_MB * 1024 * 1024) {
+      setError(`Image must be ${MAX_SIZE_MB} MB or smaller.`);
+      setStage("error");
+      return;
+    }
+
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    const url = URL.createObjectURL(selected);
+    setFile(selected);
+    setPreviewUrl(url);
+    setStage("preview");
+  }
+
+  function resetForm() {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setFile(null);
+    setPreviewUrl(null);
+    setResult(null);
+    setError(null);
+    setActiveLineId(null);
+    setStage("empty");
+  }
+
+  async function handleAnalyze(e) {
+    if (e) e.preventDefault();
+    if (!file) return;
+
+    setStage("loading");
+    setError(null);
+    setLoadingStep(0);
+
+    const stepTimer1 = setTimeout(() => setLoadingStep(1), 600);
+    const stepTimer2 = setTimeout(() => setLoadingStep(2), 1200);
+    const stepTimer3 = setTimeout(() => setLoadingStep(3), 1800);
+
+    try {
+      const data = await analyzePalm(file);
+      setResult(data);
+      setStage("success");
+    } catch (err) {
+      setError(err.message || "Failed to analyze palm image. Please try again.");
+      setStage("error");
+    } finally {
+      clearTimeout(stepTimer1);
+      clearTimeout(stepTimer2);
+      clearTimeout(stepTimer3);
+    }
+  }
+
+  // Opt-in AI interpretation: only runs when the user clicks
+  // "Generate AI Insight" (also the retry path when a previous attempt failed).
+  async function handleGenerateAi() {
+    if (!result || aiLoading) return;
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      const aiResult = await interpretPalmDirect(result);
+      if (aiResult) {
+        setResult((prev) => ({ ...prev, ai_interpretation: aiResult }));
+      }
+    } catch (aiErr) {
+      setAiError(aiErr.message || "AI interpretation failed. Please try again.");
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
+  const activeTheme = result
+    ? ELEMENT_THEMES[result.palm_shape?.element] || ELEMENT_THEMES.Air
+    : ELEMENT_THEMES.Air;
+
+  const isCloseUpError = error && error.toLowerCase().includes("close-up");
+
+  return (
+    <div className="mx-auto max-w-5xl space-y-8">
+      {/* Top Breadcrumb & Reset Action */}
+      <div className="flex items-center justify-between">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+        >
+          <ArrowLeftIcon className="h-4 w-4" />
+          Back to dashboard
+        </Link>
+        {stage === "success" && (
+          <button
+            type="button"
+            onClick={resetForm}
+            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 shadow-xs transition hover:border-slate-300 hover:bg-slate-50"
+          >
+            <RetryIcon className="h-3.5 w-3.5 text-slate-500" />
+            Analyze Another Palm
+          </button>
+        )}
+      </div>
+
+      {/* Header Banner matching MysticLens UI */}
+      <div className="text-center">
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-500 text-white shadow-lg shadow-violet-500/25">
+          <HandIcon className="h-7 w-7" />
+        </span>
+        <h1 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+          Computer Vision Palm Analysis
+        </h1>
+        <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-slate-500">
+          MediaPipe 21-point topology, OpenCV ridge enhancement, and geometric line detection
+          revealing your Life, Head, Heart, Fate, and Sun lines.
+        </p>
+      </div>
+
+      {/* Upload stages: empty, preview, and error. */}
+      {(stage === "empty" || stage === "preview" || stage === "error") && (
+        <section className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-8">
+          {/* Upload Dropzone */}
+          <div
+            onClick={() => inputRef.current?.click()}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragging(true);
+            }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragging(false);
+              pickFile(e.dataTransfer.files?.[0]);
+            }}
+            className={`group relative flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 text-center transition ${
+              dragging
+                ? "border-violet-400 bg-violet-50/60"
+                : "border-slate-300 bg-slate-50/60 hover:border-violet-300 hover:bg-slate-50"
+            }`}
+          >
+            {previewUrl ? (
+              <div className="flex flex-col items-center">
+                <div className="relative h-56 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-md">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={previewUrl}
+                    alt="Palm preview"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <p className="mt-3 text-sm font-medium text-slate-800">{file?.name}</p>
+                <p className="text-xs text-slate-500">
+                  {(file.size / (1024 * 1024)).toFixed(2)} MB · Click or drop another image to replace
+                </p>
+              </div>
+            ) : (
+              <>
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-violet-600 shadow-xs ring-1 ring-slate-200 group-hover:scale-105 transition">
+                  <UploadIcon className="h-6 w-6" />
+                </span>
+                <p className="mt-4 text-sm font-medium text-slate-800">
+                  Drag and drop your palm photo here, or{" "}
+                  <span className="text-violet-600 underline hover:text-violet-700">browse</span>
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  JPG, PNG, or WEBP · up to {MAX_SIZE_MB} MB
+                </p>
+
+                {/* Instant Camera Capture CTA */}
+                <div className="mt-4">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsCameraOpen(true);
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-white px-4 py-1.5 text-xs font-semibold text-violet-700 shadow-xs hover:bg-violet-50 hover:border-violet-300 transition"
+                  >
+                    <CameraIcon className="h-4 w-4 text-violet-600" />
+                    Use Camera to Take Photo
+                  </button>
+                </div>
+
+                {/* Clear Hand Framing Guide Grid */}
+                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2 text-left text-xs text-slate-600 max-w-xl mx-auto w-full">
+                  <div className="flex items-start gap-2.5 rounded-xl bg-white/90 p-3 border border-slate-200/80 shadow-2xs">
+                    <CheckIcon className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-semibold text-slate-800">Show Full Hand & Wrist</span>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        Capture the entire hand from wrist to fingertips. Do not crop into just the creases.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2.5 rounded-xl bg-white/90 p-3 border border-slate-200/80 shadow-2xs">
+                    <CheckIcon className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-semibold text-slate-800">Flat Open Palm</span>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        Keep fingers naturally spread and palm facing directly toward the camera.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2.5 rounded-xl bg-white/90 p-3 border border-slate-200/80 shadow-2xs">
+                    <CheckIcon className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-semibold text-slate-800">Auto Left / Right Detection</span>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        AI automatically verifies orientation and detects handedness topology.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2.5 rounded-xl bg-white/90 p-3 border border-slate-200/80 shadow-2xs">
+                    <CheckIcon className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-semibold text-slate-800">Adequate Lighting</span>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        Ensure good contrast so the subtle skin folds and mounts are clearly visible.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+            <input
+              ref={inputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={(e) => pickFile(e.target.files?.[0])}
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="mt-6 flex items-center justify-end gap-3">
+            {stage === "preview" && (
+              <button
+                type="button"
+                onClick={resetForm}
+                className="rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-medium text-slate-700 shadow-xs transition hover:border-slate-300 hover:bg-slate-50"
+              >
+                Clear
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={handleAnalyze}
+              disabled={!file}
+              className="inline-flex items-center gap-2 rounded-full bg-violet-600 px-6 py-2.5 text-sm font-medium text-white shadow-md shadow-violet-600/25 transition hover:bg-violet-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <ScanIcon className="h-4 w-4" />
+              Analyze Palm Features
+            </button>
+          </div>
+
+          {/* Error Banner with Smart Guidance */}
+          {error && (
+            <div
+              role="alert"
+              className="mt-6 rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-800 shadow-xs"
+            >
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-200 text-xs font-bold text-rose-800">
+                  !
+                </span>
+                <div className="space-y-2">
+                  <p className="font-semibold text-rose-900">
+                    {isCloseUpError ? "Hand Framing Adjustment Required" : "Analysis Halted"}
+                  </p>
+                  <p className="text-xs text-rose-700 leading-relaxed">{error}</p>
+
+                  {isCloseUpError && (
+                    <div className="rounded-xl border border-rose-200/80 bg-white/90 p-3 text-xs text-slate-700 shadow-2xs">
+                      <p className="font-semibold text-violet-800">Why did this happen?</p>
+                      <p className="mt-1 text-[11px] text-slate-600 leading-relaxed">
+                        MysticLens uses anatomical landmarks across the wrist and knuckles to locate lines and calculate elemental ratios. When an image is cropped down to only the center creases, the computer vision model cannot identify the hand anchor points.
+                      </p>
+                      <p className="mt-1.5 text-[11px] font-medium text-emerald-700">
+                        ✓ Solution: Step back so the bottom of your palm/wrist and all 5 fingertips are in frame.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* Loading stage with animated progress. */}
+      {stage === "loading" && (
+        <section className="rounded-3xl border border-slate-200/90 bg-white p-10 text-center shadow-xs">
+          <div className="relative mx-auto flex h-20 w-20 items-center justify-center">
+            <div className="absolute inset-0 animate-ping rounded-full bg-violet-500/20" />
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-violet-50 text-violet-600 ring-2 ring-violet-500 shadow-sm">
+              <ScanIcon className="h-8 w-8 animate-pulse" />
+            </div>
+          </div>
+          <h2 className="mt-6 font-display text-2xl font-bold text-slate-900">
+            Analyzing Palm Topology & Creases…
+          </h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Running computer vision models and geometric line feature extraction
+          </p>
+
+          {/* Step list */}
+          <div className="mx-auto mt-8 max-w-md space-y-2.5 text-left text-xs">
+            <div
+              className={`flex items-center gap-2.5 rounded-xl border p-3 transition ${
+                loadingStep >= 0
+                  ? "border-violet-200 bg-violet-50/70 text-violet-900 font-medium"
+                  : "border-slate-200 bg-slate-50 text-slate-400"
+              }`}
+            >
+              <CheckIcon className={`h-4 w-4 ${loadingStep >= 0 ? "text-violet-600" : "text-slate-300"}`} />
+              Phase 1: Validating file signature & EXIF orientation
+            </div>
+            <div
+              className={`flex items-center gap-2.5 rounded-xl border p-3 transition ${
+                loadingStep >= 1
+                  ? "border-violet-200 bg-violet-50/70 text-violet-900 font-medium"
+                  : "border-slate-200 bg-slate-50 text-slate-400"
+              }`}
+            >
+              <CheckIcon className={`h-4 w-4 ${loadingStep >= 1 ? "text-violet-600" : "text-slate-300"}`} />
+              Phase 2: Extracting 21 3D MediaPipe hand landmarks
+            </div>
+            <div
+              className={`flex items-center gap-2.5 rounded-xl border p-3 transition ${
+                loadingStep >= 2
+                  ? "border-violet-200 bg-violet-50/70 text-violet-900 font-medium"
+                  : "border-slate-200 bg-slate-50 text-slate-400"
+              }`}
+            >
+              <CheckIcon className={`h-4 w-4 ${loadingStep >= 2 ? "text-violet-600" : "text-slate-300"}`} />
+              Phase 3: Classifying elemental hand shape & finger ratios
+            </div>
+            <div
+              className={`flex items-center gap-2.5 rounded-xl border p-3 transition ${
+                loadingStep >= 3
+                  ? "border-violet-200 bg-violet-50/70 text-violet-900 font-medium"
+                  : "border-slate-200 bg-slate-50 text-slate-400"
+              }`}
+            >
+              <CheckIcon className={`h-4 w-4 ${loadingStep >= 3 ? "text-violet-600" : "text-slate-300"}`} />
+              Phase 4: Tracing Life, Head, Heart, Fate & Sun lines
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Success stage with visualizer and result cards. */}
+      {stage === "success" && result && (
+        <div className="space-y-8 animate-fadeIn">
+          {/* Main Visualizer + Archetype Split Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Left Column: Interactive Palm Visualizer (5 cols) */}
+            <div className="lg:col-span-5 lg:sticky lg:top-8 space-y-3">
+              <div className="flex items-center justify-between px-1">
+                <h3 className="font-display text-sm font-bold uppercase tracking-wider text-slate-700">
+                  Biometric Scan Overlay
+                </h3>
+                <span className="text-[11px] text-slate-400">
+                  Hover lines or mounts
+                </span>
+              </div>
+              <PalmVisualizer
+                imageUrl={previewUrl}
+                result={result}
+                activeLineId={activeLineId}
+                onHoverLine={setActiveLineId}
+              />
+            </div>
+
+            {/* Right Column: Archetype Hero & Biometrics (7 cols) */}
+            <div className="lg:col-span-7 space-y-6">
+              {/* Elemental Palm Shape Hero Card */}
+              <section
+                className={`overflow-hidden rounded-3xl border bg-gradient-to-br p-6 shadow-xs sm:p-7 ${activeTheme.border} ${activeTheme.gradient}`}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${activeTheme.badge}`}
+                    >
+                      <SparkleIcon className="h-3.5 w-3.5" />
+                      {result.palm_shape?.element} Hand Archetype
+                    </span>
+                    <h2 className="mt-3 font-display text-2xl font-bold text-slate-900 sm:text-3xl">
+                      {result.palm_shape?.element} Palm Classification
+                    </h2>
+                    <p className="mt-1 text-sm leading-relaxed text-slate-600">
+                      {result.palm_shape?.description}
+                    </p>
+                  </div>
+
+                  {/* Confidence Badge */}
+                  <div className="rounded-2xl border border-slate-200/90 bg-white p-4 text-center shadow-xs">
+                    <div className="text-2xl font-bold text-violet-600">
+                      {Math.round((result.metadata?.overall_confidence || 0) * 100)}%
+                    </div>
+                    <div className="text-xs font-medium text-slate-500">Analysis Confidence</div>
+                    <div className="mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold border">
+                      {(result.metadata?.overall_confidence || 0) >= 0.75
+                        ? "High Confidence Scan"
+                        : (result.metadata?.overall_confidence || 0) >= 0.55
+                          ? "Verified Scan"
+                          : "Low Confidence — Retake Photo"}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Traits Chips */}
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {result.palm_shape?.traits?.map((trait, idx) => (
+                    <span
+                      key={idx}
+                      className="rounded-lg border border-slate-200 bg-white/90 px-3 py-1 text-xs font-medium text-slate-700 shadow-xs"
+                    >
+                      #{trait}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Palm & Finger Metrics */}
+                <div className="mt-6 grid grid-cols-2 gap-3 border-t border-slate-200/80 pt-4 sm:grid-cols-4">
+                  <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-3 shadow-xs">
+                    <span className="text-[10px] text-slate-500 uppercase font-semibold">Identified Hand</span>
+                    <p className="font-semibold text-slate-900">
+                      {result.hand?.detected_handedness} Hand
+                    </p>
+                    <span className="text-[10px] font-medium text-emerald-600">
+                      Auto-detected ({Math.round((result.hand?.handedness_confidence || 0.95) * 100)}%)
+                    </span>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-3 shadow-xs">
+                    <span className="text-[10px] text-slate-500 uppercase font-semibold">Aspect Ratio</span>
+                    <p className="font-semibold text-slate-900">
+                      {result.palm_shape?.aspect_ratio}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-3 shadow-xs">
+                    <span className="text-[10px] text-slate-500 uppercase font-semibold">2D:4D Ratio</span>
+                    <p className="font-semibold text-slate-900">
+                      {result.finger_structure?.digit_ratio_2d_4d}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-3 shadow-xs">
+                    <span className="text-[10px] text-slate-500 uppercase font-semibold">Thumb Angle</span>
+                    <p className="font-semibold text-slate-900">
+                      {result.finger_structure?.thumb_angle_degrees}°
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* Detected Palm Lines Section */}
+              <section className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-7">
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <h3 className="font-display text-xl font-bold text-slate-900">Detected Palm Creases</h3>
+                    <p className="text-xs text-slate-500">
+                      Hover over any line to highlight its corresponding curve on the photo
+                    </p>
+                  </div>
+                  <span className="rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700">
+                    {result.lines?.filter((l) => l.detected).length ?? 0} of {result.lines?.length ?? 5} Detected
+                  </span>
+                </div>
+
+                {result.hand?.is_palmar === false && (
+                  <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-800">
+                    Back-of-hand (dorsal) view detected — line creases are naturally less visible
+                    from this angle, so lower line confidences are expected. A flat palmar photo
+                    gives the sharpest scan.
+                  </div>
+                )}
+
+                <PalmLinesList
+                  lines={result.lines}
+                  activeLineId={activeLineId}
+                  onHoverLine={setActiveLineId}
+                />
+              </section>
+            </div>
+          </div>
+
+          {/* MEASURED BIOMETRICS CHART (always visible — computer vision, not AI) */}
+          <section className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-7">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 className="font-display text-xl font-bold text-slate-900">Measured Biometrics</h3>
+                <p className="text-xs text-slate-500">
+                  Measured from your photo (computer vision) — no AI involved
+                </p>
+              </div>
+              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                Actual Scan Data
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+              <div>
+                <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                  Line detection confidence
+                </div>
+                <div className="space-y-3">
+                  {(result.lines || []).map((line) => {
+                    const pct = Math.round((line.confidence || 0) * 100);
+                    return (
+                      <div key={line.line_id} className="flex items-center gap-3">
+                        <span className="text-xs font-semibold text-slate-700 w-20 shrink-0">
+                          {line.name?.replace(" Line", "")}
+                        </span>
+                        <div className="flex-1 h-3 rounded-full bg-slate-100 overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-violet-500 transition-all duration-700"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                        <span className="text-[10px] font-medium text-slate-500 w-8">{pct}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                  Mount prominence score
+                </div>
+                <div className="space-y-3">
+                  {(result.mounts || []).map((mount) => {
+                    const pct = Math.round((mount.score || 0) * 100);
+                    return (
+                      <div key={mount.mount_id} className="flex items-center gap-3">
+                        <span className="text-xs font-semibold text-slate-700 w-20 shrink-0 truncate">
+                          {mount.name?.replace("Mount of ", "")}
+                        </span>
+                        <div className="flex-1 h-3 rounded-full bg-slate-100 overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-amber-400 to-rose-500 transition-all duration-700"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                        <span className="text-[10px] font-medium text-slate-500 w-8">{pct}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* FINGER STRUCTURE & MOUNT PROFILES DEEP DIVE (measured CV data) */}
+          <section className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-7">
+            <div className="mb-5">
+              <h3 className="font-display text-xl font-bold text-slate-900">
+                Biometric Deep Dive
+              </h3>
+              <p className="text-xs text-slate-500">
+                What each measured proportion and mount prominence traditionally signals
+              </p>
+            </div>
+
+            {result.finger_structure && (
+              <div className="mb-8">
+                <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                  Finger structure &amp; dexterity signals
+                </div>
+                <PalmFingerStructure fingerStructure={result.finger_structure} />
+              </div>
+            )}
+
+            {Array.isArray(result.mounts) && result.mounts.length > 0 && (
+              <div>
+                <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                  Planetary mount profiles
+                </div>
+                <PalmMountProfiles mounts={result.mounts} />
+              </div>
+            )}
+          </section>
+
+          {/* AI INTERPRETATION SECTION (Non-blocking) */}
+          <div className="space-y-6 rounded-3xl border border-amber-400/30 bg-amber-50 p-6 shadow-xl">
+            <div className="flex flex-col sm:flex-row items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <span className="text-2xl font-bold text-amber-600">🤖</span>
+              </div>
+              <div className="flex-1">
+                <h2 className="text-xl font-bold text-amber-700 sm:text-2xl">
+                  AI Insights for This Reading
+                </h2>
+                <p className="text-sm text-amber-600 sm:text-base">
+                  Personalized AI-powered interpretation of your palm reading — generated only
+                  when you ask for it.
+                </p>
+              </div>
+            </div>
+
+            {/* AI Loading spinner (only this section waits) */}
+            {aiLoading && (
+              <LoadingSpinner label="Generating AI palm interpretation…" />
+            )}
+
+            {/* AI Error */}
+            {aiError && !aiLoading && (
+              <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                <span className="font-semibold">AI Error:</span> {aiError}
+                <div className="mt-3">
+                  <Button variant="secondary" size="sm" icon={RetryIcon} onClick={handleGenerateAi}>
+                    Try again
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Display AI interpretation when ready */}
+            {result.ai_interpretation && !aiLoading && (
+              <div className="rounded-2xl border border-amber-300/20 bg-white p-6 shadow-lg animate-fadeIn">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-bold text-amber-700">
+                      AI Interpretation {result.ai_interpretation.provider === "groq" ? "(Groq)" : ""}
+                    </h3>
+                    <span className="text-xs text-amber-500">
+                      {result.ai_interpretation.engine || "AI Engine"}
+                    </span>
+                  </div>
+
+                  {result.ai_interpretation.summary && (
+                    <p className="mb-3 text-sm font-semibold text-slate-800">
+                      {result.ai_interpretation.summary}
+                    </p>
+                  )}
+
+                  {result.ai_interpretation.body && (
+                    <div className="mb-4 rounded-xl border border-amber-100 bg-amber-50 p-4">
+                      <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-amber-700">
+                        Detailed Interpretation
+                      </div>
+                      <p className="text-sm leading-relaxed text-amber-700">{result.ai_interpretation.body}</p>
+                    </div>
+                  )}
+
+                  {result.ai_interpretation.guidance && result.ai_interpretation.guidance.length > 0 && (
+                    <div className="mb-4 rounded-xl border border-amber-100 bg-amber-50 p-4">
+                      <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-amber-700">
+                        AI Guidance
+                      </div>
+                      <ul className="space-y-2 text-sm text-amber-700">
+                        {result.ai_interpretation.guidance.map((step, sIdx) => (
+                          <li key={sIdx} className="flex items-start gap-2">
+                            <span className="text-amber-500">✦</span>
+                            <span>{step}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {result.ai_interpretation.domain_insights && Object.keys(result.ai_interpretation.domain_insights).length > 0 && (
+                    <div className="mb-4 rounded-xl border border-amber-100 bg-amber-50 p-4">
+                      <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-amber-700">
+                        Domain Insights
+                      </div>
+                      <div className="space-y-2">
+                        {Object.entries(result.ai_interpretation.domain_insights).map(([domain, insight]) => (
+                          <div key={domain}>
+                            <span className="text-xs font-bold text-amber-800 uppercase">{domain}:</span>
+                            <p className="text-sm leading-relaxed text-amber-700 ml-2">{insight}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {result.ai_interpretation.disclaimer && (
+                    <p className="mt-3 border-t border-amber-100 pt-2 text-[10px] italic text-amber-600/80">
+                      {result.ai_interpretation.disclaimer}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {!result.ai_interpretation && !aiLoading && !aiError && (
+              <div className="rounded-2xl border border-dashed border-amber-300 bg-white/70 px-6 py-8 text-center">
+                <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
+                  <SparkleIcon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-3 text-base font-bold text-amber-700">
+                  Generate your AI insight
+                </h3>
+                <p className="mx-auto mt-1.5 max-w-md text-sm leading-relaxed text-amber-600">
+                  No interpretation exists for this reading yet. Run the AI model to weave your
+                  palm analysis into a personalized narrative with guidance — entirely on your
+                  terms.
+                </p>
+                <Button variant="accent" className="mt-4" icon={SparkleIcon} onClick={handleGenerateAi}>
+                  Generate AI Insight
+                </Button>
+                <p className="mt-3 text-[11px] text-amber-500/80">
+                  Takes a few seconds · saved to this reading once generated
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Live Webcam Modal */}
+      <CameraCaptureModal
+        isOpen={isCameraOpen}
+        onClose={() => setIsCameraOpen(false)}
+        onCapture={(capturedFile) => pickFile(capturedFile)}
+      />
+      {/* AI Chat Bot */}
+      <ChatBot readingId={result?.reading_id} readingType="palm" result={result} />
+      {/* Personalized Recommendations */}
+      {result?.reading_id && (
+        <RecommendationsSection
+          readingId={result.reading_id}
+          generateFn={async () => generateRecommendations({
+            reading_id: result.reading_id,
+            max_total: 8,
+            per_type: 2,
+          })}
+          autoGenerate={false}
+        />
+      )}
+    </div>
+  );
+}

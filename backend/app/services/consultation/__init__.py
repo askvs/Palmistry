@@ -1,0 +1,43 @@
+from app.services.consultation.service import (
+    STAFF_ROLES,
+    ConsultationError,
+    ConsultationNotFound,
+)
+from app.services.consultation.service import (
+    assign,
+    create_request,
+    effectiveness,
+    get_any,
+    get_owned,
+    insights,
+    ensure_participant,
+    list_clients,
+    list_for_user,
+    list_messages,
+    list_queue,
+    post_message,
+    provide_guidance,
+    update_status,
+    user_trends,
+)
+
+__all__ = [
+    "STAFF_ROLES",
+    "ConsultationError",
+    "ConsultationNotFound",
+    "assign",
+    "create_request",
+    "effectiveness",
+    "get_any",
+    "get_owned",
+    "insights",
+    "ensure_participant",
+    "list_clients",
+    "list_for_user",
+    "list_messages",
+    "list_queue",
+    "post_message",
+    "provide_guidance",
+    "update_status",
+    "user_trends",
+]

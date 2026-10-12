@@ -1,0 +1,48 @@
+"""Recommendation Engine (Module 9, FR-034, TASK-012)."""
+from app.services.recommendations.engine import (
+    ENGINE_NAME,
+    ENGINE_VERSION,
+    MODEL_NAME,
+    MODEL_VERSION,
+    RECOMMENDATION_DISCLAIMER,
+    REC_TYPES,
+    Catalog,
+    CatalogItem,
+    LLMRecommendationEngine,
+    RecommendationEngineError,
+    context_from_dict,
+    get_engine,
+    reset_engine,
+)
+from app.services.recommendations.service import (
+    RecommendationRecordNotFound,
+    RecommendationServiceError,
+    build_feature_context,
+    generate_recommendations,
+    list_recommendations,
+    recommendation_metrics,
+    record_feedback,
+)
+
+__all__ = [
+    "ENGINE_NAME",
+    "ENGINE_VERSION",
+    "MODEL_NAME",
+    "MODEL_VERSION",
+    "RECOMMENDATION_DISCLAIMER",
+    "REC_TYPES",
+    "Catalog",
+    "CatalogItem",
+    "LLMRecommendationEngine",
+    "RecommendationEngineError",
+    "RecommendationRecordNotFound",
+    "RecommendationServiceError",
+    "build_feature_context",
+    "context_from_dict",
+    "generate_recommendations",
+    "get_engine",
+    "list_recommendations",
+    "recommendation_metrics",
+    "record_feedback",
+    "reset_engine",
+]

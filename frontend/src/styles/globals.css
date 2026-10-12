@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+@theme {
+  /* Typography: Inter for UI/body, Fraunces for display headings.
+     The --font-* variables are provided by next/font in src/pages/_app.js. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
+
+  /* Semantic brand tokens. `primary` is the mystic violet used across the app;
+     `accent` is the warm gold reserved for tarot + highlights. Values mirror the
+     Tailwind violet/amber scales so contrast relationships are preserved. */
+  --color-primary-50: #f5f3ff;
+  --color-primary-100: #ede9fe;
+  --color-primary-200: #ddd6fe;
+  --color-primary-300: #c4b5fd;
+  --color-primary-400: #a78bfa;
+  --color-primary-500: #8b5cf6;
+  --color-primary-600: #7c3aed;
+  --color-primary-700: #6d28d9;
+  --color-primary-800: #5b21b6;
+  --color-primary-900: #4c1d95;
+  --color-primary-950: #2e1065;
+
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+  --color-accent-700: #b45309;
+  --color-accent-800: #92400e;
+  --color-accent-900: #78350f;
+
+  --animate-fade-in: fade-in 0.45s ease-out both;
+  --animate-rise-in: rise-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------------------------- Base ---------------------------------- */
+
+body {
+  background-color: #f7f7fb;
+  color: #0f172a;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+::selection {
+  background-color: rgb(139 92 246 / 0.18);
+}
+
+/* Soft ambient color washes behind the whole app — keeps the light theme
+   from feeling flat without adding visual noise. */
+.page-glow {
+  background-image:
+    radial-gradient(56rem 28rem at 50% -8rem, rgb(124 58 237 / 0.07), transparent 60%),
+    radial-gradient(40rem 22rem at 88% 6%, rgb(245 158 11 / 0.05), transparent 65%),
+    radial-gradient(36rem 20rem at 4% 24%, rgb(99 102 241 / 0.04), transparent 60%);
+}
+
+/* -------------------------------- Motion ---------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* -------------------------------- Tarot & 3D Animations ------------------- */
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.perspective-1500 {
+  perspective: 1500px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Shuffling animations */
+@keyframes riffle-left {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  30% { transform: translate(-70px, -15px) rotate(-14deg); }
+  60% { transform: translate(-30px, 8px) rotate(-6deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes riffle-right {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  30% { transform: translate(70px, -15px) rotate(14deg); }
+  60% { transform: translate(30px, 8px) rotate(6deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes deck-cascade {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-24px) scale(1.05); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes card-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+
+@keyframes mystic-pulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.4), 0 0 30px rgba(192, 132, 252, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.8), 0 0 50px rgba(192, 132, 252, 0.4);
+  }
+}
+
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-riffle-left {
+  animation: riffle-left 0.75s ease-in-out infinite alternate;
+}
+
+.animate-riffle-right {
+  animation: riffle-right 0.75s ease-in-out infinite alternate;
+}
+
+.animate-deck-cascade {
+  animation: deck-cascade 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-card-float {
+  animation: card-float 3s ease-in-out infinite;
+}
+
+.animate-mystic-pulse {
+  animation: mystic-pulse 2s ease-in-out infinite;
+}
+
+.shimmer-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-sweep::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer-sweep 1.8s infinite;
+}
+
+/* Mystic deck back styling */
+.tarot-card-back {
+  background: radial-gradient(circle at center, #1e1b4b 0%, #0f0c29 70%, #050414 100%);
+  border: 2px solid rgba(216, 180, 254, 0.35);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(147, 51, 234, 0.2);
+}
+

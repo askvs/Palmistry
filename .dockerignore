@@ -1,0 +1,44 @@
+# VCS & agent tooling
+.git
+.github
+.claude/
+.kilo/
+.zcode/
+.superpowers/
+.vscode/
+.cursorrules
+.zcodeignore
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python caches / virtualenv
+.venv/
+**/__pycache__
+**/*.py[oc]
+.pytest_cache/
+**/*.egg-info/
+
+# Node
+**/node_modules
+**/.next
+frontend/out
+
+# Large datasets & user data (not deployment inputs)
+dataset/
+uploads/
+
+# Dev-only content
+docs/
+scripts/
+tests/
+backend/tests/
+backend/postman/
+frontend/
+*.log
+pytest-report.xml
+AGENT_PROGRESS.md
+PROGRESS.md
+*.md

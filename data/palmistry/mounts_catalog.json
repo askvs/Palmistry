@@ -1,0 +1,144 @@
+{
+  "version": "1.0.0",
+  "description": "Traditional palm mounts catalog with MediaPipe anatomical anchors (Spec §49.5, FR-011).",
+  "mounts": [
+    {
+      "id": "mount_of_jupiter",
+      "name": "Mount of Jupiter",
+      "planetary_ruler": "Jupiter",
+      "element": "Fire",
+      "anatomical_anchor": {
+        "mediapipe_index": 5,
+        "landmark_name": "INDEX_FINGER_MCP",
+        "region": "Directly below the index finger base on upper radial palm."
+      },
+      "core_attributes": [
+        "leadership",
+        "ambition",
+        "confidence",
+        "honor",
+        "wisdom"
+      ],
+      "prominence_meanings": {
+        "underdeveloped": "Humility, diffidence, self-effacing, prefers supportive or background roles.",
+        "balanced": "Natural dignity, confident leadership, visionary ambition, balanced self-esteem.",
+        "prominent": "Dominant personality, proud, natural commander, strongly ambitious and competitive."
+      }
+    },
+    {
+      "id": "mount_of_saturn",
+      "name": "Mount of Saturn",
+      "planetary_ruler": "Saturn",
+      "element": "Earth",
+      "anatomical_anchor": {
+        "mediapipe_index": 9,
+        "landmark_name": "MIDDLE_FINGER_MCP",
+        "region": "Directly beneath the middle finger base."
+      },
+      "core_attributes": [
+        "discipline",
+        "responsibility",
+        "prudence",
+        "introspection",
+        "wisdom"
+      ],
+      "prominence_meanings": {
+        "underdeveloped": "Lighthearted, carefree, dislikes solitary work, lives for the moment.",
+        "balanced": "Philosophical, disciplined, responsible, ethical, deep thinker with quiet endurance.",
+        "prominent": "Serious, introverted, solitary temperament, intensely studious, highly cautious."
+      }
+    },
+    {
+      "id": "mount_of_apollo",
+      "name": "Mount of Apollo (Sun Mount)",
+      "planetary_ruler": "Sun",
+      "element": "Fire",
+      "anatomical_anchor": {
+        "mediapipe_index": 13,
+        "landmark_name": "RING_FINGER_MCP",
+        "region": "Directly below the ring finger base."
+      },
+      "core_attributes": [
+        "creativity",
+        "artistic talent",
+        "joy",
+        "charm",
+        "aesthetic appreciation"
+      ],
+      "prominence_meanings": {
+        "underdeveloped": "Utilitarian mindset, indifferent to arts or aesthetics, grounded in practical necessities.",
+        "balanced": "Refined artistic taste, radiant warmth, optimistic spirit, magnetic social grace.",
+        "prominent": "Extravagant love of beauty, dramatic flair, craving for applause and celebrity spotlight."
+      }
+    },
+    {
+      "id": "mount_of_mercury",
+      "name": "Mount of Mercury",
+      "planetary_ruler": "Mercury",
+      "element": "Air",
+      "anatomical_anchor": {
+        "mediapipe_index": 17,
+        "landmark_name": "PINKY_MCP",
+        "region": "Directly beneath the little finger base."
+      },
+      "core_attributes": [
+        "communication",
+        "wit",
+        "adaptability",
+        "business acumen",
+        "intellect"
+      ],
+      "prominence_meanings": {
+        "underdeveloped": "Shy in speech, straightforward, prefers simple conversations over negotiation.",
+        "balanced": "Persuasive speaker, sharp intellect, commercial savvy, swift adaptability.",
+        "prominent": "Exceptionally articulate, fast-talking, sharp negotiator, inventive mind."
+      }
+    },
+    {
+      "id": "mount_of_venus",
+      "name": "Mount of Venus",
+      "planetary_ruler": "Venus",
+      "element": "Water / Earth",
+      "anatomical_anchor": {
+        "mediapipe_index": 1,
+        "landmark_name": "THUMB_CMC",
+        "region": "The fleshy ball of the palm enclosed by the Life Line."
+      },
+      "core_attributes": [
+        "vitality",
+        "sensuality",
+        "love",
+        "passion",
+        "generosity"
+      ],
+      "prominence_meanings": {
+        "underdeveloped": "Ascetic nature, detached from sensual pleasures, reserved in physical affections.",
+        "balanced": "Warm-hearted, passionate, vibrant vitality, loving, appreciative of music and beauty.",
+        "prominent": "Deeply passionate, hedonistic love of pleasure, abundant physical energy."
+      }
+    },
+    {
+      "id": "mount_of_moon",
+      "name": "Mount of Moon (Mount of Luna)",
+      "planetary_ruler": "Moon",
+      "element": "Water",
+      "anatomical_anchor": {
+        "mediapipe_index": 0,
+        "landmark_name": "WRIST",
+        "region": "The fleshy lower percussion on the outer edge of the palm opposite the thumb."
+      },
+      "core_attributes": [
+        "intuition",
+        "imagination",
+        "dreams",
+        "mysticism",
+        "empathy"
+      ],
+      "prominence_meanings": {
+        "underdeveloped": "Hyper-realistic, grounded strictly in tangible facts, rare daydreams.",
+        "balanced": "Intuitive insight, vivid imagination, empathetic emotional antenna, artistic flair.",
+        "prominent": "Visionary dreamer, profound mystical sensibilities, poetic, highly receptive to psychic impressions."
+      }
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Environment & secrets
+.env
+.env.local
+.env*.local
+!.env.example
+!.env.local.example
+
+# Builds
+frontend/.next/
+frontend/out/
+**/.next/
+dist/
+build/
+
+# Model & data artifacts (large binaries tracked separately)
+models/*.pt
+models/*.pth
+models/*.onnx
+data/**/*.zip
+
+# Training datasets (not needed for deployment)
+dataset/
+
+# User uploads (avatars, palm images)
+backend/uploads/
+uploads/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs & test reports
+*.log
+pytest-report.xml
+
+# Agent tooling & local assistant state
+.claude/
+.kilo/
+.zcode/
+.superpowers/
+.cursorrules
+.zcodeignore
+AGENT_PROGRESS.md
+PROGRESS.md
+
+# Unused packages (empty placeholder tree)
+/ai/
+
+# Nested repository (frontend history merged into this repo)
+frontend/.git
+
+# Dev-only API collections
+backend/postman/

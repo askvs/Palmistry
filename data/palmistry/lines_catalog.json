@@ -1,0 +1,212 @@
+{
+  "version": "1.0.0",
+  "description": "Primary palm lines catalog for the Palmistry & Tarot Intelligence Platform (Spec §49.5, FR-009).",
+  "required_lines_count": 5,
+  "lines": [
+    {
+      "id": "life_line",
+      "name": "Life Line",
+      "classical_name": "Linea Vitae",
+      "sanskrit_name": "Pitri Rekha (Vitality Line)",
+      "category": "major_line",
+      "description": "Curves around the base of the thumb (Mount of Venus); represents vitality, physical energy, health stamina, and significant life transitions.",
+      "significance": [
+        "physical vitality and stamina",
+        "general health constitution",
+        "major life transitions and geographic relocations",
+        "quality of life energy and enthusiasm"
+      ],
+      "starting_zone": "Radial edge of the palm between the index finger (Jupiter) and thumb (Venus).",
+      "ending_zone": "Base of the palm near the wrist (Rascettes) curving around Mount of Venus.",
+      "variations": [
+        {
+          "type": "long_and_deep",
+          "description": "Long, clear, and well-defined line curving gracefully around the thumb.",
+          "meaning": "Vibrant vitality, strong constitution, steady stamina, and grounded physical presence."
+        },
+        {
+          "type": "faint_or_shallow",
+          "description": "Thin, superficial line requiring close inspection to trace.",
+          "meaning": "Sensitive constitution, needing deliberate rest, prone to nervous energy exhaustion."
+        },
+        {
+          "type": "wide_arc",
+          "description": "Sweeps broadly toward the center of the palm before descending.",
+          "meaning": "Expansive enthusiasm, generous warm heart, love of adventure and travel."
+        },
+        {
+          "type": "close_to_thumb",
+          "description": "Stays tightly enclosed against the ball of the thumb.",
+          "meaning": "Cautious nature, introverted reserve, conservative with energy and resources."
+        },
+        {
+          "type": "forked_at_base",
+          "description": "Branching into two or more strands as it reaches the wrist.",
+          "meaning": "Travel abroad, profound life shift in maturity, dual residences or pursuits."
+        }
+      ],
+      "confidence_threshold_default": 0.65
+    },
+    {
+      "id": "head_line",
+      "name": "Head Line",
+      "classical_name": "Linea Capitis",
+      "sanskrit_name": "Matri Rekha (Wisdom Line)",
+      "category": "major_line",
+      "description": "Traverses horizontally across the palm between the Life and Heart lines; governs cognitive style, intellect, reasoning focus, and mental processing.",
+      "significance": [
+        "intellectual orientation (analytical vs creative)",
+        "mental focus, concentration, and clarity",
+        "decision-making style and risk tolerance",
+        "communication and psychological adaptability"
+      ],
+      "starting_zone": "Originates near or joined with the Life Line above the Mount of Venus.",
+      "ending_zone": "Crosses the palm toward the Mount of Mars (percussive edge) or slants down toward the Mount of Moon.",
+      "variations": [
+        {
+          "type": "straight_and_horizontal",
+          "description": "Extends directly across the palm toward the upper percussion (Mount of Mars).",
+          "meaning": "Highly practical, logical, data-driven, objective problem solver with disciplined focus."
+        },
+        {
+          "type": "sloping_toward_moon",
+          "description": "Curving gently downward toward the fleshy base of the Mount of Moon.",
+          "meaning": "Rich creative imagination, artistic sensitivity, intuitive cognition, literary flair."
+        },
+        {
+          "type": "writers_fork",
+          "description": "Splits into a distinct fork near the termination (one branch straight, one dipping to Moon).",
+          "meaning": "The Writer's Fork: rare blend of analytical pragmatism and brilliant creative imagination."
+        },
+        {
+          "type": "joined_with_life_line",
+          "description": "Originates entwined with the Life Line for a centimeter or more.",
+          "meaning": "Deeply reflective, cautious start in youth, values family counsel, considerate."
+        },
+        {
+          "type": "separated_from_life_line",
+          "description": "Clear gap between the start of the Head Line and Life Line.",
+          "meaning": "Independent thinker, pioneering spirit, bold self-confidence, takes initiative early."
+        }
+      ],
+      "confidence_threshold_default": 0.65
+    },
+    {
+      "id": "heart_line",
+      "name": "Heart Line",
+      "classical_name": "Linea Mensalis",
+      "sanskrit_name": "Ayush Rekha (Emotion Line)",
+      "category": "major_line",
+      "description": "Runs across the upper palm below the fingers; governs emotional depth, romantic style, empathy, compassion, and interpersonal vulnerability.",
+      "significance": [
+        "emotional expression and vulnerability",
+        "romantic ideals, loyalty, and relationship patterns",
+        "empathy, social compassion, and emotional boundaries",
+        "cardiovascular and emotional equilibrium"
+      ],
+      "starting_zone": "Ulnar percussion of the hand below the little finger (Mercury).",
+      "ending_zone": "Sweeps across the upper palm toward the Mount of Jupiter (index) or Mount of Saturn (middle).",
+      "variations": [
+        {
+          "type": "curved_to_jupiter",
+          "description": "Curving upward and terminating gracefully under the index finger (Mount of Jupiter).",
+          "meaning": "Idealistic in love, affectionate, noble expectations, warm-hearted, deeply loyal partner."
+        },
+        {
+          "type": "straight_and_terminating_at_saturn",
+          "description": "Flat, straight trajectory terminating beneath the middle finger (Mount of Saturn).",
+          "meaning": "Realistic, emotionally guarded, values stability and demonstrated action over romantic idealism."
+        },
+        {
+          "type": "ending_between_jupiter_and_saturn",
+          "description": "Balanced termination right in the valley between the index and middle fingers.",
+          "meaning": "Golden emotional balance: gives love warmly while maintaining healthy self-respect and boundaries."
+        },
+        {
+          "type": "chained_or_feathered",
+          "description": "Small island links or feathery branches along the line.",
+          "meaning": "High emotional sensitivity, deeply empathetic, absorbs energy of surroundings easily."
+        }
+      ],
+      "confidence_threshold_default": 0.65
+    },
+    {
+      "id": "fate_line",
+      "name": "Fate Line",
+      "classical_name": "Linea Saturni (Destiny Line)",
+      "sanskrit_name": "Bhagya Rekha",
+      "category": "major_line",
+      "description": "Ascends vertically up the center of the palm toward the middle finger (Mount of Saturn); reflects vocation, sense of purpose, life direction, and external karmic tides.",
+      "significance": [
+        "career path clarity and professional dedication",
+        "sense of purpose and vocational direction",
+        "self-determined vs externally influenced destiny",
+        "pivotal career shifts and vocational transitions"
+      ],
+      "starting_zone": "Base of palm near the wrist, or rising from the Life Line or Mount of Moon.",
+      "ending_zone": "Mount of Saturn (below middle finger).",
+      "variations": [
+        {
+          "type": "deep_and_straight",
+          "description": "Continuous, unbroken vertical column from wrist to Saturn mount.",
+          "meaning": "Unshakable vocational clarity from an early age, self-directed achievement, high career focus."
+        },
+        {
+          "type": "rising_from_moon",
+          "description": "Originates from the fleshy Mount of Moon (outer palm edge).",
+          "meaning": "Career dependent on public rapport, client charisma, artistic recognition, or support of others."
+        },
+        {
+          "type": "rising_from_life_line",
+          "description": "Sprouts from the Life Line further up the hand.",
+          "meaning": "Self-made success: career breakthroughs won through personal grit and dedicated perseverance."
+        },
+        {
+          "type": "faint_or_absent",
+          "description": "Faint, intermittent, or absent.",
+          "meaning": "Flexible, self-authored journey: free from rigid corporate ladders, crafting varied eclectic paths."
+        }
+      ],
+      "confidence_threshold_default": 0.55
+    },
+    {
+      "id": "sun_line",
+      "name": "Sun Line",
+      "classical_name": "Linea Solaris (Apollo Line)",
+      "sanskrit_name": "Surya Rekha (Success & Brilliance Line)",
+      "category": "major_line",
+      "description": "Runs vertically parallel to the Fate Line toward the ring finger (Mount of Apollo); signifies public recognition, charisma, artistic fulfillment, and personal magnetism.",
+      "significance": [
+        "public acclaim, fame, and reputation",
+        "artistic talent, aesthetic refinement, and creative genius",
+        "charismatic presence and social warmth",
+        "reward and recognition fulfilling career labor"
+      ],
+      "starting_zone": "Lower palm, or ascending from Heart Line, Head Line, or Fate Line.",
+      "ending_zone": "Mount of Apollo (base of the ring finger).",
+      "variations": [
+        {
+          "type": "strong_and_unbroken",
+          "description": "Clear vertical line reaching onto the Apollo mount.",
+          "meaning": "Profound artistic brilliance, high public visibility, magnetic charisma, acknowledged success."
+        },
+        {
+          "type": "rising_from_heart_line",
+          "description": "Begins only above the Heart Line and ascends into Apollo.",
+          "meaning": "Late-blooming brilliance: public recognition, joy, and greatest success achieved in mature years."
+        },
+        {
+          "type": "multiple_parallel_lines",
+          "description": "Two or three slender parallel lines ascending under ring finger.",
+          "meaning": "Versatile creative interests, multiple concurrent artistic pursuits, widely appreciated."
+        },
+        {
+          "type": "absent",
+          "description": "Not visibly delineated on palm surface.",
+          "meaning": "Quiet fulfillment: success achieved through steadfast internal satisfaction rather than celebrity or fame."
+        }
+      ],
+      "confidence_threshold_default": 0.5
+    }
+  ]
+}

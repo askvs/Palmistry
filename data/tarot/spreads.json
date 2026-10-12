@@ -1,0 +1,389 @@
+{
+  "version": "1.0.0",
+  "description": "Standardized tarot spreads defined for the Palmistry & Tarot Intelligence Platform (Spec §49.6, FR-017..FR-022).",
+  "spreads": [
+    {
+      "id": "single_card",
+      "name": "Single Card Spread",
+      "spec_requirement": "FR-017",
+      "card_count": 1,
+      "category": "daily_focus",
+      "description": "A single-card draw providing direct spiritual guidance, daily focus, or a clear answer to a focused inquiry.",
+      "positions": [
+        {
+          "position": 1,
+          "name": "Core Guidance",
+          "description": "The primary energy, theme, or lesson currently governing your inquiry.",
+          "layout_coordinate": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        }
+      ],
+      "interpretation_order": [
+        1
+      ]
+    },
+    {
+      "id": "three_card",
+      "name": "Three Card Spread (Past, Present, Future)",
+      "spec_requirement": "FR-018",
+      "card_count": 3,
+      "category": "temporal_overview",
+      "description": "The classic three-card spread tracing chronological momentum from roots through current experience to emerging trajectory.",
+      "positions": [
+        {
+          "position": 1,
+          "name": "The Past",
+          "description": "Foundations, root causes, past lessons, and background energies shaping the present.",
+          "layout_coordinate": {
+            "x": 0.2,
+            "y": 0.5
+          }
+        },
+        {
+          "position": 2,
+          "name": "The Present",
+          "description": "Current reality, active dynamics, immediate challenges, and where your focus is centered.",
+          "layout_coordinate": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        },
+        {
+          "position": 3,
+          "name": "The Future",
+          "description": "Emerging trajectory, potential outcome, and advice for navigating what lies ahead.",
+          "layout_coordinate": {
+            "x": 0.8,
+            "y": 0.5
+          }
+        }
+      ],
+      "interpretation_order": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "relationship",
+      "name": "Relationship Harmony Spread",
+      "spec_requirement": "FR-019",
+      "card_count": 5,
+      "category": "interpersonal",
+      "description": "A 5-card diagnostic examining personal perspectives, interpersonal bonds, hidden blocks, and mutual growth pathways.",
+      "positions": [
+        {
+          "position": 1,
+          "name": "Querent / Your Perspective",
+          "description": "Your emotional state, expectations, and energy brought into the connection.",
+          "layout_coordinate": {
+            "x": 0.2,
+            "y": 0.6
+          }
+        },
+        {
+          "position": 2,
+          "name": "Partner / Other's Perspective",
+          "description": "Their viewpoint, underlying feelings, and current attitude toward the connection.",
+          "layout_coordinate": {
+            "x": 0.8,
+            "y": 0.6
+          }
+        },
+        {
+          "position": 3,
+          "name": "The Dynamic / Connection",
+          "description": "The core energy and nature of the bond uniting the two parties.",
+          "layout_coordinate": {
+            "x": 0.5,
+            "y": 0.4
+          }
+        },
+        {
+          "position": 4,
+          "name": "Hidden Influences / Obstacle",
+          "description": "Unspoken tensions, external pressures, or blind spots requiring illumination.",
+          "layout_coordinate": {
+            "x": 0.5,
+            "y": 0.7
+          }
+        },
+        {
+          "position": 5,
+          "name": "Resolution / Path Forward",
+          "description": "The potential outcome and constructive guidance for mutual elevation.",
+          "layout_coordinate": {
+            "x": 0.5,
+            "y": 0.15
+          }
+        }
+      ],
+      "interpretation_order": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "career",
+      "name": "Career & Ambition Spread",
+      "spec_requirement": "FR-020",
+      "card_count": 5,
+      "category": "professional",
+      "description": "A 5-card strategic layout evaluating current career standing, ambitions, hidden workplace dynamics, and professional milestones.",
+      "positions": [
+        {
+          "position": 1,
+          "name": "Current Career Standing",
+          "description": "Where you currently stand in your professional trajectory and workspace.",
+          "layout_coordinate": {
+            "x": 0.5,
+            "y": 0.75
+          }
+        },
+        {
+          "position": 2,
+          "name": "True Aspirations & Calling",
+          "description": "Your authentic ambition, creative desires, and ultimate career goals.",
+          "layout_coordinate": {
+            "x": 0.5,
+            "y": 0.45
+          }
+        },
+        {
+          "position": 3,
+          "name": "Challenges & Workplace Blocks",
+          "description": "Obstacles, competition, internal self-doubt, or organizational friction.",
+          "layout_coordinate": {
+            "x": 0.2,
+            "y": 0.45
+          }
+        },
+        {
+          "position": 4,
+          "name": "Actionable Strategy",
+          "description": "The tactical step, skill to hone, or decision to execute now.",
+          "layout_coordinate": {
+            "x": 0.8,
+            "y": 0.45
+          }
+        },
+        {
+          "position": 5,
+          "name": "Professional Milestone / Outcome",
+          "description": "The long-term realization and career success awaiting dedication.",
+          "layout_coordinate": {
+            "x": 0.5,
+            "y": 0.15
+          }
+        }
+      ],
+      "interpretation_order": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "celtic_cross",
+      "name": "The Celtic Cross Spread",
+      "spec_requirement": "FR-021",
+      "card_count": 10,
+      "category": "comprehensive_destiny",
+      "description": "The time-honored 10-card master spread dissecting intricate life situations across conscious aims, subconscious drives, past roots, and future convergence.",
+      "positions": [
+        {
+          "position": 1,
+          "name": "The Present / Heart of the Matter",
+          "description": "The core situation, query, and central atmosphere enveloping the querent.",
+          "layout_coordinate": {
+            "x": 0.35,
+            "y": 0.5
+          }
+        },
+        {
+          "position": 2,
+          "name": "The Challenge / Crossing Card",
+          "description": "The immediate obstacle, friction, or catalyst crossing the present energy.",
+          "layout_coordinate": {
+            "x": 0.35,
+            "y": 0.5,
+            "cross": true
+          }
+        },
+        {
+          "position": 3,
+          "name": "The Past / Deep Foundation",
+          "description": "The underlying roots, past choices, and foundational events giving rise to today.",
+          "layout_coordinate": {
+            "x": 0.35,
+            "y": 0.8
+          }
+        },
+        {
+          "position": 4,
+          "name": "Passing Influences / Recent Past",
+          "description": "Energies or circumstances that are receding and fading out of relevance.",
+          "layout_coordinate": {
+            "x": 0.15,
+            "y": 0.5
+          }
+        },
+        {
+          "position": 5,
+          "name": "Conscious Goal / The Crown",
+          "description": "What you consciously aspire toward and the highest attainable ideal in this scenario.",
+          "layout_coordinate": {
+            "x": 0.35,
+            "y": 0.2
+          }
+        },
+        {
+          "position": 6,
+          "name": "Immediate Horizon / Near Future",
+          "description": "Upcoming events and shifts arriving in the immediate future.",
+          "layout_coordinate": {
+            "x": 0.55,
+            "y": 0.5
+          }
+        },
+        {
+          "position": 7,
+          "name": "The Querent / Internal Mindset",
+          "description": "Your internal perspective, emotional posture, and how you perceive yourself in this moment.",
+          "layout_coordinate": {
+            "x": 0.85,
+            "y": 0.85
+          }
+        },
+        {
+          "position": 8,
+          "name": "External Influences & Environment",
+          "description": "The social circle, family, friends, workplace context, and external environment.",
+          "layout_coordinate": {
+            "x": 0.85,
+            "y": 0.62
+          }
+        },
+        {
+          "position": 9,
+          "name": "Hopes & Secret Fears",
+          "description": "Your deepest psychological hopes and the corresponding subconscious anxieties.",
+          "layout_coordinate": {
+            "x": 0.85,
+            "y": 0.38
+          }
+        },
+        {
+          "position": 10,
+          "name": "Ultimate Outcome / Culmination",
+          "description": "The synthesized culmination of energies and the ultimate long-term trajectory.",
+          "layout_coordinate": {
+            "x": 0.85,
+            "y": 0.15
+          }
+        }
+      ],
+      "interpretation_order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "life_path",
+      "name": "Life Path & Soul Purpose Spread",
+      "spec_requirement": "FR-022",
+      "card_count": 7,
+      "category": "spiritual_evolution",
+      "description": "A 7-card esoteric layout illuminating the querent's spiritual essence, karmic challenges, innate blessings, and highest personal potential.",
+      "positions": [
+        {
+          "position": 1,
+          "name": "Core Soul Identity",
+          "description": "Your authentic spiritual frequency and true higher-self essence.",
+          "layout_coordinate": {
+            "x": 0.5,
+            "y": 0.85
+          }
+        },
+        {
+          "position": 2,
+          "name": "Current Incarnate Path",
+          "description": "The earthly journey and lesson path you are actively traversing.",
+          "layout_coordinate": {
+            "x": 0.3,
+            "y": 0.65
+          }
+        },
+        {
+          "position": 3,
+          "name": "Karmic Lesson",
+          "description": "The recurring life lesson and spiritual debt to be integrated with grace.",
+          "layout_coordinate": {
+            "x": 0.7,
+            "y": 0.65
+          }
+        },
+        {
+          "position": 4,
+          "name": "Innate Gifts & Blessings",
+          "description": "Your natural talents, psychic gifts, and intuitive strengths.",
+          "layout_coordinate": {
+            "x": 0.2,
+            "y": 0.45
+          }
+        },
+        {
+          "position": 5,
+          "name": "Subconscious Shadow & Potential",
+          "description": "Unawakened powers and hidden dimensions waiting to be integrated into consciousness.",
+          "layout_coordinate": {
+            "x": 0.8,
+            "y": 0.45
+          }
+        },
+        {
+          "position": 6,
+          "name": "The Next Spiritual Horizon",
+          "description": "The gateway and transformative shift opening in your life journey.",
+          "layout_coordinate": {
+            "x": 0.5,
+            "y": 0.35
+          }
+        },
+        {
+          "position": 7,
+          "name": "Ultimate Spiritual Destiny",
+          "description": "The highest realization of your purpose and personal enlightenment in this lifetime.",
+          "layout_coordinate": {
+            "x": 0.5,
+            "y": 0.12
+          }
+        }
+      ],
+      "interpretation_order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    }
+  ]
+}

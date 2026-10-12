@@ -1,0 +1,228 @@
+{
+  "version": "1.0.0",
+  "description": "MediaPipe Hand Landmarker 21-point topology reference mapping for palmistry geometry (Spec §49.5).",
+  "total_landmarks": 21,
+  "landmarks": [
+    {
+      "index": 0,
+      "name": "WRIST",
+      "category": "wrist",
+      "palmistry_role": "Rascettes / Bracelets origin, Moon-Venus baseline."
+    },
+    {
+      "index": 1,
+      "name": "THUMB_CMC",
+      "category": "thumb",
+      "palmistry_role": "Mount of Venus base anchor."
+    },
+    {
+      "index": 2,
+      "name": "THUMB_MCP",
+      "category": "thumb",
+      "palmistry_role": "Mount of Venus upper border, Life Line origin zone."
+    },
+    {
+      "index": 3,
+      "name": "THUMB_IP",
+      "category": "thumb",
+      "palmistry_role": "Willpower phalanx of the thumb."
+    },
+    {
+      "index": 4,
+      "name": "THUMB_TIP",
+      "category": "thumb",
+      "palmistry_role": "Logic/Intuition apex of the thumb."
+    },
+    {
+      "index": 5,
+      "name": "INDEX_FINGER_MCP",
+      "category": "index",
+      "palmistry_role": "Mount of Jupiter center anchor; Head Line origin calibration."
+    },
+    {
+      "index": 6,
+      "name": "INDEX_FINGER_PIP",
+      "category": "index",
+      "palmistry_role": "Ambition phalanx."
+    },
+    {
+      "index": 7,
+      "name": "INDEX_FINGER_DIP",
+      "category": "index",
+      "palmistry_role": "Philosophy phalanx."
+    },
+    {
+      "index": 8,
+      "name": "INDEX_FINGER_TIP",
+      "category": "index",
+      "palmistry_role": "Executive index apex."
+    },
+    {
+      "index": 9,
+      "name": "MIDDLE_FINGER_MCP",
+      "category": "middle",
+      "palmistry_role": "Mount of Saturn center anchor; Fate Line termination target."
+    },
+    {
+      "index": 10,
+      "name": "MIDDLE_FINGER_PIP",
+      "category": "middle",
+      "palmistry_role": "Duty phalanx."
+    },
+    {
+      "index": 11,
+      "name": "MIDDLE_FINGER_DIP",
+      "category": "middle",
+      "palmistry_role": "Sobriety phalanx."
+    },
+    {
+      "index": 12,
+      "name": "MIDDLE_FINGER_TIP",
+      "category": "middle",
+      "palmistry_role": "Saturnian discipline apex."
+    },
+    {
+      "index": 13,
+      "name": "RING_FINGER_MCP",
+      "category": "ring",
+      "palmistry_role": "Mount of Apollo center anchor; Sun Line termination target."
+    },
+    {
+      "index": 14,
+      "name": "RING_FINGER_PIP",
+      "category": "ring",
+      "palmistry_role": "Aesthetic phalanx."
+    },
+    {
+      "index": 15,
+      "name": "RING_FINGER_DIP",
+      "category": "ring",
+      "palmistry_role": "Artistic discernment phalanx."
+    },
+    {
+      "index": 16,
+      "name": "RING_FINGER_TIP",
+      "category": "ring",
+      "palmistry_role": "Solar creative apex."
+    },
+    {
+      "index": 17,
+      "name": "PINKY_MCP",
+      "category": "pinky",
+      "palmistry_role": "Mount of Mercury center anchor; Heart Line origin calibration."
+    },
+    {
+      "index": 18,
+      "name": "PINKY_PIP",
+      "category": "pinky",
+      "palmistry_role": "Commerce/Negotiation phalanx."
+    },
+    {
+      "index": 19,
+      "name": "PINKY_DIP",
+      "category": "pinky",
+      "palmistry_role": "Tact phalanx."
+    },
+    {
+      "index": 20,
+      "name": "PINKY_TIP",
+      "category": "pinky",
+      "palmistry_role": "Mercurial eloquence apex."
+    }
+  ],
+  "connections": [
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      0,
+      5
+    ],
+    [
+      5,
+      6
+    ],
+    [
+      6,
+      7
+    ],
+    [
+      7,
+      8
+    ],
+    [
+      5,
+      9
+    ],
+    [
+      9,
+      10
+    ],
+    [
+      10,
+      11
+    ],
+    [
+      11,
+      12
+    ],
+    [
+      9,
+      13
+    ],
+    [
+      13,
+      14
+    ],
+    [
+      14,
+      15
+    ],
+    [
+      15,
+      16
+    ],
+    [
+      13,
+      17
+    ],
+    [
+      17,
+      18
+    ],
+    [
+      18,
+      19
+    ],
+    [
+      19,
+      20
+    ],
+    [
+      0,
+      17
+    ]
+  ],
+  "palm_hull_indices": [
+    0,
+    1,
+    2,
+    5,
+    9,
+    13,
+    17
+  ]
+}
