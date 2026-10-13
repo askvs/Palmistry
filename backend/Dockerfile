@@ -1,19 +1,40 @@
-# Build from the repository root: docker build -f backend/Dockerfile .
-# The app resolves its data/ and models/ directories relative to the
-# repository root (parents[4] of the service modules), so both are copied
-# to the matching absolute paths inside the image.
-FROM python:3.11-slim AS base
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
-WORKDIR /code
-RUN apt-get update && apt-get install -y --no-install-recommends libgl1 libglib2.0-0 libegl1 && rm -rf /var/lib/apt/lists/*COPY backend/requirements.txt .
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system libraries required by MediaPipe and OpenCV
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
+    libegl1 \
+    libglib2.0-0 \
+    libsm6 \
+    libxrender1 \
+    libxext6 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application configuration and code
 COPY backend/alembic.ini ./
 COPY backend/alembic ./alembic
 COPY backend/app ./app
+
+# Copy project data and MediaPipe model
 COPY data /data
 COPY models /models
-RUN useradd -m appuser && mkdir -p /code/uploads && chown -R appuser:appuser /code
+
+# Run the application as a non-root user
+RUN useradd --create-home appuser && \
+    chown -R appuser:appuser /app /data /models
+
 USER appuser
+
 EXPOSE 8000
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health').getcode()==200 else 1)"
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=5)" || exit 1
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
