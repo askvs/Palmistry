@@ -62,6 +62,15 @@ def create_tarot_reading(
         "engine": ENGINE_NAME,
         "interpretation": interpretation,
     }
+    # Make the spread metadata available at a predictable top-level key for reporting & aggregation
+    # (reader_engagement and reports expect result['spread_name'] and result['card_count']).
+    if isinstance(interpretation, dict) and interpretation.get("spread_name"):
+        result["spread_name"] = interpretation.get("spread_name")
+    else:
+        # Fallback to provided spread ref when interpretation lacks a spread_name
+        result["spread_name"] = str(spread)
+    result["card_count"] = int(len(cards))
+
     reading = Reading(
         user_id=user.id,
         type=ReadingType.tarot,
