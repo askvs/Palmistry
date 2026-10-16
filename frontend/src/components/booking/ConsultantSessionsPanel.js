@@ -1,5 +1,5 @@
 // Consultant session panel for the reader/consultant dashboards (FR-BOOK-008).
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   Badge,
   Button,
@@ -144,9 +144,13 @@ function ConfirmedSession({ booking }) {
 }
 
 export default function ConsultantSessionsPanel({ limit = 6 }) {
-  const { data, error, loading, refresh } = useAsyncData(() =>
-    fetchConsultantSessions({ limit })
+  // Stable loader: useAsyncData re-runs whenever the loader identity changes,
+  // so an inline arrow here would refetch on every render (infinite loop).
+  const loader = useCallback(
+    () => fetchConsultantSessions({ limit }),
+    [limit],
   );
+  const { data, error, loading, refresh } = useAsyncData(loader);
   const requests = useMemo(() => data?.requests?.items || [], [data]);
   const upcoming = useMemo(() => data?.upcoming?.items || [], [data]);
   const recent = useMemo(

@@ -487,7 +487,7 @@ def auth_settings() -> dict:
         "refresh_token_expire_days": settings.REFRESH_TOKEN_EXPIRE_DAYS,
         "refresh_cookie_name": REFRESH_COOKIE_NAME,
         "refresh_cookie_secure": settings.REFRESH_COOKIE_SECURE,
-        "refresh_cookie_samesite": "lax",
+        "refresh_cookie_samesite": "none" if settings.REFRESH_COOKIE_SECURE else "lax",
         "refresh_cookie_path": "/api/v1/auth",
         "password_hashing": "argon2id",
         "oauth_providers": oauth_providers,

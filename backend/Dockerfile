@@ -3,10 +3,13 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system libraries required by MediaPipe and OpenCV
+# Install system libraries required by MediaPipe and OpenCV.
+# libgles2 provides libGLESv2.so.2, which MediaPipe's EGL/GLES loader
+# dlopen()s at runtime (hand landmarker inference).
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     libegl1 \
+    libgles2 \
     libglib2.0-0 \
     libsm6 \
     libxrender1 \
@@ -26,8 +29,11 @@ COPY backend/app ./app
 COPY data /data
 COPY models /models
 
-# Run the application as a non-root user
+# Run the application as a non-root user. The uploads directory is created
+# here (and covered by the chown below) so the compose uploads volume mounts
+# writable for appuser.
 RUN useradd --create-home appuser && \
+    mkdir -p /app/uploads && \
     chown -R appuser:appuser /app /data /models
 
 USER appuser

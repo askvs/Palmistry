@@ -1,5 +1,5 @@
 // Seeker session panel for the user dashboard (FR-BOOK-007).
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   Button,
   EmptyState,
@@ -159,9 +159,13 @@ function PastSession({ booking, onFeedback }) {
 }
 
 export default function SeekerSessionsPanel({ limit = 4 }) {
-  const { data, error, loading, refresh } = useAsyncData(() =>
-    fetchSeekerSessions({ upcomingLimit: limit, pastLimit: limit })
+  // Stable loader: useAsyncData re-runs whenever the loader identity changes,
+  // so an inline arrow here would refetch on every render (infinite loop).
+  const loader = useCallback(
+    () => fetchSeekerSessions({ upcomingLimit: limit, pastLimit: limit }),
+    [limit],
   );
+  const { data, error, loading, refresh } = useAsyncData(loader);
   const upcomingItems = useMemo(() => data?.upcoming?.items || [], [data]);
   const pastItems = useMemo(() => data?.past?.items || [], [data]);
 

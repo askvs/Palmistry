@@ -1054,9 +1054,10 @@ function SlotsPanel() {
 // Live requests with one-click accept/decline; negotiation lives in the Requests tab.
 function RequestsTopPanel({ onOpenRequests, onChanged }) {
   const toast = useToast();
-  const { data, error, loading, refresh } = useAsyncData(() =>
-    fetchConsultantSessions({ limit: 20 }),
-  );
+  // Stable loader: useAsyncData re-runs whenever the loader identity changes,
+  // so an inline arrow here would refetch on every render (infinite loop).
+  const loader = useCallback(() => fetchConsultantSessions({ limit: 20 }), []);
+  const { data, error, loading, refresh } = useAsyncData(loader);
   const [busyId, setBusyId] = useState(null);
   const [rowError, setRowError] = useState(null);
   const requests = useMemo(() => (data?.requests?.items || []).slice(0, 5), [data]);
@@ -1316,9 +1317,9 @@ function RequestCard({ booking, busyId, onAct, onCounter, refresh }) {
 
 function RequestsTab() {
   const toast = useToast();
-  const { data, error, loading, refresh } = useAsyncData(() =>
-    fetchConsultantSessions({ limit: 100 }),
-  );
+  // Stable loader (see RequestsTopPanel) to avoid a refetch loop.
+  const loader = useCallback(() => fetchConsultantSessions({ limit: 100 }), []);
+  const { data, error, loading, refresh } = useAsyncData(loader);
   const [busyId, setBusyId] = useState(null);
   const requests = data?.requests?.items || [];
 
@@ -1383,9 +1384,9 @@ function RequestsTab() {
 function SessionsTab() {
   const toast = useToast();
   const [scope, setScope] = useState("upcoming");
-  const { data, error, loading, refresh } = useAsyncData(() =>
-    fetchConsultantSessions({ limit: 100 }),
-  );
+  // Stable loader (see RequestsTopPanel) to avoid a refetch loop.
+  const loader = useCallback(() => fetchConsultantSessions({ limit: 100 }), []);
+  const { data, error, loading, refresh } = useAsyncData(loader);
   const [busyId, setBusyId] = useState(null);
   const [notesTarget, setNotesTarget] = useState(null);
 

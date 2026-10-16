@@ -43,7 +43,10 @@ def _auth_response(db: Session, user: User, response: Response) -> AuthResponse:
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
         httponly=True,
         secure=settings.REFRESH_COOKIE_SECURE,
-        samesite="lax",
+        # SameSite=None (needed when frontend and API are on different
+        # sites, e.g. Vercel + Render) is only accepted by browsers
+        # together with Secure. Local HTTP dev keeps Lax.
+        samesite="none" if settings.REFRESH_COOKIE_SECURE else "lax",
         path="/api/v1/auth",
     )
     return AuthResponse(
