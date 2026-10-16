@@ -1,10 +1,11 @@
 """Per-role signup/login portals (D-014): /auth/{role}/register and /auth/{role}/login."""
 import enum
 
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.orm import Session
 
 from app.auth import service
+from app.auth.cookies import set_refresh_cookie
 from app.auth.errors import AuthError
 from app.auth.rbac import get_current_user
 from app.config import settings
@@ -32,23 +33,14 @@ PORTAL_TO_ROLE: dict[Portal, UserRole] = {
 }
 
 
-def _auth_response(db: Session, user: User, response: Response) -> AuthResponse:
+def _auth_response(
+    db: Session, user: User, response: Response, request: Request
+) -> AuthResponse:
     from app.auth.tokens import create_access_token
 
     access_token = create_access_token(user.id, user.role)
     refresh_token = service.issue_refresh_token(db, user)
-    response.set_cookie(
-        key="palmistry_refresh",
-        value=refresh_token,
-        max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
-        httponly=True,
-        secure=settings.REFRESH_COOKIE_SECURE,
-        # SameSite=None (needed when frontend and API are on different
-        # sites, e.g. Vercel + Render) is only accepted by browsers
-        # together with Secure. Local HTTP dev keeps Lax.
-        samesite="none" if settings.REFRESH_COOKIE_SECURE else "lax",
-        path="/api/v1/auth",
-    )
+    set_refresh_cookie(response, refresh_token, request)
     return AuthResponse(
         user=UserOut.model_validate(user),
         access_token=access_token,
@@ -69,6 +61,7 @@ def _resolve_role(portal: Portal) -> UserRole:
 )
 async def portal_register(
     portal: Portal,
+    request: Request,
     payload: RoleRegisterRequest,
     response: Response,
     db: Session = Depends(get_db),
@@ -82,7 +75,7 @@ async def portal_register(
         role=role,
         admin_invite_code=payload.admin_invite_code,
     )
-    return _auth_response(db, user, response)
+    return _auth_response(db, user, response, request)
 
 
 @router.post(
@@ -92,6 +85,7 @@ async def portal_register(
 )
 async def portal_login(
     portal: Portal,
+    request: Request,
     payload: RoleLoginRequest,
     response: Response,
     db: Session = Depends(get_db),
@@ -101,4 +95,4 @@ async def portal_login(
         db, email=payload.email, password=payload.password, expected_role=role
     )
     logger.info("portal login user_id=%s portal=%s", user.id, portal.value)
-    return _auth_response(db, user, response)
+    return _auth_response(db, user, response, request)
