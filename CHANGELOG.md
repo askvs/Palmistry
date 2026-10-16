@@ -2,6 +2,45 @@
 
 All notable implementation changes to the Palmistry & Tarot Intelligence Platform.
 
+## [Unreleased] — System Reports module (admin monitoring)
+- **Admin-only System Reports** surface in the console (`/admin/reports`,
+  nav entry "System Reports"), with four endpoints behind `require_admin`:
+  - `GET /api/v1/admin/reports/overview?days=7|30` — total registered users,
+    total analyses, successful and failed analyses (period + all-time),
+    per-type breakdown, and the date failure tracking began.
+  - `GET /api/v1/admin/reports/health` — backend and database status from live
+    checks (real `SELECT 1`, measured latency); AI availability is a
+    configuration check stated honestly (no live upstream ping exists).
+  - `GET /api/v1/admin/reports/errors?days=&limit=` — recent operational
+    errors and failed analyses with category, sanitized short description
+    (whitespace-collapsed, 200-char cap), method/path/status, occurrences,
+    first/last seen and acknowledged state.
+  - `GET /api/v1/admin/reports/performance?days=` — average/p50/p95/max API
+    response time, request and 5xx counts from persisted samples, plus
+    average/p95/max analysis-generation time per reading type.
+- **New measurements feeding the reports**: failed palm/tarot generations are
+  recorded as `analysis_failed` error rows (deduplicated with occurrences);
+  `readings.duration_ms` (migration `0014_system_reports`) captures per-reading
+  generation time; the monitoring middleware buffers API latency samples and
+  flushes them to the new `performance_samples` table (on report reads and app
+  shutdown, with 90-day retention).
+- **Honest empty states.** Metrics with no data return `no_data` plus nulls
+  (and the UI shows an explanation) rather than misleading zeros.
+
+## [Unreleased] — Google Calendar removal & manual Meet links
+- **Google Calendar integration removed.** The consultant "connect calendar"
+  flow, automatic event creation on accept/cancel, sync statuses and the
+  `/consultants/me/google-calendar*` routes are gone; migration
+  `0013_remove_google_calendar` drops `consultant_calendar_connections` and
+  the booking columns `meet_code`, `google_event_id`, `google_calendar_id`,
+  `calendar_sync_status`, `calendar_synced_at`, `calendar_error`.
+- **Manual Google Meet link sharing.** Either party can paste the meeting
+  link for a session; the consultant can add, update or clear it any time
+  before the session starts
+  (`PATCH /api/v1/consultants/me/bookings/{id}/meeting-link`). Both sides
+  keep the "Join Google Meet" button, which unlocks 30 minutes before the
+  start.
+
 ## [Unreleased] — Deployment
 - Backend/frontend Docker images with healthchecks, Compose stack with one-shot
   `alembic upgrade head`, CI + ECR push workflows, AWS Fargate/RDS runbook,

@@ -1,3 +1,9 @@
+from app.services.admin.reports import (
+    error_report,
+    performance_report,
+    system_health,
+    system_overview,
+)
 from app.services.admin.service import (
     AdminError,
     LastAdminError,
@@ -30,6 +36,7 @@ __all__ = [
     "UserNotFound",
     "acknowledge_error",
     "auth_settings",
+    "error_report",
     "error_stats",
     "get_user",
     "list_all_readings",
@@ -37,12 +44,15 @@ __all__ = [
     "list_errors",
     "list_users",
     "log_action",
+    "performance_report",
     "performance_summary",
     "permission_matrix",
     "platform_analytics",
     "reading_statistics",
     "session_oversight",
     "system_config",
+    "system_health",
+    "system_overview",
     "system_report",
     "update_user",
     "verify_permission_matrix",

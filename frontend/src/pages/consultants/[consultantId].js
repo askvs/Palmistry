@@ -361,14 +361,6 @@ export default function ConsultantDetailPage() {
           <Panel
             title="Book a session"
             subtitle="Pick a date and time that works for you"
-            action={
-              profile.calendar_connected ? (
-                <Badge tone="emerald">
-                  <VideoIcon className="mr-1 h-3 w-3" />
-                  Meet on connect
-                </Badge>
-              ) : null
-            }
           >
             {!profile.is_accepting_bookings ? (
               <EmptyState
@@ -497,8 +489,8 @@ export default function ConsultantDetailPage() {
                 </div>
 
                 <p className="text-xs text-slate-400">
-                  Requests stay pending until the consultant accepts. Once confirmed, a Google
-                  Calendar event and Meet link are created and shown on your{" "}
+                  Requests stay pending until the consultant accepts. Once confirmed, the Google
+                  Meet link shows on your{" "}
                   <Link href="/sessions" className="text-primary-600 hover:underline">
                     sessions
                   </Link>{" "}

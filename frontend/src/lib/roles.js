@@ -68,6 +68,7 @@ export const ADMIN_ROUTES = [
   { href: "/admin/analytics", label: "Platform Analytics", icon: ChartIcon },
   { href: "/admin/security", label: "Security & Errors", icon: ShieldIcon },
   { href: "/admin/system", label: "System", icon: SettingsIcon },
+  { href: "/admin/reports", label: "System Reports", icon: FileTextIcon },
 ];
 
 // Secondary admin links.
@@ -83,6 +84,7 @@ export const ADMIN_PAGE_META = {
   "/admin/analytics": { title: "Platform Analytics", crumb: "Analytics" },
   "/admin/security": { title: "Security & Error Monitor", crumb: "Security" },
   "/admin/system": { title: "System & Configuration", crumb: "System" },
+  "/admin/reports": { title: "System Reports", crumb: "Reports" },
 };
 
 export const BACK_TO_CLIENTS = { href: "/consultant/clients", label: "Back to Clients", icon: ArrowLeftIcon };

@@ -26,6 +26,10 @@ ADMIN_PATHS = (
     "/api/v1/admin/errors",
     "/api/v1/admin/errors/stats",
     "/api/v1/admin/system/performance",
+    "/api/v1/admin/reports/overview",
+    "/api/v1/admin/reports/health",
+    "/api/v1/admin/reports/errors",
+    "/api/v1/admin/reports/performance",
 )
 
 

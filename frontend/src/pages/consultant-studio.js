@@ -1,6 +1,5 @@
-// Consultant Studio: operator console for profile, availability, requests, sessions, calendar.
+// Consultant Studio: operator console for profile, availability, requests, sessions.
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/router";
 import {
   Badge,
   Button,
@@ -21,15 +20,13 @@ import {
   CompassIcon,
   PencilIcon,
   PlusIcon,
-  SettingsIcon,
   StarIcon,
   TrashIcon,
-  VideoIcon,
 } from "@/components/icons";
 import {
   BookingStatusBadge,
-  CalendarSyncBadge,
   EmptyRow,
+  MeetingLinkEditor,
   SessionCard,
 } from "@/components/booking/shared";
 import BookingChat from "@/components/booking/BookingChat";
@@ -42,13 +39,11 @@ import {
   addSessionNote,
   blockSlot,
   completeBooking,
-  connectCalendar,
   counterBookingAsConsultant,
   createAvailabilityRule,
   deleteAvailabilityRule,
   deleteSlot,
   deleteSessionNote,
-  disconnectCalendar,
   fetchAvailabilityRules,
   fetchBookingNotes,
   fetchConsultantStudioOverview,
@@ -56,7 +51,6 @@ import {
   fetchMySlots,
   generateSlots,
   rejectBooking,
-  requestCalendarAuthorization,
   toggleAcceptingBookings,
   unblockSlot,
   updateAvailabilityRule,
@@ -77,13 +71,11 @@ const TABS = [
   { value: "availability", label: "Availability" },
   { value: "requests", label: "Requests" },
   { value: "sessions", label: "Sessions" },
-  { value: "calendar", label: "Calendar" },
 ];
 
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 export default function ConsultantStudioPage() {
-  const router = useRouter();
   const toast = useToast();
   const { user, loading: authLoading } = useAuth();
   // Seekers (role "user") are redirected to their dashboard; the studio is for
@@ -94,9 +86,6 @@ export default function ConsultantStudioPage() {
   // Bumped whenever the top requests panel resolves a booking, so the full
   // Requests tab below remounts with fresh data when it is opened.
   const [requestsTick, setRequestsTick] = useState(0);
-  const googleCalendarState = Array.isArray(router.query.google_calendar)
-    ? router.query.google_calendar[0]
-    : router.query.google_calendar;
 
   if (blocked) {
     return (
@@ -154,22 +143,10 @@ export default function ConsultantStudioPage() {
         />
       )}
 
-      {googleCalendarState && (
-        <div className="flex items-start gap-3 rounded-2xl border border-primary-100 bg-primary-50/70 p-4 text-sm text-primary-900">
-          <SettingsIcon className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" />
-          <p>
-            {googleCalendarState === "connected"
-              ? "Google Calendar connected. Future bookings will create calendar events with Meet links."
-              : `Google Calendar connection status: ${googleCalendarState}.`}
-          </p>
-        </div>
-      )}
-
       {tab === "overview" && <OverviewTab onNavigate={setTab} />}
       {tab === "availability" && <AvailabilityTab />}
       {tab === "requests" && <RequestsTab key={requestsTick} />}
       {tab === "sessions" && <SessionsTab />}
-      {tab === "calendar" && <CalendarTab onDone={() => setTab("calendar")} />}
     </div>
   );
 }
@@ -337,9 +314,6 @@ function OverviewTab({ onNavigate }) {
             </Button>
             <Button variant="ghost" size="sm" onClick={() => onNavigate("availability")}>
               Manage availability
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => onNavigate("calendar")}>
-              Google Calendar
             </Button>
           </div>
         </Panel>
@@ -1069,7 +1043,7 @@ function RequestsTopPanel({ onOpenRequests, onChanged }) {
     try {
       if (action === "accept") {
         await acceptBooking(booking.id);
-        toast.success("Session confirmed", "A Google Calendar event and Meet link were created.");
+        toast.success("Session confirmed", "Add your Google Meet link so the seeker can join.");
       } else {
         await rejectBooking(booking.id);
         toast.success("Request declined", "The seeker has been notified.");
@@ -1328,7 +1302,7 @@ function RequestsTab() {
     try {
       if (action === "accept") {
         await acceptBooking(booking.id);
-        toast.success("Session confirmed", "A Google Calendar event and Meet link were created.");
+        toast.success("Session confirmed", "Add your Google Meet link so the seeker can join.");
       } else {
         await rejectBooking(booking.id);
         toast.success("Request declined", "The seeker has been notified.");
@@ -1427,6 +1401,11 @@ function SessionsTab() {
                 <SessionCard
                   booking={booking}
                   variant="consultant"
+                  footer={
+                    booking.status === "accepted" ? (
+                      <MeetingLinkEditor booking={booking} onSaved={refresh} />
+                    ) : null
+                  }
                   actions={
                     <>
                       {booking.status === "accepted" && (
@@ -1661,246 +1640,3 @@ function SessionNotesPanel({ bookings = [], target, onTargetChange, onChanged })
   );
 }
 
-// Google Calendar connection.
-function CalendarTab() {
-  const toast = useToast();
-  const router = useRouter();
-  const { data, error, loading, refresh } = useAsyncData(fetchCalendarStatus);
-  const [pastedCode, setPastedCode] = useState(null);
-  const [busy, setBusy] = useState(null);
-  const [localError, setLocalError] = useState(null);
-
-  // Google redirects back with ?code=…; surface it for one-click save instead
-  // of making the consultant paste it. Derived during render, never effect-synced.
-  const urlCode = router.isReady ? router.query.code : undefined;
-  const urlCodeValue = Array.isArray(urlCode) ? urlCode[0] : urlCode;
-  const code = pastedCode ?? urlCodeValue ?? "";
-  const hasUrlCode = Boolean(urlCodeValue);
-
-  async function startAuthorize() {
-    setBusy("authorize");
-    setLocalError(null);
-    try {
-      const { authorization_url } = await requestCalendarAuthorization();
-      window.location.href = authorization_url;
-    } catch (err) {
-      setLocalError(err?.message || "Could not start the Google consent flow");
-    } finally {
-      setBusy(null);
-    }
-  }
-
-  async function submitCode(event) {
-    event.preventDefault();
-    if (!code.trim() || busy) return;
-    setBusy("connect");
-    setLocalError(null);
-    try {
-      await connectCalendar(code.trim());
-      toast.success("Google Calendar connected");
-      setPastedCode("");
-      refresh();
-    } catch (err) {
-      setLocalError(err?.message || "Could not connect your calendar");
-    } finally {
-      setBusy(null);
-    }
-  }
-
-  async function disconnect() {
-    setBusy("disconnect");
-    try {
-      await disconnectCalendar();
-      toast.success("Google Calendar disconnected");
-      refresh();
-    } catch (err) {
-      toast.error("Could not disconnect", err?.message);
-    } finally {
-      setBusy(null);
-    }
-  }
-
-  if (loading) return <SkeletonRow lines={5} />;
-  if (error) return <ErrorState message={error.message} onRetry={refresh} />;
-
-  const status = data;
-  const connection = status?.connection;
-
-  return (
-    <div className="space-y-6">
-      <Panel
-        title="Google Calendar"
-        subtitle="Where confirmed sessions create events and Google Meet links"
-        action={
-          connection ? (
-            <Badge tone={connection.is_active ? "emerald" : "slate"}>
-              {connection.is_active ? "Connected" : "Disabled"}
-            </Badge>
-          ) : (
-            <Badge tone="slate">Not connected</Badge>
-          )
-        }
-      >
-        <div className="space-y-4">
-          <p className="text-sm leading-relaxed text-slate-600">
-            When you accept a booking, MysticLens creates a calendar event with an auto-generated
-            Google Meet link. Events land on the calendar you connect here, so the meeting belongs
-            to you — not to a shared platform calendar.
-          </p>
-
-          {!status.calendar_enabled && (
-            <div className="rounded-2xl border border-accent-200/60 bg-accent-50 px-4 py-3">
-              <p className="text-xs font-bold uppercase tracking-wide text-accent-800">
-                Google Calendar is disabled on this server
-              </p>
-              <p className="mt-1 text-xs leading-relaxed text-accent-900">
-                Set <code className="font-mono">GOOGLE_CALENDAR_ENABLED=true</code> in the backend
-                environment to turn the integration on. Booking still works without it; sessions
-                simply will not get a Meet link.
-              </p>
-            </div>
-          )}
-
-          {connection ? (
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
-              <dl className="grid gap-3 text-sm sm:grid-cols-2">
-                <div>
-                  <dt className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                    Google account
-                  </dt>
-                  <dd className="mt-1 text-slate-800">{connection.google_email || "—"}</dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                    Calendar
-                  </dt>
-                  <dd className="mt-1 font-mono text-xs text-slate-800">
-                    {connection.calendar_id}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                    Connected
-                  </dt>
-                  <dd className="mt-1 text-slate-800">{formatDateTime(connection.connected_at)}</dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                    Events created
-                  </dt>
-                  <dd className="mt-1 text-slate-800">{status.synced_bookings ?? 0}</dd>
-                </div>
-              </dl>
-
-              {connection.last_error && (
-                <p className="mt-3 rounded-xl border border-rose-200/60 bg-rose-50 px-3.5 py-2 text-xs text-rose-800">
-                  {connection.last_error}
-                </p>
-              )}
-
-              <div className="mt-4 flex flex-wrap gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  loading={busy === "disconnect"}
-                  disabled={busy !== null}
-                  onClick={disconnect}
-                >
-                  Disconnect
-                </Button>
-                {!connection.is_active && (
-                  <Button size="sm" onClick={disconnect}>
-                    Re-enable
-                  </Button>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  icon={VideoIcon}
-                  loading={busy === "authorize"}
-                  disabled={busy !== null}
-                  onClick={startAuthorize}
-                >
-                  Connect Google Calendar
-                </Button>
-                {status.service_account_configured && (
-                  <span className="inline-flex items-center text-xs text-slate-500">
-                    A platform calendar is configured and is used as a fallback.
-                  </span>
-                )}
-              </div>
-
-              <details className="rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3">
-                <summary className="cursor-pointer text-xs font-bold uppercase tracking-wide text-slate-600">
-                  Or paste the authorisation code
-                </summary>
-                <form onSubmit={submitCode} className="mt-3 space-y-2.5">
-                  <input
-                    value={pastedCode ?? ""}
-                    onChange={(event) => setPastedCode(event.target.value)}
-                    placeholder="4/0A… from the Google consent screen"
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 font-mono text-xs text-slate-900 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
-                  />
-                  <Button
-                    type="submit"
-                    size="sm"
-                    loading={busy === "connect"}
-                    disabled={busy !== null || !code.trim()}
-                  >
-                    Save code
-                  </Button>
-                </form>
-              </details>
-            </div>
-          )}
-
-          {localError && <InlineError message={localError} />}
-
-          {!status.oauth_configured && (
-            <p className="text-xs text-slate-500">
-              Google OAuth is not configured on this server. Set{" "}
-              <code className="font-mono">GOOGLE_CLIENT_ID</code> and{" "}
-              <code className="font-mono">GOOGLE_CLIENT_SECRET</code> to let consultants connect their
-              own calendars.
-            </p>
-          )}
-        </div>
-      </Panel>
-
-      <Panel title="How it works">
-        <ol className="space-y-2.5 text-sm text-slate-600">
-          <li className="flex gap-2.5">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-[11px] font-bold text-primary-700">
-              1
-            </span>
-            A seeker books one of your open slots. The booking starts as{" "}
-            <span className="font-semibold">pending</span>.
-          </li>
-          <li className="flex gap-2.5">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-[11px] font-bold text-primary-700">
-              2
-            </span>
-            You accept it — MysticLens creates the calendar event and asks Google for a Meet
-            link.
-          </li>
-          <li className="flex gap-2.5">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-[11px] font-bold text-primary-700">
-              3
-            </span>
-            Both of you see the link and a <span className="font-semibold">Join Google Meet</span>{" "}
-            button 30 minutes before the session.
-          </li>
-          <li className="flex gap-2.5">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-[11px] font-bold text-primary-700">
-              4
-            </span>
-            Cancelling removes the event; completing the session unlocks seeker feedback.
-          </li>
-        </ol>
-      </Panel>
-    </div>
-  );
-}

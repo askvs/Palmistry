@@ -139,7 +139,6 @@ export function AuthSettingsPanel() {
     { label: "Admin self-signup", value: data.admin_signup_requires_invite_code ? "invite code required" : "open" },
     { label: "Auth rate limit", value: `${data.rate_limits.auth_requests_per_minute} req/min per IP` },
     { label: "Allowed origins", value: data.cors_origins.join(", ") },
-    { label: "Google Calendar", value: data.google_calendar.enabled ? (data.google_calendar.oauth_configured || data.google_calendar.service_account_configured ? "enabled and connected" : "enabled, credentials missing") : "disabled" },
   ];
 
   return (
@@ -225,7 +224,6 @@ export function SystemConfigPanel() {
               { label: "AI credentials", value: data.ai_configured ? "configured" : "not configured (rule-based fallback)" },
               { label: "Email delivery", value: data.email_configured ? "SMTP configured" : "not configured" },
               { label: "SMS delivery", value: data.sms_configured ? "configured" : "not configured" },
-              { label: "Google Calendar", value: data.google_calendar_configured ? "configured" : "disabled" },
               { label: "Maximum upload", value: `${data.max_upload_size_mb} MB · ${data.allowed_image_types.join(", ")}` },
               { label: "Stored timezone", value: data.timezone },
             ].map((row) => (

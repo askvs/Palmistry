@@ -54,7 +54,7 @@ export const BOOKING_STATUS = {
   accepted: {
     label: "Confirmed",
     tone: "emerald",
-    hint: "Confirmed. Your Google Meet link is ready below.",
+    hint: "Confirmed. The Google Meet link is shared below ahead of the session.",
   },
   rejected: {
     label: "Declined",
@@ -84,25 +84,12 @@ export function BookingStatusBadge({ status }) {
   return <KitBadge tone={meta.tone}>{meta.label}</KitBadge>;
 }
 
-// Calendar-sync chip; explains the Google Meet state on accepted bookings.
-export function CalendarSyncBadge({ booking }) {
-  const status = booking?.calendar_sync_status;
-  if (booking?.status !== "accepted" && status !== "created") return null;
-  const config = {
-    created: { tone: "emerald", label: "Meet link ready" },
-    not_created: { tone: "slate", label: "No calendar connected" },
-    failed: { tone: "rose", label: "Calendar sync failed" },
-    disabled: { tone: "slate", label: "Calendar disabled" },
-    cancelled: { tone: "slate", label: "Calendar event removed" },
-  }[status] || { tone: "slate", label: status };
-  return <KitBadge tone={config.tone}>{config.label}</KitBadge>;
-}
-
 // Session row used by both the seeker hub and the consultant studio.
 export function SessionCard({
   booking,
   variant = "seeker",
   actions,
+  footer,
   onOpen,
   defaultOpen = false,
 }) {
@@ -121,7 +108,6 @@ export function SessionCard({
           <div className="flex flex-wrap items-center gap-2">
             <h4 className="text-sm font-semibold text-slate-900">{booking?.subject}</h4>
             <BookingStatusBadge status={booking?.status} />
-            {booking?.status === "accepted" && <CalendarSyncBadge booking={booking} />}
           </div>
           <p className="mt-1 text-xs text-slate-500">
             {isConsultant ? "Seeker: " : "Consultant: "}
@@ -170,6 +156,8 @@ export function SessionCard({
         </p>
       )}
 
+      {footer && <div className="mt-3">{footer}</div>}
+
       {onOpen && (
         <div className="mt-3">
           <KitButton variant="ghost" size="sm" onClick={() => setOpen((v) => !v)}>
@@ -184,6 +172,71 @@ export function SessionCard({
         </div>
       )}
     </li>
+  );
+}
+
+// Consultant control to share or update the Google Meet link for a session.
+export function MeetingLinkEditor({ booking, onSaved }) {
+  const toast = useToast();
+  const [value, setValue] = useState(booking?.meet_link || "");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function save(event) {
+    event.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const { updateBookingMeetingLink } = await import("@/services/booking");
+      await updateBookingMeetingLink(booking.id, value.trim() || null);
+      toast.success(
+        value.trim() ? "Meeting link saved" : "Meeting link cleared",
+        value.trim()
+          ? "The seeker will see this Google Meet link before the session."
+          : "This session no longer shows a meeting link.",
+      );
+      onSaved?.();
+    } catch (err) {
+      setError(err?.message || "Could not save the meeting link");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <form onSubmit={save} className="rounded-xl border border-slate-200/70 bg-white p-3.5">
+      <label
+        htmlFor={`meet-link-${booking.id}`}
+        className="text-xs font-bold uppercase tracking-wide text-slate-500"
+      >
+        Google Meet link
+      </label>
+      <p className="mt-1 text-xs leading-relaxed text-slate-500">
+        Create the meeting at meet.google.com, then paste the link here to share it with the
+        seeker.
+      </p>
+      <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+        <input
+          id={`meet-link-${booking.id}`}
+          type="url"
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          placeholder="https://meet.google.com/abc-defg-hij"
+          className="w-full rounded-2xl border border-slate-200 px-3.5 py-2 text-sm text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+        />
+        <div className="shrink-0">
+          <KitButton type="submit" size="sm" loading={busy} disabled={busy}>
+            {booking?.meet_link ? "Update link" : "Share link"}
+          </KitButton>
+        </div>
+      </div>
+      {error && (
+        <div className="mt-2">
+          <InlineError message={error} />
+        </div>
+      )}
+    </form>
   );
 }
 

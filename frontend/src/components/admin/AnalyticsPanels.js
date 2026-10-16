@@ -23,11 +23,11 @@ const PERIOD_OPTIONS = [
   { value: "30", label: "30 days" },
 ];
 
-export function AnalyticsWindowPicker({ days, onChange }) {
+export function AnalyticsWindowPicker({ days, onChange, label = "Analytics window" }) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
-      <span className="text-xs font-medium text-slate-400">Analytics window</span>
-      <div role="group" aria-label="Analytics window" className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100/80 p-0.5">
+      <span className="text-xs font-medium text-slate-400">{label}</span>
+      <div role="group" aria-label={label} className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100/80 p-0.5">
         {PERIOD_OPTIONS.map((option) => {
           const active = String(days) === option.value;
           return (

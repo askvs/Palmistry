@@ -8,7 +8,6 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from app.models.booking import (
     BookingOrigin,
     BookingStatus,
-    CalendarSyncStatus,
     NoteVisibility,
     SlotStatus,
 )
@@ -132,7 +131,6 @@ class ConsultantProfileOut(BaseModel):
     # Joined presentation fields (filled in by the routers).
     full_name: str | None = None
     email: str | None = None
-    calendar_connected: bool = False
 
 
 class ConsultantProfileDetail(ConsultantProfileOut):
@@ -462,14 +460,8 @@ class BookingOut(BaseModel):
     price: Decimal
     currency: str
 
-    # Google Calendar / Meet
-    google_event_id: str | None
-    google_calendar_id: str | None
+    # Google Meet link, created by a participant and shared with the other.
     meet_link: str | None
-    meet_code: str | None
-    calendar_sync_status: CalendarSyncStatus
-    calendar_synced_at: datetime | None
-    calendar_error: str | None
 
     reminder_sent_at: datetime | None
     short_reminder_sent_at: datetime | None
@@ -513,43 +505,22 @@ class BookingDetailOut(BookingOut):
     session_notes: list[BookingNoteOut] = Field(default_factory=list)
 
 
-# Google Calendar connection
+# Meeting link
 
 
-class CalendarConnectionOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+class BookingMeetingLinkIn(BaseModel):
+    """A Google Meet link a participant shares for the session."""
 
-    id: uuid.UUID
-    consultant_id: uuid.UUID
-    google_email: str | None
-    calendar_id: str
-    timezone: str
-    is_active: bool
-    connected_at: datetime
-    last_error: str | None
+    meeting_link: str | None = Field(default=None, max_length=500)
 
-
-class CalendarAuthorizeOut(BaseModel):
-    authorization_url: str
-    state: str
-    scopes: list[str]
-
-
-class CalendarConnectIn(BaseModel):
-    code: str = Field(min_length=4, max_length=2048)
-    state: str | None = None
-
-
-class CalendarStatusOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    calendar_enabled: bool
-    oauth_configured: bool
-    service_account_configured: bool
-    connection: CalendarConnectionOut | None = None
-    synced_bookings: int = 0
-
-
-class CalendarUpdateIn(BaseModel):
-    calendar_id: str | None = Field(default=None, max_length=255)
-    is_active: bool | None = None
+    @field_validator("meeting_link")
+    @classmethod
+    def _meeting_link(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        cleaned = value.strip()
+        if not cleaned:
+            return None
+        if not (cleaned.startswith("http://") or cleaned.startswith("https://")):
+            raise ValueError("Meeting link must be a full http(s) URL")
+        return cleaned[:500]

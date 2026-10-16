@@ -115,8 +115,8 @@ export default function ConsultantsPage() {
         icon={CompassIcon}
         eyebrow="Live consultations"
         title="Find your consultant"
-        description="Book a live session with a tarot reader or spiritual consultant. Every
-          confirmed session includes a Google Meet link."
+        description="Book a live session with a tarot reader or spiritual consultant. Sessions
+          happen over Google Meet."
         gradient="gold"
         actions={
           <Button href="/sessions" variant="secondary" icon={UsersIcon}>

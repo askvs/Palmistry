@@ -233,30 +233,11 @@ export async function deleteSessionNote(noteId) {
   return api.delete(`${BASE}/consultants/me/notes/${noteId}`);
 }
 
-// Google Calendar connection.
-export async function fetchCalendarStatus() {
-  return api.get(`${BASE}/consultants/me/google-calendar`);
-}
-
-// Returns auth URL; the frontend navigates there.
-export async function requestCalendarAuthorization() {
-  return api.post(`${BASE}/consultants/me/google-calendar/authorize`);
-}
-
-export async function connectCalendar(code) {
-  return api.post(`${BASE}/consultants/me/google-calendar/connect`, { code });
-}
-
-export async function updateCalendarConnection(payload) {
-  return api.patch(`${BASE}/consultants/me/google-calendar`, payload);
-}
-
-export async function disconnectCalendar() {
-  return api.delete(`${BASE}/consultants/me/google-calendar`);
-}
-
-export async function retryCalendarSync(bookingId) {
-  return api.post(`${BASE}/consultants/me/bookings/${bookingId}/calendar/retry`);
+// Consultant shares or clears the Google Meet link for a session.
+export async function updateBookingMeetingLink(bookingId, meetingLink) {
+  return api.patch(`${BASE}/consultants/me/bookings/${bookingId}/meeting-link`, {
+    meeting_link: meetingLink ?? null,
+  });
 }
 
 // Combined loaders with stable references for useAsyncData.

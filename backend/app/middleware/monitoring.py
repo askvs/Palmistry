@@ -4,7 +4,7 @@ import threading
 import time
 import uuid
 from collections import deque
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
@@ -16,6 +16,10 @@ from app.utils.logging import logger
 _MAX_LATENCY_SAMPLES = 2000
 _MAX_ROUTE_KEYS = 200
 
+# Buffered API samples awaiting a flush into the `performance_samples` table.
+_MAX_PENDING_SAMPLES = 2000
+_SAMPLE_RETENTION_DAYS = 90
+
 # Paths skipped in latency stats.
 _NOISY_PATHS = ("/health", "/api/docs", "/api/openapi.json", "/favicon.ico")
 
@@ -24,6 +28,9 @@ _START_MONOTONIC = time.monotonic()
 
 _lock = threading.Lock()
 _latency: deque[tuple[float, int]] = deque(maxlen=_MAX_LATENCY_SAMPLES)
+_pending_samples: deque[tuple[str, str, int, float, datetime]] = deque(
+    maxlen=_MAX_PENDING_SAMPLES
+)
 _routes: dict[str, dict[str, float]] = {}
 _requests_since_start = 0
 _errors_since_start = 0
@@ -43,12 +50,13 @@ def reset_metrics() -> None:
     global _requests_since_start, _errors_since_start
     with _lock:
         _latency.clear()
+        _pending_samples.clear()
         _routes.clear()
         _requests_since_start = 0
         _errors_since_start = 0
 
 
-def _record_latency(path: str, status: int, duration_ms: float) -> None:
+def _record_latency(path: str, status: int, duration_ms: float, method: str = "GET") -> None:
     global _requests_since_start, _errors_since_start
     if any(path.startswith(prefix) for prefix in _NOISY_PATHS):
         return
@@ -57,6 +65,15 @@ def _record_latency(path: str, status: int, duration_ms: float) -> None:
         if status >= 500:
             _errors_since_start += 1
         _latency.append((duration_ms, status))
+        _pending_samples.append(
+            (
+                method[:10],
+                path[:500],
+                status,
+                round(duration_ms, 1),
+                datetime.now(timezone.utc),
+            )
+        )
         stats = _routes.get(path)
         if stats is None:
             if len(_routes) >= _MAX_ROUTE_KEYS:
@@ -120,6 +137,64 @@ def _read_error_message(response: Response) -> tuple[str, str | None]:
     return message[:2000], request_id
 
 
+def _upsert_error_row(
+    *,
+    level: str,
+    kind: str,
+    status_code: int,
+    method: str,
+    path: str,
+    message: str,
+    request_id: str | None = None,
+    actor_id=None,
+) -> None:
+    # Deduplicated insert/update of one error row. Callers guard exceptions.
+    from sqlalchemy.orm import sessionmaker
+
+    from app.db.session import get_engine
+    from app.models.error_log import ErrorKind, ErrorLevel, ErrorLog
+
+    now = datetime.now(timezone.utc)
+    safe_message = (message or "")[:2000]
+    session_factory = sessionmaker(bind=get_engine(), autoflush=False)
+    db = session_factory()
+    try:
+        existing = (
+            db.query(ErrorLog)
+            .filter(
+                ErrorLog.kind == kind,
+                ErrorLog.method == method[:10],
+                ErrorLog.path == path[:500],
+                ErrorLog.status_code == status_code,
+                ErrorLog.message == safe_message,
+                ErrorLog.acknowledged_at.is_(None),
+            )
+            .first()
+        )
+        if existing is not None:
+            existing.occurrences += 1
+            existing.last_seen_at = now
+            if request_id:
+                existing.request_id = request_id
+        else:
+            db.add(
+                ErrorLog(
+                    level=ErrorLevel(level),
+                    kind=ErrorKind(kind),
+                    status_code=status_code,
+                    method=method[:10],
+                    path=path[:500],
+                    request_id=request_id,
+                    message=safe_message,
+                    actor_id=actor_id,
+                    last_seen_at=now,
+                )
+            )
+        db.commit()
+    finally:
+        db.close()
+
+
 def _record_error(
     *,
     status_code: int,
@@ -134,53 +209,92 @@ def _record_error(
         classification = _classify(status_code)
         if classification is None:
             return
+        level, kind = classification
+        _upsert_error_row(
+            level=level,
+            kind=kind,
+            status_code=status_code,
+            method=method,
+            path=path,
+            message=message,
+            request_id=request_id,
+            actor_id=actor_id,
+        )
+    except Exception:  # pragma: no cover - defensive
+        logger.warning("could not record operational error row", exc_info=True)
+
+
+def record_analysis_failure(
+    *,
+    analysis_type: str,
+    path: str,
+    exc: BaseException,
+    method: str = "POST",
+    status_code: int = 500,
+    actor_id=None,
+) -> None:
+    # Save one deduplicated failed-analysis row; never raises.
+    try:
+        message = f"{analysis_type} analysis failed: {type(exc).__name__}: {exc}"
+        _upsert_error_row(
+            level="error",
+            kind="analysis_failed",
+            status_code=status_code,
+            method=method,
+            path=path,
+            message=message,
+            actor_id=actor_id,
+        )
+    except Exception:  # pragma: no cover - defensive
+        logger.warning("could not record analysis failure", exc_info=True)
+
+
+def flush_samples() -> int:
+    # Persist buffered API samples into the database; never raises.
+    # Returns the number of rows written (0 when the buffer is empty or the write fails).
+    with _lock:
+        pending = list(_pending_samples)
+        _pending_samples.clear()
+    if not pending:
+        return 0
+
+    try:
+        from sqlalchemy import delete
         from sqlalchemy.orm import sessionmaker
 
         from app.db.session import get_engine
-        from app.models.error_log import ErrorKind, ErrorLevel, ErrorLog
+        from app.models.performance_sample import PerformanceSample
 
-        level, kind = classification
-        now = datetime.now(timezone.utc)
-        safe_message = (message or "")[:2000]
         session_factory = sessionmaker(bind=get_engine(), autoflush=False)
         db = session_factory()
         try:
-            existing = (
-                db.query(ErrorLog)
-                .filter(
-                    ErrorLog.kind == kind,
-                    ErrorLog.method == method[:10],
-                    ErrorLog.path == path[:500],
-                    ErrorLog.status_code == status_code,
-                    ErrorLog.message == safe_message,
-                    ErrorLog.acknowledged_at.is_(None),
-                )
-                .first()
-            )
-            if existing is not None:
-                existing.occurrences += 1
-                existing.last_seen_at = now
-                if request_id:
-                    existing.request_id = request_id
-            else:
-                db.add(
-                    ErrorLog(
-                        level=ErrorLevel(level),
-                        kind=ErrorKind(kind),
+            db.add_all(
+                [
+                    PerformanceSample(
+                        method=method,
+                        path=path,
                         status_code=status_code,
-                        method=method[:10],
-                        path=path[:500],
-                        request_id=request_id,
-                        message=safe_message,
-                        actor_id=actor_id,
-                        last_seen_at=now,
+                        duration_ms=duration_ms,
+                        sampled_at=sampled_at,
                     )
-                )
+                    for method, path, status_code, duration_ms, sampled_at in pending
+                ]
+            )
+            # Keep the table bounded: prune samples past the retention window.
+            cutoff = datetime.now(timezone.utc) - timedelta(days=_SAMPLE_RETENTION_DAYS)
+            db.execute(
+                delete(PerformanceSample).where(PerformanceSample.sampled_at < cutoff)
+            )
             db.commit()
+            return len(pending)
         finally:
             db.close()
-    except Exception:  # pragma: no cover - defensive
-        logger.warning("could not record operational error row", exc_info=True)
+    except Exception:
+        logger.warning("could not flush performance samples", exc_info=True)
+        # Put the samples back so a later flush can retry them.
+        with _lock:
+            _pending_samples.extend(pending)
+        return 0
 
 
 class ErrorMonitoringMiddleware(BaseHTTPMiddleware):
@@ -196,8 +310,7 @@ class ErrorMonitoringMiddleware(BaseHTTPMiddleware):
             status_code = response.status_code
             return response
         except Exception:
-            # Unhandled error: record generic 500 entry.
-            _record_latency(path, 500, (time.perf_counter() - start) * 1000)
+            # Unhandled error: record generic 500 entry (latency is recorded in finally).
             _record_error(
                 status_code=500,
                 method=method,
@@ -209,7 +322,7 @@ class ErrorMonitoringMiddleware(BaseHTTPMiddleware):
             raise
         finally:
             duration_ms = (time.perf_counter() - start) * 1000
-            _record_latency(path, status_code, duration_ms)
+            _record_latency(path, status_code, duration_ms, method)
             if status_code >= 400 and response is not None:
                 # Record error details from response body.
                 message, request_id = _read_error_message(response)
@@ -273,7 +386,9 @@ def performance_snapshot(*, window_requests: int = 500) -> dict:
 
 __all__ = [
     "ErrorMonitoringMiddleware",
+    "flush_samples",
     "performance_snapshot",
+    "record_analysis_failure",
     "reset_metrics",
     "started_at",
     "uptime_seconds",

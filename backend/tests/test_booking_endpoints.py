@@ -1,4 +1,4 @@
-# Booking lifecycle: profile, availability, booking, calendar, dashboards, notifications.
+# Booking lifecycle: profile, availability, booking, meeting link, dashboards, notifications.
 
 import uuid
 from datetime import date, datetime, timedelta, timezone
@@ -422,7 +422,6 @@ class TestBookingLifecycle:
         assert body["meet_link"] is None
         assert body["consultant_name"] == "Reader One"
         assert body["seeker_name"] == "Seeker One"
-        assert body["calendar_sync_status"] == "not_created"
         # Price is snapshotted from the consultant profile at booking time.
         assert body["price"] == "45.00"
 
@@ -641,12 +640,12 @@ class TestBookingStatusFlow:
         assert resp.json()["code"] == "BOOKING_NOT_FOUND"
 
 
-# Phase 3 — Google Calendar / Meet
+# Phase 3 — Meeting link
 
 
-class TestGoogleCalendarIntegration:
-    def _book_and_accept(self, client):
-        consultant = _as_consultant(client, email="cal@example.com")
+class TestMeetingLink:
+    def _book(self, client, *, meeting_link=None):
+        consultant = _as_consultant(client, email="meet@example.com")
         _create_consultant_profile(client, consultant)
         _add_rule(client, consultant)
         seeker = _as_seeker(client)
@@ -654,145 +653,73 @@ class TestGoogleCalendarIntegration:
             "/api/v1/consultants/me/profile", headers=consultant
         ).json()["id"]
         slot = _future_slot(client, consultant_id, seeker)
+        payload = {"slot_id": slot["id"], "subject": "Meet link test"}
+        if meeting_link is not None:
+            payload["meeting_link"] = meeting_link
         booking = client.post(
             f"/api/v1/consultants/{consultant_id}/bookings",
-            json={"slot_id": slot["id"], "subject": "Calendar test"},
+            json=payload,
             headers=seeker,
         ).json()
         return consultant, seeker, booking
 
-    def test_status_reports_disabled_when_not_configured(self, client):
-        consultant = _as_consultant(client, email="caloff@example.com")
-        _create_consultant_profile(client, consultant)
-        body = client.get("/api/v1/consultants/me/google-calendar", headers=consultant).json()
-        assert body["calendar_enabled"] is False
-        assert body["connection"] is None
-
-    def test_accept_without_calendar_marks_disabled(self, client):
-        """The integration is off in tests, so no event is attempted at all."""
-        consultant, seeker, booking = self._book_and_accept(client)
-        resp = client.post(
-            f"/api/v1/consultants/me/bookings/{booking['id']}/accept", headers=consultant
-        )
-        assert resp.status_code == 200
-        assert resp.json()["calendar_sync_status"] == "disabled"
-        assert resp.json()["meet_link"] is None
-
-    def test_accept_creates_event_and_meet_link(self, client, monkeypatch):
-        from app.services.booking import calendar as calendar_module
-
-        calls = {}
-
-        class _FakeClient:
-            calendar_id = "primary"
-
-            def create_event(self, **kwargs):
-                calls.update(kwargs)
-                return calendar_module.gcal.CalendarEventResult(
-                    event_id="evt_123",
-                    html_link="https://calendar.google.com/event?eid=evt_123",
-                    meet_link="https://meet.google.com/abc-defg-hij",
-                    meet_code="abc-defg-hij",
-                    calendar_id="primary",
-                    raw={},
-                )
-
-            def cancel_event(self, event_id):
-                calls["cancelled"] = event_id
-                return True
-
-        consultant, seeker, booking = self._book_and_accept(client)
-        monkeypatch.setattr(
-            "app.config.settings.GOOGLE_CALENDAR_ENABLED", True, raising=False
-        )
-        monkeypatch.setattr(
-            calendar_module, "_service_account_client", lambda: _FakeClient()
-        )
-
-        resp = client.post(
-            f"/api/v1/consultants/me/bookings/{booking['id']}/accept", headers=consultant
+    def test_consultant_sets_meeting_link(self, client):
+        consultant, _seeker, booking = self._book(client)
+        resp = client.patch(
+            f"/api/v1/consultants/me/bookings/{booking['id']}/meeting-link",
+            json={"meeting_link": "https://meet.google.com/abc-defg-hij"},
+            headers=consultant,
         )
         assert resp.status_code == 200, resp.text
-        body = resp.json()
-        assert body["calendar_sync_status"] == "created"
-        assert body["meet_link"] == "https://meet.google.com/abc-defg-hij"
-        assert body["meet_code"] == "abc-defg-hij"
-        assert body["google_event_id"] == "evt_123"
-        assert body["calendar_synced_at"] is not None
-        # The event was asked for a conference (Meet) and both attendees.
-        assert calls["create_meet"] is True
-        assert calls["attendees"]
+        assert resp.json()["meet_link"] == "https://meet.google.com/abc-defg-hij"
 
-        # Seekers can see the link once the session is near.
-        assert body["can_join_meet"] is False
-
-        # Cancelling removes the remote event.
-        cancelled = client.post(
-            f"/api/v1/bookings/{booking['id']}/cancel", headers=seeker
+    def test_meeting_link_must_be_http_url(self, client):
+        consultant, _seeker, booking = self._book(client)
+        resp = client.patch(
+            f"/api/v1/consultants/me/bookings/{booking['id']}/meeting-link",
+            json={"meeting_link": "meet.google.com/abc-defg-hij"},
+            headers=consultant,
         )
-        assert cancelled.status_code == 200
-        assert calls["cancelled"] == "evt_123"
-        assert cancelled.json()["meet_link"] is None or True
+        assert resp.status_code == 422
 
-    def test_calendar_failure_is_recorded_not_raised(self, client, monkeypatch):
-        from app.services.booking import calendar as calendar_module
-        from app.services.booking.google_calendar import CalendarApiError
-
-        class _FailingClient:
-            calendar_id = "primary"
-
-            def create_event(self, **kwargs):
-                raise CalendarApiError("quota exceeded")
-
-        consultant, seeker, booking = self._book_and_accept(client)
-        monkeypatch.setattr(
-            "app.config.settings.GOOGLE_CALENDAR_ENABLED", True, raising=False
+    def test_meeting_link_can_be_cleared(self, client):
+        consultant, _seeker, booking = self._book(
+            client, meeting_link="https://meet.google.com/abc-defg-hij"
         )
-        monkeypatch.setattr(
-            calendar_module, "_service_account_client", lambda: _FailingClient()
+        resp = client.patch(
+            f"/api/v1/consultants/me/bookings/{booking['id']}/meeting-link",
+            json={"meeting_link": None},
+            headers=consultant,
+        )
+        assert resp.status_code == 200, resp.text
+        assert resp.json()["meet_link"] is None
+
+    def test_accept_keeps_provided_meeting_link(self, client):
+        consultant, _seeker, booking = self._book(
+            client, meeting_link="https://meet.google.com/seek-erli-nk1"
         )
         resp = client.post(
-            f"/api/v1/consultants/me/bookings/{booking['id']}/accept", headers=consultant
+            f"/api/v1/consultants/me/bookings/{booking['id']}/accept",
+            headers=consultant,
         )
-        assert resp.status_code == 200
-        assert resp.json()["status"] == "accepted"
-        assert resp.json()["calendar_sync_status"] == "failed"
-        assert "quota exceeded" in resp.json()["calendar_error"]
+        assert resp.status_code == 200, resp.text
+        assert resp.json()["meet_link"] == "https://meet.google.com/seek-erli-nk1"
+        assert resp.json()["can_join_meet"] is False
 
-    def test_retry_after_success_status(self, client, monkeypatch):
-        from app.services.booking import calendar as calendar_module
-
-        class _FakeClient:
-            calendar_id = "primary"
-
-            def create_event(self, **kwargs):
-                return calendar_module.gcal.CalendarEventResult(
-                    event_id="evt_retry",
-                    html_link=None,
-                    meet_link="https://meet.google.com/ret-ryaa-bbb",
-                    meet_code="ret-ryaa-bbb",
-                    calendar_id="primary",
-                    raw={},
-                )
-
-            def get_event(self, event_id):
-                return {"id": event_id, "hangoutLink": "https://meet.google.com/zzz"}
-
-        consultant, seeker, booking = self._book_and_accept(client)
-        monkeypatch.setattr(
-            "app.config.settings.GOOGLE_CALENDAR_ENABLED", True, raising=False
+    def test_meeting_link_rejected_on_closed_booking(self, client):
+        consultant, _seeker, booking = self._book(client)
+        rejected = client.post(
+            f"/api/v1/consultants/me/bookings/{booking['id']}/reject",
+            headers=consultant,
         )
-        monkeypatch.setattr(
-            calendar_module, "_service_account_client", lambda: _FakeClient()
+        assert rejected.status_code == 200, rejected.text
+        resp = client.patch(
+            f"/api/v1/consultants/me/bookings/{booking['id']}/meeting-link",
+            json={"meeting_link": "https://meet.google.com/abc-defg-hij"},
+            headers=consultant,
         )
-        client.post(
-            f"/api/v1/consultants/me/bookings/{booking['id']}/accept", headers=consultant
-        )
-        resp = client.post(
-            f"/api/v1/consultants/me/bookings/{booking['id']}/calendar/retry", headers=consultant
-        )
-        assert resp.status_code == 200
-        assert resp.json()["calendar_sync_status"] == "created"
+        assert resp.status_code == 409
+        assert resp.json()["code"] == "INVALID_BOOKING_TRANSITION"
 
 
 # Phase 5 — notifications + reminders + cancellation

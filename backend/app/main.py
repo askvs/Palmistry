@@ -110,6 +110,11 @@ async def lifespan(app: FastAPI):
 
     logger.info("shutdown")
 
+    # Persist any API latency samples still buffered in the monitoring middleware.
+    from app.middleware.monitoring import flush_samples
+
+    flush_samples()
+
 
 def create_app() -> FastAPI:
     configure_logging()

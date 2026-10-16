@@ -174,6 +174,26 @@ export function adminPerformance() {
   return api.get("/api/v1/admin/system/performance");
 }
 
+// Persisted system reports (monitoring dashboards).
+export function adminReportsOverview(days = 7) {
+  return api.get(`/api/v1/admin/reports/overview?days=${days}`);
+}
+
+export function adminReportsHealth() {
+  return api.get("/api/v1/admin/reports/health");
+}
+
+export function adminReportsErrors(days = 7, limit = 50) {
+  const query = new URLSearchParams();
+  query.set("days", String(days));
+  query.set("limit", String(limit));
+  return api.get(`/api/v1/admin/reports/errors?${query.toString()}`);
+}
+
+export function adminReportsPerformance(days = 7) {
+  return api.get(`/api/v1/admin/reports/performance?days=${days}`);
+}
+
 // Public system health for the admin console.
 export function fetchSystemHealth() {
   return api.get("/api/v1/health");

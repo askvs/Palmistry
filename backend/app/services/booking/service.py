@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import logging
-import secrets
 import uuid
 from datetime import date, datetime, timedelta, timezone
 
@@ -12,7 +11,6 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.config import settings
 from app.models.booking import (
-    ConsultantCalendarConnection,
     ConsultantProfile,
     AvailabilityRule,
     AvailabilitySlot,
@@ -29,10 +27,6 @@ from app.models.booking import (
 from app.models.user import User, UserRole
 from app.services.booking import availability as avail
 from app.services.booking import notifications as booking_notifications
-from app.services.booking.calendar import (
-    cancel_calendar_event,
-    create_calendar_event,
-)
 from app.services.booking.errors import (
     AvailabilityRuleNotFound,
     AvailabilityRuleOverlap,
@@ -46,20 +40,12 @@ from app.services.booking.errors import (
     ConsultantProfileNotFound,
     FeedbackExists,
     FeedbackNotAllowed,
-    GoogleOAuthUnavailable,
     InvalidBookingTransition,
     NotAnConsultant,
     SessionNoteNotFound,
     SlotNotBookable,
     SlotNotFound,
 )
-from app.services.booking.google_calendar import (
-    CALENDAR_SCOPES,
-    CalendarApiError,
-    build_authorization_url,
-    exchange_authorization_code,
-)
-
 logger = logging.getLogger(__name__)
 
 CONSULTANT_ROLES = (UserRole.tarot_reader, UserRole.spiritual_consultant)
@@ -1146,7 +1132,7 @@ def _assert_transition(booking: Booking, target: BookingStatus) -> None:
 
 
 def _accept(db: Session, booking: Booking, *, actor: User) -> Booking:
-    """Shared accept path: mark accepted and provision Calendar/Meet."""
+    """Shared accept path: mark the session accepted."""
     from_status = booking.status
     _assert_transition(booking, BookingStatus.accepted)
 
@@ -1162,12 +1148,6 @@ def _accept(db: Session, booking: Booking, *, actor: User) -> Booking:
     )
     db.commit()
     db.refresh(booking)
-
-    # Calendar first: the notification copy points at the Meet link.
-    try:
-        create_calendar_event(db, booking)
-    except Exception:  # pragma: no cover - create_calendar_event swallows its own
-        logger.exception("unexpected calendar failure for booking %s", booking.id)
 
     booking_notifications.notify_status_changed(
         db, booking, status=BookingStatus.accepted, actor_id=actor.id
@@ -1299,11 +1279,6 @@ def _cancel(
     db.commit()
     db.refresh(booking)
 
-    try:
-        cancel_calendar_event(db, booking)
-    except Exception:  # pragma: no cover
-        logger.exception("calendar cancel failed for booking %s", booking.id)
-
     booking_notifications.notify_status_changed(
         db,
         booking,
@@ -1320,15 +1295,6 @@ def cancel_consultant_booking(
 ) -> Booking:
     booking = get_consultant_booking(db, user, booking_id)
     return _cancel(db, booking, actor=user, reason=reason)
-
-
-def retry_calendar(db: Session, user: User, booking_id: uuid.UUID) -> Booking:
-    booking = get_consultant_booking(db, user, booking_id)
-    from app.services.booking.calendar import retry_calendar_event
-
-    retry_calendar_event(db, booking)
-    db.refresh(booking)
-    return booking
 
 
 # Session notes
@@ -1547,108 +1513,32 @@ def _recalculate_consultant_rating(db: Session, consultant_id: uuid.UUID) -> Non
     consultant.review_count = int(count or 0)
 
 
-# Google Calendar connection
+# Meeting link
 
 
-def calendar_authorization_url(db: Session, user: User) -> dict:
-    """Build the consent URL the frontend opens for "connect my calendar"."""
-    get_my_consultant_profile(db, user)
-    if not (settings.GOOGLE_CLIENT_ID and settings.GOOGLE_CLIENT_SECRET):
-        raise GoogleOAuthUnavailable("Google OAuth is not configured on this server")
-    state = secrets.token_urlsafe(24)
-    return {
-        "authorization_url": build_authorization_url(
-            redirect_uri=settings.GOOGLE_CALENDAR_REDIRECT_URI,
-            state=state,
-            login_hint=user.email,
+def set_booking_meeting_link(
+    db: Session, user: User, booking_id: uuid.UUID, *, meeting_link: str | None
+) -> Booking:
+    """Consultant shares (or clears) the Google Meet link for a booking."""
+    booking = get_consultant_booking(db, user, booking_id)
+    if booking.status in CLOSED_STATUSES:
+        raise InvalidBookingTransition("This session is already closed")
+
+    cleaned = (meeting_link or "").strip() or None
+    booking.meet_link = cleaned[:500] if cleaned else None
+    _record_event(
+        db,
+        booking,
+        event_type="meeting_link_updated",
+        actor=user,
+        message=(
+            "Meeting link updated" if booking.meet_link else "Meeting link cleared"
         ),
-        "state": state,
-        "scopes": list(CALENDAR_SCOPES),
-    }
-
-
-def connect_calendar(db: Session, user: User, *, code: str) -> ConsultantCalendarConnection:
-    """Exchange an OAuth code and store the consultant's refresh token."""
-    consultant = get_my_consultant_profile(db, user)
-    try:
-        token = exchange_authorization_code(
-            code, redirect_uri=settings.GOOGLE_CALENDAR_REDIRECT_URI
-        )
-    except CalendarApiError as exc:
-        raise InvalidBookingTransition(f"Google rejected the consent code: {exc}") from exc
-
-    refresh_token = token.get("refresh_token")
-    if not refresh_token:
-        raise InvalidBookingTransition(
-            "Google did not return a refresh token; revoke access and try again"
-        )
-
-    connection = db.scalar(
-        select(ConsultantCalendarConnection).where(
-            ConsultantCalendarConnection.consultant_id == consultant.id
-        )
     )
-    if connection is None:
-        connection = ConsultantCalendarConnection(consultant_id=consultant.id)
-        db.add(connection)
-
-    connection.refresh_token = refresh_token
-    connection.google_email = user.email
-    connection.calendar_id = connection.calendar_id or "primary"
-    connection.timezone = consultant.timezone
-    connection.is_active = True
-    connection.last_error = None
-    connection.connected_at = _now()
     db.commit()
-    db.refresh(connection)
-    logger.info("consultant %s connected Google Calendar %s", consultant.id, connection.id)
-    return connection
-
-
-def disconnect_calendar(db: Session, user: User) -> bool:
-    consultant = get_my_consultant_profile(db, user)
-    connection = db.scalar(
-        select(ConsultantCalendarConnection).where(
-            ConsultantCalendarConnection.consultant_id == consultant.id
-        )
-    )
-    if connection is None:
-        return False
-    db.delete(connection)
-    db.commit()
-    logger.info("consultant %s disconnected Google Calendar", consultant.id)
-    return True
-
-
-def get_calendar_connection(
-    db: Session, user: User
-) -> ConsultantCalendarConnection | None:
-    consultant = get_my_consultant_profile(db, user)
-    return db.scalar(
-        select(ConsultantCalendarConnection).where(
-            ConsultantCalendarConnection.consultant_id == consultant.id
-        )
-    )
-
-
-def update_calendar_connection(
-    db: Session, user: User, *, calendar_id: str | None, is_active: bool | None
-) -> ConsultantCalendarConnection:
-    consultant = get_my_consultant_profile(db, user)
-    connection = db.scalar(
-        select(ConsultantCalendarConnection).where(
-            ConsultantCalendarConnection.consultant_id == consultant.id
-        )
-    )
-    if connection is None:
-        raise BookingNotFound("No Google Calendar is connected yet")
-    if calendar_id:
-        connection.calendar_id = calendar_id[:255]
-    if is_active is not None:
-        connection.is_active = bool(is_active)
-    db.commit()
-    db.refresh(connection)
-    return connection
+    db.refresh(booking)
+    logger.info("booking %s meeting link updated by %s", booking.id, user.id)
+    return booking
 
 
 __all__ = [name for name in dir() if not name.startswith("_")]

@@ -17,13 +17,17 @@ from app.schemas.admin import (
     AuthSettingsOut,
     ErrorLogListOut,
     ErrorLogOut,
+    ErrorReportOut,
     ErrorStatsOut,
+    PerformanceReportOut,
     PerformanceSummaryOut,
     PermissionMatrixOut,
     PlatformAnalytics,
     ReadingStatistics,
     SessionOversight,
     SystemConfigOut,
+    SystemHealthOut,
+    SystemOverviewOut,
     SystemReportOut,
 )
 from app.schemas.consultation import ConsultationListOut, ConsultationOut
@@ -121,6 +125,43 @@ async def generate_system_report(
     admin: User = Depends(get_current_user),
 ):
     return SystemReportOut(**admin_service.system_report(db, admin))
+
+
+# System reports (monitoring dashboards)
+
+
+@admin_router.get("/reports/overview", response_model=SystemOverviewOut)
+async def reports_overview(
+    days: int = Query(default=7, ge=1, le=365),
+    db: Session = Depends(get_db),
+):
+    """Registered users and analysis success/failure totals."""
+    return SystemOverviewOut(**admin_service.system_overview(db, days=days))
+
+
+@admin_router.get("/reports/health", response_model=SystemHealthOut)
+async def reports_health(db: Session = Depends(get_db)):
+    """Backend, database, and AI service availability."""
+    return SystemHealthOut(**admin_service.system_health(db))
+
+
+@admin_router.get("/reports/errors", response_model=ErrorReportOut)
+async def reports_errors(
+    days: int = Query(default=7, ge=1, le=365),
+    limit: int = Query(default=50, ge=1, le=200),
+    db: Session = Depends(get_db),
+):
+    """Recent system errors and failed analyses."""
+    return ErrorReportOut(**admin_service.error_report(db, days=days, limit=limit))
+
+
+@admin_router.get("/reports/performance", response_model=PerformanceReportOut)
+async def reports_performance(
+    days: int = Query(default=7, ge=1, le=365),
+    db: Session = Depends(get_db),
+):
+    """API response times and analysis-generation times."""
+    return PerformanceReportOut(**admin_service.performance_report(db, days=days))
 
 
 @admin_router.get("/audit-logs", response_model=AuditLogListOut)

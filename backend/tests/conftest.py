@@ -64,10 +64,10 @@ def _clean_tables(request, test_engine):
     with test_engine.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
         conn.exec_driver_sql(
             "TRUNCATE TABLE audit_logs, error_logs, custom_spreads, recommendation_events, recommendation_records, "
-            "consultation_messages, consultations, readings, refresh_tokens, users, "
+            "consultation_messages, consultations, readings, performance_samples, refresh_tokens, users, "
             "profiles, profile_interests, profile_goals, "
             "session_feedbacks, session_notes, booking_events, booking_messages, bookings, "
-            "availability_slots, availability_rules, consultant_calendar_connections, "
+            "availability_slots, availability_rules, "
             "consultant_profiles CASCADE"
         )
     yield

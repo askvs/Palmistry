@@ -64,3 +64,4 @@ frontend/.git
 
 # Dev-only API collections
 backend/postman/
+docs

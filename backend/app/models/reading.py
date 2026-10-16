@@ -3,7 +3,7 @@ import enum
 import uuid
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Enum, ForeignKey, String, Text
+from sqlalchemy import Enum, Float, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -39,6 +39,7 @@ class Reading(Base, TimestampMixin):
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     summary: Mapped[str] = mapped_column(Text, nullable=False, default="")
     result: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    duration_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     reviewed_by: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True

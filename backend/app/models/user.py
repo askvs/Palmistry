@@ -13,7 +13,6 @@ if TYPE_CHECKING:
         AvailabilitySlot,
         Booking,
         BookingEvent,
-        ConsultantCalendarConnection,
         ConsultantProfile,
         SessionFeedback,
         SessionNote,

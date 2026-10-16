@@ -16,7 +16,6 @@ import { CalendarIcon, ChatIcon, ClockIcon, TrashIcon, UsersIcon, VideoIcon } fr
 import {
   BookingStatusBadge,
   BookingTimeline,
-  CalendarSyncBadge,
   EmptyRow,
   FeedbackForm,
 } from "@/components/booking/shared";
@@ -105,9 +104,6 @@ function BookingRow({ booking, onChanged }) {
           <div className="flex flex-wrap items-center gap-2">
             <h4 className="text-sm font-semibold text-slate-900">{booking.subject}</h4>
             <BookingStatusBadge status={booking.status} />
-            {booking.status === "accepted" && (
-              <CalendarSyncBadge booking={booking} />
-            )}
           </div>
           <p className="mt-1 text-xs text-slate-600">
             with{" "}
@@ -274,11 +270,6 @@ function BookingRow({ booking, onChanged }) {
                   The link opens 30 minutes before the session starts.
                 </p>
               )}
-              {booking.google_event_id && (
-                <p className="mt-1 text-[11px] text-emerald-600/80">
-                  Calendar event {booking.google_event_id}
-                </p>
-              )}
             </div>
           )}
 
@@ -387,8 +378,8 @@ export default function SessionsPage() {
           <VideoIcon className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
           <p>
             Your booking request has been sent. It shows as{" "}
-            <span className="font-semibold">Pending</span> until the consultant accepts — we will
-            notify you and add the Google Meet link here as soon as they do.
+            <span className="font-semibold">Pending</span> until the consultant accepts — the
+            Google Meet link appears here as soon as it is shared.
           </p>
         </div>
       )}

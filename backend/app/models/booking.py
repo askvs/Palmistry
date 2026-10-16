@@ -58,16 +58,6 @@ class SlotStatus(str, enum.Enum):
     cancelled = "cancelled"
 
 
-class CalendarSyncStatus(str, enum.Enum):
-    """State of the Google Calendar event backing a booking."""
-
-    disabled = "disabled"
-    not_created = "not_created"
-    created = "created"
-    failed = "failed"
-    cancelled = "cancelled"
-
-
 class NoteVisibility(str, enum.Enum):
     """Whether a consultant session note is visible to the seeker."""
 
@@ -150,12 +140,6 @@ class ConsultantProfile(Base, TimestampMixin):
         back_populates="consultant",
         cascade="all, delete-orphan",
         passive_deletes=True,
-    )
-    calendar_connection: Mapped["ConsultantCalendarConnection | None"] = relationship(
-        back_populates="consultant",
-        cascade="all, delete-orphan",
-        passive_deletes=True,
-        uselist=False,
     )
 
     def __repr__(self) -> str:
@@ -306,20 +290,8 @@ class Booking(Base, TimestampMixin):
     )
     currency: Mapped[str] = mapped_column(String(3), nullable=False, default="USD")
 
-    # Google Calendar / Meet
-    google_event_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    google_calendar_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    # Google Meet link, created by a participant and shared with the other.
     meet_link: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    meet_code: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    calendar_sync_status: Mapped[CalendarSyncStatus] = mapped_column(
-        Enum(CalendarSyncStatus, name="booking_calendar_sync_status", native_enum=False, create_type=False),
-        nullable=False,
-        default=CalendarSyncStatus.not_created,
-    )
-    calendar_synced_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
-    calendar_error: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Reminders
     reminder_sent_at: Mapped[datetime | None] = mapped_column(
@@ -513,45 +485,6 @@ class SessionFeedback(Base, TimestampMixin):
 
     def __repr__(self) -> str:
         return f"<SessionFeedback id={self.id} booking_id={self.booking_id} rating={self.rating}>"
-
-
-class ConsultantCalendarConnection(Base, TimestampMixin):
-    """OAuth2 link between a consultant profile and their Google Calendar."""
-
-    __tablename__ = "consultant_calendar_connections"
-    __table_args__ = (
-        UniqueConstraint("consultant_id", name="uq_consultant_calendar_connection"),
-    )
-
-    id: Mapped[uuid.UUID] = uuid_pk()
-    consultant_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey("consultant_profiles.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
-    )
-    google_email: Mapped[str | None] = mapped_column(String(320), nullable=True)
-    google_account_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    refresh_token: Mapped[str] = mapped_column(Text, nullable=False)
-    access_token_expires_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
-    calendar_id: Mapped[str] = mapped_column(
-        String(255), nullable=False, default="primary"
-    )
-    timezone: Mapped[str] = mapped_column(String(64), nullable=False, default="UTC")
-    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    connected_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, default=datetime.utcnow
-    )
-    last_error: Mapped[str | None] = mapped_column(Text, nullable=True)
-
-    consultant: Mapped["ConsultantProfile"] = relationship(
-        back_populates="calendar_connection"
-    )
-
-    def __repr__(self) -> str:
-        return f"<ConsultantCalendarConnection id={self.id} consultant_id={self.consultant_id}>"
 
 
 class BookingMessage(Base, TimestampMixin):

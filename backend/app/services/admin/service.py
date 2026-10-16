@@ -363,11 +363,6 @@ def session_oversight(db: Session, *, days: int = 30, upcoming_limit: int = 8) -
             "consultant_name": profile.user.full_name if profile.user is not None else None,
             "seeker_email": seeker_email,
             "meet_link_booked": bool(booking.meet_link),
-            "calendar_sync_status": (
-                booking.calendar_sync_status.value
-                if hasattr(booking.calendar_sync_status, "value")
-                else booking.calendar_sync_status
-            ),
         }
 
     return {
@@ -471,7 +466,6 @@ def verify_permission_matrix() -> list[str]:
 def auth_settings() -> dict:
     """Authentication posture. Secrets are reported as presence flags only."""
     from app.auth import tokens
-    from app.services.booking import google_calendar
 
     oauth_providers = []
     oauth_configured = []
@@ -497,11 +491,6 @@ def auth_settings() -> dict:
             "auth_requests_per_minute": settings.AUTH_RATE_LIMIT_PER_MINUTE,
         },
         "cors_origins": list(settings.CORS_ORIGINS),
-        "google_calendar": {
-            "enabled": google_calendar.is_calendar_enabled(),
-            "oauth_configured": google_calendar.is_oauth_configured(),
-            "service_account_configured": google_calendar.is_service_account_configured(),
-        },
         "notes": [
             "Access tokens are short-lived and stateless; refresh tokens rotate and "
             "are stored hashed with reuse detection.",
@@ -552,7 +541,6 @@ def _ai_provider() -> tuple[str, str, bool]:
 def system_config(db: Session) -> dict:
     """Deployment-shaped view of the running configuration."""
     from app.middleware import monitoring
-    from app.services.booking import google_calendar
     from app.services.booking import scheduler as booking_scheduler
     from app.services.notifications import scheduler as notification_scheduler
 
@@ -595,13 +583,6 @@ def system_config(db: Session) -> dict:
         "ai_configured": ai_configured,
         "email_configured": bool(settings.EMAIL_SMTP_HOST),
         "sms_configured": False,
-        "google_calendar_configured": (
-            google_calendar.is_calendar_enabled()
-            and (
-                google_calendar.is_oauth_configured()
-                or google_calendar.is_service_account_configured()
-            )
-        ),
         "max_upload_size_mb": settings.MAX_UPLOAD_SIZE_MB,
         "allowed_image_types": ["jpg", "jpeg", "png", "webp"],
         "schedulers": schedulers,

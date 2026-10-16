@@ -125,30 +125,9 @@ class FeedbackNotAllowed(BookingError):
     status_code = 409
 
 
-class GoogleOAuthUnavailable(BookingError):
-    """Google sign-in is not configured on this server"""
-
-    code = "GOOGLE_OAUTH_UNAVAILABLE"
-    status_code = 503
-
-
 class FeedbackExists(BookingError):
     """You have already reviewed this session"""
 
     code = "FEEDBACK_EXISTS"
     status_code = 409
-
-
-class CalendarNotConnected(BookingError):
-    """No Google Calendar is connected for this consultant"""
-
-    code = "CALENDAR_NOT_CONNECTED"
-    status_code = 409
-
-
-class CalendarError(BookingError):
-    """Google Calendar rejected the request"""
-
-    code = "CALENDAR_ERROR"
-    status_code = 502
 

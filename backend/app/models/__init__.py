@@ -16,8 +16,6 @@ from app.models.booking import (
     BookingMessage,
     BookingOrigin,
     BookingStatus,
-    CalendarSyncStatus,
-    ConsultantCalendarConnection,
     ConsultantProfile,
     NoteVisibility,
     SessionFeedback,
@@ -32,6 +30,7 @@ from app.models.notification import (
     NotificationPriority,
     NotificationType,
 )
+from app.models.performance_sample import PerformanceSample
 from app.models.profile import Profile, ProfileGoal, ProfileInterest
 from app.models.reading import Reading, ReadingStatus, ReadingType
 from app.models.recommendation import (
@@ -60,6 +59,7 @@ __all__ = [
     "NotificationDelivery",
     "NotificationPriority",
     "NotificationType",
+    "PerformanceSample",
     "Profile",
     "ProfileGoal",
     "ProfileInterest",
@@ -82,8 +82,6 @@ __all__ = [
     "BookingMessage",
     "BookingOrigin",
     "BookingStatus",
-    "CalendarSyncStatus",
-    "ConsultantCalendarConnection",
     "ConsultantProfile",
     "NoteVisibility",
     "SessionFeedback",

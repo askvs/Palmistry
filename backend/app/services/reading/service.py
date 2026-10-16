@@ -1,4 +1,5 @@
 """Reading service: create, list, review (FR-002..FR-004)."""
+import time
 import uuid
 from datetime import datetime, timedelta, timezone
 
@@ -52,9 +53,25 @@ def _owned_or_404(db: Session, reading_id: uuid.UUID, user_id: uuid.UUID | None)
 def create_tarot_reading(
     db: Session, user, *, spread: str, cards: list[str], question: str | None
 ) -> Reading:
-    from app.services.tarot.interpretation import ENGINE_NAME, interpret_explicit_cards
+    start = time.perf_counter()
+    from app.middleware.monitoring import record_analysis_failure
+    from app.services.tarot.interpretation import (
+        ENGINE_NAME,
+        TarotInterpretationError,
+        interpret_explicit_cards,
+    )
 
-    interpretation = interpret_explicit_cards(spread_ref=spread, selections=cards, question=question)
+    try:
+        interpretation = interpret_explicit_cards(spread_ref=spread, selections=cards, question=question)
+    except TarotInterpretationError as exc:
+        record_analysis_failure(
+            analysis_type="tarot",
+            path="/api/v1/readings/tarot",
+            exc=exc,
+            status_code=getattr(exc, "status_code", 400) or 400,
+            actor_id=getattr(user, "id", None),
+        )
+        raise
     result = {
         "spread": spread,
         "cards": cards,
@@ -90,6 +107,8 @@ def create_tarot_reading(
         db.commit()
     except Exception:
         db.rollback()
+    reading.duration_ms = round((time.perf_counter() - start) * 1000, 1)
+    db.commit()
     return reading
 
 
@@ -97,12 +116,25 @@ def create_palm_reading(
     db: Session, user, *, filename: str | None, data: bytes, hand: str | None = None
 ) -> Reading:
     """Store the uploaded palm image, run the CV pipeline, and persist a completed reading."""
+    start = time.perf_counter()
     import pathlib
     from app.config import settings
+    from app.middleware.monitoring import record_analysis_failure
     from app.services.palm_analysis.pipeline import analyze_palm_image
+    from app.services.palm_analysis.preprocessor import PalmValidationError
 
     # Run computer vision pipeline
-    analysis = analyze_palm_image(image_bytes=data, preferred_hand=hand, enforce_palmar=True)
+    try:
+        analysis = analyze_palm_image(image_bytes=data, preferred_hand=hand, enforce_palmar=True)
+    except PalmValidationError as exc:
+        record_analysis_failure(
+            analysis_type="palm",
+            path="/api/v1/readings/palm",
+            exc=exc,
+            status_code=getattr(exc, "status_code", 400) or 400,
+            actor_id=getattr(user, "id", None),
+        )
+        raise
 
     shape_elem = analysis.get("palm_shape", {}).get("element", "Hand")
     conf_pct = int(analysis.get("metadata", {}).get("overall_confidence", 0.0) * 100)
@@ -137,6 +169,9 @@ def create_palm_reading(
         db.commit()
     except Exception:
         db.rollback()
+
+    reading.duration_ms = round((time.perf_counter() - start) * 1000, 1)
+    db.commit()
 
     return reading
 

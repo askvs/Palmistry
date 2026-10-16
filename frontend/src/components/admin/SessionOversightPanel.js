@@ -118,12 +118,13 @@ export default function SessionOversightPanel() {
                     {new Date(session.start_time).toLocaleString()} · {session.duration_minutes} min
                   </p>
                   <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-slate-400">
-                    <span>Calendar: {session.calendar_sync_status || "not created"}</span>
-                    {session.meet_link_booked && (
+                    {session.meet_link_booked ? (
                       <span className="inline-flex items-center gap-1">
                         <VideoIcon className="h-3 w-3" />
                         Meet link attached
                       </span>
+                    ) : (
+                      <span>No meeting link yet</span>
                     )}
                   </p>
                 </li>

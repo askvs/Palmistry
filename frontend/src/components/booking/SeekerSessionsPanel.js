@@ -87,7 +87,7 @@ function UpcomingSession({ booking, onCancelled }) {
       {booking.status === "accepted" && !joinable && (
         <p className="mt-3 flex items-center gap-1.5 rounded-xl border border-slate-200/70 bg-white px-3.5 py-2 text-xs text-slate-500">
           <VideoIcon className="h-3.5 w-3.5" />
-          Your Google Meet link appears here 30 minutes before the session.
+          The Google Meet link appears here before the session.
         </p>
       )}
 
@@ -106,8 +106,8 @@ function UpcomingSession({ booking, onCancelled }) {
       <ConfirmDialog
         open={confirming}
         title="Cancel this session?"
-        message={`"${booking.subject}" with ${booking.consultant_name} will be removed from your
-          calendar and the consultant will be notified.`}
+        message={`"${booking.subject}" with ${booking.consultant_name} will be cancelled and the
+          consultant will be notified.`}
         confirmLabel="Yes, cancel"
         tone="danger"
         loading={busy}

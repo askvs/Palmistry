@@ -62,15 +62,6 @@ class Settings(BaseSettings):
     BOOKING_SLOT_HORIZON_DAYS: int = 21
     BOOKING_ROLLOUT_HOUR: int = 1
 
-    # Google Calendar / Meet settings.
-    GOOGLE_CALENDAR_ENABLED: bool = False
-    GOOGLE_CALENDAR_ID: str = "primary"
-    GOOGLE_SERVICE_ACCOUNT_FILE: str = ""
-    GOOGLE_CALENDAR_CREATE_MEET: bool = True
-    GOOGLE_CALENDAR_REDIRECT_URI: str = "http://localhost:3000/consultant-studio?google_calendar=callback"
-    GOOGLE_CALENDAR_REDECT_URIS: str = ""
-    GOOGLE_OAUTH_TIMEOUT_SECONDS: int = 15
-
     # Email (SMTP) settings.
     EMAIL_SMTP_HOST: str = ""
     EMAIL_SMTP_PORT: int = 587

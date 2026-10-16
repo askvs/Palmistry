@@ -13,8 +13,8 @@ import {
 import { CalendarIcon, CheckCircleIcon, ClockIcon, TrashIcon, VideoIcon } from "@/components/icons";
 import {
   BookingStatusBadge,
-  CalendarSyncBadge,
   EmptyRow,
+  MeetingLinkEditor,
 } from "@/components/booking/shared";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { acceptBooking, fetchConsultantSessions, rejectBooking } from "@/services/booking";
@@ -66,7 +66,7 @@ function RequestRow({ booking, onResolved }) {
             onClick={() =>
               act("accept", "accept", {
                 title: "Session confirmed",
-                message: "A Google Calendar event and Meet link have been created.",
+                message: "Add your Google Meet link so the seeker can join.",
               })
             }
           >
@@ -106,7 +106,7 @@ function RequestRow({ booking, onResolved }) {
 }
 
 // One confirmed session; the Meet button unlocks 30 minutes before the start.
-function ConfirmedSession({ booking }) {
+function ConfirmedSession({ booking, onSaved }) {
   const joinable = canJoinMeet(booking);
   return (
     <li className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
@@ -115,7 +115,6 @@ function ConfirmedSession({ booking }) {
           <div className="flex flex-wrap items-center gap-2">
             <h4 className="text-sm font-semibold text-slate-900">{booking.subject}</h4>
             <BookingStatusBadge status={booking.status} />
-            <CalendarSyncBadge booking={booking} />
           </div>
           <p className="mt-1 text-xs text-slate-600">
             with <span className="font-semibold">{booking.seeker_name}</span>
@@ -139,6 +138,10 @@ function ConfirmedSession({ booking }) {
           <Badge tone="slate">Opens 30 min before</Badge>
         )}
       </div>
+
+      {booking.status === "accepted" && (
+        <MeetingLinkEditor booking={booking} onSaved={onSaved} />
+      )}
     </li>
   );
 }
@@ -208,7 +211,7 @@ export default function ConsultantSessionsPanel({ limit = 6 }) {
           ) : (
             <ul className="space-y-3">
               {upcoming.map((booking) => (
-                <ConfirmedSession key={booking.id} booking={booking} />
+                <ConfirmedSession key={booking.id} booking={booking} onSaved={refresh} />
               ))}
             </ul>
           )}

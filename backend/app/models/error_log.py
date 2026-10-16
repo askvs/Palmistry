@@ -22,6 +22,7 @@ class ErrorKind(str, enum.Enum):
     forbidden = "forbidden"
     rate_limited = "rate_limited"
     validation_error = "validation_error"
+    analysis_failed = "analysis_failed"
 
 
 class ErrorLog(Base, TimestampMixin):

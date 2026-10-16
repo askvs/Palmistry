@@ -24,6 +24,7 @@ from app.schemas.booking import (
     BookingDetailOut,
     BookingEventOut,
     BookingListOut,
+    BookingMeetingLinkIn,
     BookingMessageCreate,
     BookingMessageListOut,
     BookingMessageOut,
@@ -32,10 +33,6 @@ from app.schemas.booking import (
     BookingNoteUpdate,
     BookingOut,
     BookingProposeIn,
-    CalendarAuthorizeOut,
-    CalendarConnectIn,
-    CalendarStatusOut,
-    CalendarUpdateIn,
     DaySlotsOut,
     ConsultantListOut,
     ConsultantProfileCreate,
@@ -54,11 +51,6 @@ from app.schemas.booking import (
 )
 from app.services.booking import service as booking_service
 from app.services.booking import availability as avail
-from app.services.booking.google_calendar import (
-    is_calendar_enabled,
-    is_oauth_configured,
-    is_service_account_configured,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -97,9 +89,6 @@ def _consultant_out(db: Session, profile, *, detail: bool = False) -> Consultant
     if profile.user is not None:
         payload.full_name = profile.user.full_name
         payload.email = profile.user.email
-    payload.calendar_connected = bool(
-        profile.calendar_connection is not None and profile.calendar_connection.is_active
-    )
     if detail:
         data = payload.model_dump()
         now = avail.now_utc()
@@ -595,6 +584,20 @@ def accept_my_booking(
     return _booking_out(booking)
 
 
+@consultant.patch("/me/bookings/{booking_id}/meeting-link", response_model=BookingOut)
+def update_my_booking_meeting_link(
+    booking_id: uuid.UUID,
+    payload: BookingMeetingLinkIn,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> BookingOut:
+    """The consultant shares (or clears) the Google Meet link for a session."""
+    booking = booking_service.set_booking_meeting_link(
+        db, user, booking_id, meeting_link=payload.meeting_link
+    )
+    return _booking_out(booking)
+
+
 @consultant.post("/me/bookings/{booking_id}/reject", response_model=BookingOut)
 def reject_my_booking(
     booking_id: uuid.UUID,
@@ -710,92 +713,6 @@ def delete_my_note(
 ) -> Response:
     booking_service.delete_session_note(db, user, note_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-
-
-# Google Calendar connection
-
-
-def _calendar_status(db: Session, connection) -> CalendarStatusOut:
-    synced = 0
-    if connection is not None:
-        from app.models.booking import Booking
-
-        synced = db.scalar(
-            select(func.count())
-            .select_from(Booking)
-            .where(
-                Booking.consultant_id == connection.consultant_id,
-                Booking.google_event_id.isnot(None),
-            )
-        )
-    return CalendarStatusOut(
-        calendar_enabled=is_calendar_enabled(),
-        oauth_configured=is_oauth_configured(),
-        service_account_configured=is_service_account_configured(),
-        connection=(
-            CalendarConnectionOut.model_validate(connection) if connection else None
-        ),
-        synced_bookings=int(synced or 0),
-    )
-
-
-@consultant.get("/me/google-calendar", response_model=CalendarStatusOut)
-def calendar_status(
-    db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
-) -> CalendarStatusOut:
-    connection = booking_service.get_calendar_connection(db, user)
-    return _calendar_status(db, connection)
-
-
-@consultant.post("/me/google-calendar/authorize", response_model=CalendarAuthorizeOut)
-def calendar_authorize(
-    db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
-) -> CalendarAuthorizeOut:
-    payload = booking_service.calendar_authorization_url(db, user)
-    return CalendarAuthorizeOut(**payload)
-
-
-@consultant.post("/me/google-calendar/connect", response_model=CalendarStatusOut)
-def calendar_connect(
-    payload: CalendarConnectIn,
-    db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
-) -> CalendarStatusOut:
-    booking_service.connect_calendar(db, user, code=payload.code)
-    return _calendar_status(db, booking_service.get_calendar_connection(db, user))
-
-
-@consultant.patch("/me/google-calendar", response_model=CalendarStatusOut)
-def calendar_update(
-    payload: CalendarUpdateIn,
-    db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
-) -> CalendarStatusOut:
-    booking_service.update_calendar_connection(
-        db, user, calendar_id=payload.calendar_id, is_active=payload.is_active
-    )
-    return _calendar_status(db, booking_service.get_calendar_connection(db, user))
-
-
-@consultant.delete("/me/google-calendar", status_code=204)
-def calendar_disconnect(
-    db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
-) -> Response:
-    booking_service.disconnect_calendar(db, user)
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
-
-
-@consultant.post("/me/bookings/{booking_id}/calendar/retry", response_model=BookingOut)
-def calendar_retry(
-    booking_id: uuid.UUID,
-    db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
-) -> BookingOut:
-    booking = booking_service.retry_calendar(db, user, booking_id)
-    return _booking_out(booking)
 
 
 # /bookings — seeker session hub

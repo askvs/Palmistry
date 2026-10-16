@@ -123,7 +123,6 @@ class SessionOversightRow(BaseModel):
     consultant_name: str | None = None
     seeker_email: str | None = None
     meet_link_booked: bool = False
-    calendar_sync_status: str | None = None
 
 
 class SessionOversight(BaseModel):
@@ -194,7 +193,6 @@ class SystemConfigOut(BaseModel):
     ai_configured: bool
     email_configured: bool
     sms_configured: bool
-    google_calendar_configured: bool
     max_upload_size_mb: int
     allowed_image_types: list[str]
     schedulers: list[dict]
@@ -251,4 +249,109 @@ class PerformanceSummaryOut(BaseModel):
     latency_ms: dict[str, float]
     slowest_routes: list[dict]
     window_requests: int
+    notes: list[str]
+
+
+# System reports (overview, health, errors, performance)
+
+
+class ReportUserCounts(BaseModel):
+    total: int
+    new_in_period: int
+
+
+class ReportAnalysisCounts(BaseModel):
+    successful: int
+    failed: int
+    total: int
+    successful_all_time: int
+    failed_all_time: int
+    total_all_time: int
+    success_by_type: list[dict]
+    failed_by_type: list[dict]
+    failed_tracking_since: datetime | None = None
+
+
+class SystemOverviewOut(BaseModel):
+    days: int
+    generated_at: datetime
+    users: ReportUserCounts
+    analyses: ReportAnalysisCounts
+
+
+class ServiceStatusOut(BaseModel):
+    status: str
+    detail: str
+    latency_ms: float | None = None
+
+
+class SystemHealthOut(BaseModel):
+    generated_at: datetime
+    backend: ServiceStatusOut
+    database: ServiceStatusOut
+    ai_service: ServiceStatusOut
+    ai_provider: str
+    ai_model: str
+    environment: str
+    version: str
+    uptime_seconds: int
+    started_at: datetime
+    notes: list[str]
+
+
+class ErrorReportItemOut(BaseModel):
+    id: uuid.UUID
+    category: str
+    description: str
+    method: str
+    path: str
+    status_code: int
+    occurrences: int
+    first_seen_at: datetime
+    last_seen_at: datetime
+    acknowledged_at: datetime | None = None
+
+
+class ErrorReportCountsOut(BaseModel):
+    rows: int
+    total: int
+    failed_analyses: int
+    server_errors: int
+    by_category: list[dict]
+
+
+class ErrorReportOut(BaseModel):
+    days: int
+    generated_at: datetime
+    counts: ErrorReportCountsOut
+    items: list[ErrorReportItemOut]
+    notes: list[str]
+
+
+class ApiPerformanceOut(BaseModel):
+    status: str
+    requests: int
+    avg_ms: float | None = None
+    p50_ms: float | None = None
+    p95_ms: float | None = None
+    max_ms: float | None = None
+    error_rate: float | None = None
+    first_sample_at: datetime | None = None
+    last_sample_at: datetime | None = None
+
+
+class AnalysisPerformanceOut(BaseModel):
+    status: str
+    samples: int
+    avg_ms: float | None = None
+    p95_ms: float | None = None
+    max_ms: float | None = None
+    by_type: list[dict]
+
+
+class PerformanceReportOut(BaseModel):
+    days: int
+    generated_at: datetime
+    api: ApiPerformanceOut
+    analysis_generation: AnalysisPerformanceOut
     notes: list[str]
