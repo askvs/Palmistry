@@ -29,6 +29,21 @@ PALMAR_SAMPLE = ROOT_DIR / "dataset" / "Hands and palm images dataset" / "Hands"
 DORSAL_SAMPLE = ROOT_DIR / "dataset" / "Hands and palm images dataset" / "Hands" / "Hands" / "Hand_0000002.jpg"
 HORIZONTAL_PALMAR_SAMPLE = ROOT_DIR / "dataset" / "palmline" / "Palm Line Detection.v2i.yolov5pytorch" / "train" / "images" / "istockphoto-3_PNG.rf.8bb7def428b681284a2d62198d51f359.jpg"
 
+# dataset/ is gitignored local-only sample data; checkouts without it (e.g. CI)
+# must skip sample-based tests instead of failing on missing image files.
+requires_palmar_sample = pytest.mark.skipif(
+    not PALMAR_SAMPLE.exists(),
+    reason=f"dataset sample image not available: {PALMAR_SAMPLE.name}",
+)
+requires_dorsal_sample = pytest.mark.skipif(
+    not DORSAL_SAMPLE.exists(),
+    reason=f"dataset sample image not available: {DORSAL_SAMPLE.name}",
+)
+requires_horizontal_sample = pytest.mark.skipif(
+    not HORIZONTAL_PALMAR_SAMPLE.exists(),
+    reason=f"dataset sample image not available: {HORIZONTAL_PALMAR_SAMPLE.name}",
+)
+
 
 class TestPalmValidationAndPreprocessing:
     def test_validate_image_bytes_formats(self):
@@ -64,6 +79,7 @@ class TestPalmValidationAndPreprocessing:
         assert exc.value.status_code == 413
         assert exc.value.code == "IMAGE_TOO_LARGE"
 
+    @requires_palmar_sample
     def test_preprocess_palm_image_on_sample(self):
         assert PALMAR_SAMPLE.exists(), f"Sample image missing: {PALMAR_SAMPLE}"
         with open(PALMAR_SAMPLE, "rb") as f:
@@ -78,6 +94,7 @@ class TestPalmValidationAndPreprocessing:
 
 
 class TestMediaPipeAndFeatureExtraction:
+    @requires_palmar_sample
     def test_landmark_extraction_on_palmar_image(self):
         with open(PALMAR_SAMPLE, "rb") as f:
             data = f.read()
@@ -92,6 +109,7 @@ class TestMediaPipeAndFeatureExtraction:
         assert len(lms.palm_polygon_pixels) == 7
         assert lms.hand_presence_score > 0.8
 
+    @requires_dorsal_sample
     def test_dorsal_image_rejection(self):
         assert DORSAL_SAMPLE.exists(), f"Sample image missing: {DORSAL_SAMPLE}"
         with open(DORSAL_SAMPLE, "rb") as f:
@@ -105,6 +123,7 @@ class TestMediaPipeAndFeatureExtraction:
         assert exc.value.code == "DORSAL_HAND_DETECTED"
         assert "palm" in exc.value.message.lower()
 
+    @requires_horizontal_sample
     def test_horizontal_rotated_palmar_image_accepted(self):
         assert HORIZONTAL_PALMAR_SAMPLE.exists(), f"Sample missing: {HORIZONTAL_PALMAR_SAMPLE}"
         with open(HORIZONTAL_PALMAR_SAMPLE, "rb") as f:
@@ -115,6 +134,7 @@ class TestMediaPipeAndFeatureExtraction:
         assert lms.is_palmar is True
         assert lms.handedness == "Right"
 
+    @requires_palmar_sample
     def test_palm_shape_classification(self):
         with open(PALMAR_SAMPLE, "rb") as f:
             data = f.read()
@@ -128,6 +148,7 @@ class TestMediaPipeAndFeatureExtraction:
         assert shape.finger_to_palm_ratio > 0.0
         assert len(shape.traits) >= 3
 
+    @requires_palmar_sample
     def test_finger_structure_analysis(self):
         with open(PALMAR_SAMPLE, "rb") as f:
             data = f.read()
@@ -142,6 +163,7 @@ class TestMediaPipeAndFeatureExtraction:
         assert fingers.digit_ratio_2d_4d > 0.0
         assert fingers.thumb_angle_degrees > 0.0
 
+    @requires_palmar_sample
     def test_mounts_extraction(self):
         with open(PALMAR_SAMPLE, "rb") as f:
             data = f.read()
@@ -164,6 +186,7 @@ class TestMediaPipeAndFeatureExtraction:
             assert m.prominence in ("underdeveloped", "balanced", "prominent")
             assert 0.0 <= m.score <= 1.0
 
+    @requires_palmar_sample
     def test_line_detection_five_lines(self):
         with open(PALMAR_SAMPLE, "rb") as f:
             data = f.read()
@@ -215,6 +238,7 @@ class TestPalmAnalysisAPI:
         body = res.json()
         assert body["code"] == "INVALID_IMAGE_FORMAT"
 
+    @requires_dorsal_sample
     def test_analyze_palm_dorsal_rejected(self, client):
         with open(DORSAL_SAMPLE, "rb") as f:
             img_bytes = f.read()
@@ -226,6 +250,7 @@ class TestPalmAnalysisAPI:
         assert body["code"] == "DORSAL_HAND_DETECTED"
         assert "palm" in body["message"].lower()
 
+    @requires_palmar_sample
     def test_analyze_palm_success_guest(self, client):
         with open(PALMAR_SAMPLE, "rb") as f:
             img_bytes = f.read()
@@ -252,6 +277,7 @@ class TestPalmAnalysisAPI:
         # Guest has no reading_id
         assert data["reading_id"] is None
 
+    @requires_palmar_sample
     def test_analyze_palm_success_authenticated_persists(self, client, test_engine):
         from sqlalchemy.orm import Session
         from app.auth import tokens
@@ -309,6 +335,8 @@ class TestPalmAnalysisAPI:
         assert "extreme close-up" in body["message"]
         assert "wrist" in body["message"]
 
+    @requires_palmar_sample
+    @requires_dorsal_sample
     def test_check_frame_palmar_vs_dorsal_vs_empty(self, client):
         # 1. Palmar hand
         with open(PALMAR_SAMPLE, "rb") as f:

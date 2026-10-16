@@ -5,6 +5,11 @@ on:
   workflow_dispatch:
 jobs:
   push-images:
+    # Skipped until AWS is actually configured: set the repository/environment
+    # variables AWS_REGION, ECR_BACKEND_REPO, ECR_FRONTEND_REPO and the secrets
+    # AWS_DEPLOY_ROLE_ARN + AWS_ACCOUNT_ID (plus the OIDC provider and deploy
+    # role in AWS). Until AWS_REGION is set this job skips instead of failing.
+    if: ${{ vars.AWS_REGION != '' }}
     runs-on: ubuntu-latest
     environment: production
     permissions: { contents: read, id-token: write }

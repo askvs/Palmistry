@@ -2,6 +2,18 @@
 
 All notable implementation changes to the Palmistry & Tarot Intelligence Platform.
 
+## [Unreleased] — CI fixes (backend tests + AWS deploy gate)
+- **Backend CI fixed on clean checkouts.** The `test_palm_analysis.py` sample
+  tests open images from the gitignored, local-only `dataset/` folder — present
+  locally, absent on GitHub Actions — so 12 of them failed on every run since
+  the initial commit. They are now skipped when their sample file is missing
+  (`requires_palmar_sample` / `requires_dorsal_sample` /
+  `requires_horizontal_sample`) and still run and pass locally.
+- **AWS deploy workflow gated.** `deploy.yml` failed at
+  `configure-aws-credentials` ("Input required and not supplied: aws-region")
+  on every push because the AWS variables/secrets were never configured. The
+  job now skips until `vars.AWS_REGION` is set, then activates as before.
+
 ## [Unreleased] — System Reports module (admin monitoring)
 - **Admin-only System Reports** surface in the console (`/admin/reports`,
   nav entry "System Reports"), with four endpoints behind `require_admin`:
