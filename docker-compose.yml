@@ -20,8 +20,11 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     command: alembic upgrade head
+    # The image entrypoint migrates by default; this service's whole job is
+    # that command, so it skips the entrypoint's run.
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-palmistry}
+      RUN_MIGRATIONS: "false"
     depends_on:
       db:
         condition: service_healthy

@@ -24,6 +24,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/alembic.ini ./
 COPY backend/alembic ./alembic
 COPY backend/app ./app
+COPY backend/entrypoint.sh ./entrypoint.sh
 
 # Copy project data and MediaPipe model
 COPY data /data
@@ -34,6 +35,7 @@ COPY models /models
 # writable for appuser.
 RUN useradd --create-home appuser && \
     mkdir -p /app/uploads && \
+    chmod +x /app/entrypoint.sh && \
     chown -R appuser:appuser /app /data /models
 
 USER appuser
@@ -43,4 +45,7 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=5)" || exit 1
 
+# entrypoint.sh applies pending migrations (RUN_MIGRATIONS=true by default)
+# before handing off to the command below.
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

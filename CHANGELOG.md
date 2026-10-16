@@ -2,6 +2,20 @@
 
 All notable implementation changes to the Palmistry & Tarot Intelligence Platform.
 
+## [Unreleased] — Deploy-time migrations (entrypoint)
+- **Containers apply pending migrations before starting.** New
+  `backend/entrypoint.sh` runs `alembic upgrade head` ahead of the server
+  command in the Docker image, so deployed code can never serve against an
+  un-migrated database. This is the failure mode behind the live dashboard
+  error: Render was serving the System Reports build (`readings.duration_ms`,
+  migrations 0013/0014) against a Neon schema still at `0012_custom_spreads`,
+  so `GET /api/v1/readings` returned `INTERNAL_ERROR` ("An unexpected error
+  occurred") and the seeker dashboard showed "Something went wrong". Skip with
+  `RUN_MIGRATIONS=false`.
+- **Compose `migrate` service** keeps its explicit one-shot
+  `alembic upgrade head` and sets `RUN_MIGRATIONS=false` so the entrypoint does
+  not repeat it.
+
 ## [Unreleased] — CI fixes (backend tests + AWS deploy gate)
 - **Backend CI fixed on clean checkouts.** The `test_palm_analysis.py` sample
   tests open images from the gitignored, local-only `dataset/` folder — present
