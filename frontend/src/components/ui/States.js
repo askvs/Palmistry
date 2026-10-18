@@ -52,7 +52,7 @@ export function EmptyState({ icon: Icon, title, description, action, className =
       className={`flex flex-col items-center justify-center rounded-[20px] border border-slate-200 bg-[#fbfafe] px-6 py-12 text-center ${className}`}
     >
       {Icon && (
-        <span className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-white text-primary-600 shadow-rest ring-1 ring-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,.85),0_1px_2px_rgba(30,24,54,.05)]">
+        <span className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-white text-primary-600 ring-1 ring-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,.85),0_1px_2px_rgba(30,24,54,.05)]">
           <Icon className="h-6 w-6" />
         </span>
       )}
