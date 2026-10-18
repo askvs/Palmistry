@@ -253,7 +253,7 @@ export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
           {cameraError ? (
             <div className="p-6 text-center text-rose-300">
               <p className="font-medium text-sm text-rose-200">Camera Unavailable</p>
-              <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">{cameraError}</p>
+              <p className="mt-1 text-xs text-slate-400 max-w-sm mx-auto">{cameraError}</p>
             </div>
           ) : (
             <>
@@ -335,7 +335,7 @@ export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
               </div>
 
               {isStarting && (
-                <div className="absolute inset-0 flex items-center justify-center bg-slate-950 text-slate-500 text-xs">
+                <div className="absolute inset-0 flex items-center justify-center bg-slate-950 text-slate-400 text-xs">
                   Starting camera…
                 </div>
               )}
