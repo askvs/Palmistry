@@ -332,5 +332,6 @@ html::-webkit-scrollbar-track { background: #efebfa; }
 
 .animate-fan-float {
   animation: fan-float 4s var(--ease-standard) infinite;
+  animation-fill-mode: both;
 }
 

@@ -125,9 +125,9 @@ export default function Home() {
             <DeckBackOrnaments />
           </span>
           <span className="tarot-card-back absolute left-1/2 top-3 h-40 w-24 translate-x-[28%] rotate-[10deg] rounded-[10px] shadow-lift" />
-          <span className="absolute left-1/2 top-24 -translate-x-1/2 text-xs text-accent-300">✦</span>
-          <span className="absolute left-[18%] top-10 text-[10px] text-accent-300/80">✦</span>
-          <span className="absolute right-[16%] top-16 text-[10px] text-accent-300/80">✦</span>
+          <span className="animate-pulse absolute left-1/2 top-24 -translate-x-1/2 text-xs text-accent-300">✦</span>
+          <span className="animate-pulse [animation-delay:600ms] absolute left-[18%] top-10 text-[10px] text-accent-300/80">✦</span>
+          <span className="animate-pulse [animation-delay:1200ms] absolute right-[16%] top-16 text-[10px] text-accent-300/80">✦</span>
         </div>
       </section>
 
