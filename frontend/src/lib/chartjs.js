@@ -26,10 +26,13 @@ ChartJS.register(
   Legend
 );
 
-// Brand chart colors.
-export const CHART_COLORS = ["#6366f1", "#7c3aed", "#f59e0b", "#10b981", "#f43f5e"];
+// Brand chart colors (porcelain palette, spec §5.13).
+export const CHART_COLORS = ["#7c3aed", "#f59e0b", "#c4b5fd", "#059669", "#e11d48"];
 
-const AXIS_TICK = { color: "#64748b", font: { size: 11 } };
+const AXIS_TICK = { color: "#5b5675", font: { size: 11 } };
+
+// Dataset-level defaults (tension .35, borderWidth 2, pointRadius 0,
+// pointHoverRadius 4) belong to the consuming dataset configs (W2.5/W4).
 
 // Shared line chart options.
 export function lineChartOptions({ max = 1, unit = "%", legend = true } = {}) {
@@ -45,7 +48,7 @@ export function lineChartOptions({ max = 1, unit = "%", legend = true } = {}) {
           ...AXIS_TICK,
           callback: (value) => `${Math.round(value * 100)}${unit}`,
         },
-        grid: { color: "rgba(148, 163, 184, 0.2)" },
+        grid: { color: "#f1eff9" },
       },
       x: { ticks: AXIS_TICK, grid: { display: false } },
     },
@@ -53,11 +56,15 @@ export function lineChartOptions({ max = 1, unit = "%", legend = true } = {}) {
       legend: {
         display: legend,
         position: "bottom",
-        labels: { color: "#475569", usePointStyle: true, boxWidth: 8, boxHeight: 8 },
+        labels: { color: "#46415f", usePointStyle: true, boxWidth: 8, boxHeight: 8 },
       },
       tooltip: {
         enabled: true,
-        backgroundColor: "#0f172a",
+        backgroundColor: "#ffffff",
+        titleColor: "#1e1836",
+        bodyColor: "#46415f",
+        borderColor: "#eae6f5",
+        borderWidth: 1,
         padding: 10,
         cornerRadius: 10,
         callbacks: {
@@ -81,7 +88,7 @@ export function barChartOptions({ unit = "%" } = {}) {
           ...AXIS_TICK,
           callback: (value) => `${Math.round(value * 100)}${unit}`,
         },
-        grid: { color: "rgba(148, 163, 184, 0.2)" },
+        grid: { color: "#f1eff9" },
       },
       x: { ticks: AXIS_TICK, grid: { display: false } },
     },
@@ -89,7 +96,11 @@ export function barChartOptions({ unit = "%" } = {}) {
       legend: { display: false },
       tooltip: {
         enabled: true,
-        backgroundColor: "#0f172a",
+        backgroundColor: "#ffffff",
+        titleColor: "#1e1836",
+        bodyColor: "#46415f",
+        borderColor: "#eae6f5",
+        borderWidth: 1,
         padding: 10,
         cornerRadius: 10,
         callbacks: {
