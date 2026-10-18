@@ -60,10 +60,13 @@
   --animate-rise-in: rise-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Fonts MUST live in an inline theme so generated utilities keep the var()
-   reference and resolve where next/font sets the variables (the _app wrapper
-   element). This is the P0 font-bug fix (spec §8.1). */
-@theme inline {
+/* Typography — REVERTED to the original rendering at the user's request
+   (2026-10-18): the app keeps its pre-redesign system-font stack everywhere.
+   The next/font variables are provided on the _app wrapper element, so with a
+   NON-inline theme `font-sans` / `font-display` fall back to the inherited
+   system font (Segoe UI on Windows). Do NOT move these into `@theme inline`
+   again — the earlier "font fix" (spec §8.1) was intentionally rolled back. */
+@theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
 }
@@ -312,26 +315,5 @@ html::-webkit-scrollbar-track { background: #efebfa; }
     0 0 15px rgba(124, 58, 237, 0.18);
 }
 
-/* Landing hero candlelight + fan float (spec §4.4, Appendix A.7) */
-.hero-candlelight {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 420px;
-  height: 420px;
-  pointer-events: none;
-  z-index: 0;
-  background: radial-gradient(circle, rgb(245 158 11 / 0.06), rgb(124 58 237 / 0.045) 45%, transparent 70%);
-  transition: transform 0.3s var(--ease-standard);
-}
 
-@keyframes fan-float {
-  0%, 100% { transform: translate(-50%, 0); }
-  50% { transform: translate(-50%, -6px); }
-}
-
-.animate-fan-float {
-  animation: fan-float 4s var(--ease-standard) infinite;
-  animation-fill-mode: both;
-}
 

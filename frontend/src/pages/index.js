@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { useEffect, useRef } from "react";
 import BackendStatus from "@/components/BackendStatus";
 import Seo from "@/components/Seo";
-import DeckBackOrnaments from "@/components/tarot/DeckBackOrnaments";
 import { Button } from "@/components/ui";
 import {
   ArrowRightIcon,
@@ -59,38 +57,12 @@ const FEATURES = [
 ];
 
 export default function Home() {
-  const heroRef = useRef(null);
-
-  useEffect(() => {
-    const el = heroRef.current;
-    if (!el) return undefined;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
-    if (!window.matchMedia("(pointer: fine)").matches) return undefined;
-    const glow = document.createElement("div");
-    glow.className = "hero-candlelight";
-    el.prepend(glow); // first child so hero content paints above the glow
-    let raf = 0;
-    const onMove = (event) => {
-      const rect = el.getBoundingClientRect();
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        glow.style.transform = `translate(${event.clientX - rect.left - 210}px, ${event.clientY - rect.top - 210}px)`;
-      });
-    };
-    el.addEventListener("pointermove", onMove);
-    return () => {
-      el.removeEventListener("pointermove", onMove);
-      cancelAnimationFrame(raf);
-      glow.remove();
-    };
-  }, []);
-
   return (
     <div className="space-y-16 sm:space-y-20">
       <Seo />
 
       {/* Hero */}
-      <section ref={heroRef} className="relative overflow-hidden text-center">
+      <section className="text-center">
         <span className="animate-rise-in inline-flex items-center gap-1.5 rounded-full border border-primary-200/80 bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700">
           <SparkleIcon className="h-3 w-3" />
           AI-guided readings · Early access
@@ -118,17 +90,6 @@ export default function Home() {
         <p className="mt-4 text-xs text-slate-500">
           Free during early access · No account required
         </p>
-
-        <div className="relative mx-auto mt-12 h-48 w-72" aria-hidden="true">
-          <span className="tarot-card-back absolute left-1/2 top-3 h-40 w-24 -translate-x-[128%] -rotate-[10deg] rounded-[10px] shadow-lift" />
-          <span className="tarot-card-back animate-fan-float absolute left-1/2 top-0 h-44 w-24 rounded-[10px] shadow-float">
-            <DeckBackOrnaments />
-          </span>
-          <span className="tarot-card-back absolute left-1/2 top-3 h-40 w-24 translate-x-[28%] rotate-[10deg] rounded-[10px] shadow-lift" />
-          <span className="animate-pulse absolute left-1/2 top-24 -translate-x-1/2 text-xs text-accent-300">✦</span>
-          <span className="animate-pulse [animation-delay:600ms] absolute left-[18%] top-10 text-[10px] text-accent-300/80">✦</span>
-          <span className="animate-pulse [animation-delay:1200ms] absolute right-[16%] top-16 text-[10px] text-accent-300/80">✦</span>
-        </div>
       </section>
 
       <BackendStatus />
