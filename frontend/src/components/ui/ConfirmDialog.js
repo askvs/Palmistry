@@ -16,6 +16,12 @@ export default function ConfirmDialog({
 }) {
   const cancelRef = useRef(null);
   const dialogRef = useRef(null);
+  // Latest onCancel, so the trap effect can depend on [open] only and stay
+  // stable across parent re-renders (inline-arrow call sites).
+  const onCancelRef = useRef(onCancel);
+  useEffect(() => {
+    onCancelRef.current = onCancel;
+  });
 
   useEffect(() => {
     if (!open) return undefined;
@@ -25,7 +31,7 @@ export default function ConfirmDialog({
       node.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
     (node.querySelector("[data-autofocus]") || focusables()[0])?.focus();
     const onKeyDown = (event) => {
-      if (event.key === "Escape") onCancel?.();
+      if (event.key === "Escape") onCancelRef.current?.();
       if (event.key !== "Tab") return;
       const list = Array.from(focusables()).filter((el) => !el.disabled);
       if (list.length === 0) return;
@@ -46,7 +52,7 @@ export default function ConfirmDialog({
       document.body.style.overflow = "";
       previous?.focus?.();
     };
-  }, [open, onCancel]);
+  }, [open]);
 
   if (!open) return null;
 
