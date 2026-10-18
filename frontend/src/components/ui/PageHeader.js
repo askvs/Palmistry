@@ -25,8 +25,8 @@ export default function PageHeader({
   className = "",
 }) {
   const tileClass = gradient
-    ? `flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-white shadow-lg ${GRADIENTS[GRADIENTS[gradient] ? gradient : "violet"]}`
-    : `flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${TILE_TONES[tileTone] || TILE_TONES.primary}`;
+    ? `flex h-14 w-14 shrink-0 items-center justify-center rounded-[14px] text-white shadow-lg ${GRADIENTS[GRADIENTS[gradient] ? gradient : "violet"]}`
+    : `flex h-14 w-14 shrink-0 items-center justify-center rounded-[14px] ${TILE_TONES[tileTone] || TILE_TONES.primary}`;
 
   return (
     <header
@@ -48,15 +48,15 @@ export default function PageHeader({
         )}
         <div>
           {eyebrow && (
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary-600">
+            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary-700">
               {eyebrow}
             </p>
           )}
-          <h1 className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl">
+          <h1 className="font-display text-3xl font-semibold tracking-[-0.02em] text-slate-900 sm:text-4xl">
             {title}
           </h1>
           {description && (
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
+            <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-slate-600 sm:text-base">
               {description}
             </p>
           )}

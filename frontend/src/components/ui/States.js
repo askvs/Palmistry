@@ -6,7 +6,7 @@ export function Spinner({ className = "h-5 w-5", label }) {
   return (
     <span className="inline-flex items-center gap-2.5" role="status" aria-live="polite">
       <span
-        className={`inline-block animate-spin rounded-full border-2 border-primary-200 border-t-primary-600 ${className}`}
+        className={`inline-block animate-spin rounded-full border-2 border-primary-100 border-t-primary-600 ${className}`}
         aria-hidden="true"
       />
       {label && <span className="text-sm text-slate-500">{label}</span>}
@@ -35,7 +35,7 @@ export function SkeletonCards({ count = 3, className = "" }) {
       aria-hidden="true"
     >
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="animate-pulse rounded-3xl border border-slate-200/70 bg-white p-6">
+        <div key={i} className="animate-pulse rounded-[20px] border border-slate-200/70 bg-white p-6">
           <div className="h-9 w-9 rounded-xl bg-slate-200/80" />
           <div className="mt-4 h-4 w-2/3 rounded bg-slate-200/80" />
           <div className="mt-2.5 h-3 w-full rounded bg-slate-100" />
@@ -49,16 +49,16 @@ export function SkeletonCards({ count = 3, className = "" }) {
 export function EmptyState({ icon: Icon, title, description, action, className = "" }) {
   return (
     <div
-      className={`flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 px-6 py-12 text-center ${className}`}
+      className={`flex flex-col items-center justify-center rounded-[20px] border border-slate-200 bg-[#fbfafe] px-6 py-12 text-center ${className}`}
     >
       {Icon && (
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-slate-400 shadow-xs ring-1 ring-slate-200">
+        <span className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-white text-primary-600 shadow-rest ring-1 ring-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,.85),0_1px_2px_rgba(30,24,54,.05)]">
           <Icon className="h-6 w-6" />
         </span>
       )}
       <h3 className="mt-4 text-sm font-semibold text-slate-900">{title}</h3>
       {description && (
-        <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-slate-500">{description}</p>
+        <p className="mt-1.5 max-w-[42ch] text-sm leading-relaxed text-slate-500">{description}</p>
       )}
       {action && <div className="mt-5">{action}</div>}
     </div>
@@ -68,7 +68,7 @@ export function EmptyState({ icon: Icon, title, description, action, className =
 export function ErrorState({ title = "Something went wrong", message, onRetry, className = "" }) {
   return (
     <div
-      className={`flex flex-col items-center justify-center rounded-2xl border border-rose-200 bg-rose-50/70 px-6 py-10 text-center ${className}`}
+      className={`flex flex-col items-center justify-center rounded-[20px] border border-rose-200 bg-[#fff7f8] px-6 py-10 text-center ${className}`}
       role="alert"
     >
       <span className="flex h-11 w-11 items-center justify-center rounded-full bg-rose-100 text-rose-600">

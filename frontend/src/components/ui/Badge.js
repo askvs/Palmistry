@@ -11,13 +11,14 @@ const TONES = {
   amber: "border-amber-200 bg-amber-50 text-amber-800",
 };
 
-export default function Badge({ tone = "slate", className = "", children }) {
+export default function Badge({ tone = "slate", dot = false, className = "", children }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium ${
+      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-[3px] text-[11px] font-semibold ${
         TONES[tone] || TONES.slate
       } ${className}`}
     >
+      {dot && <span className="h-1.5 w-1.5 rounded-full bg-current opacity-70" aria-hidden="true" />}
       {children}
     </span>
   );

@@ -12,7 +12,9 @@ const VARIANTS = {
   dangerGhost:
     "border border-rose-200 bg-white text-rose-600 hover:border-rose-300 hover:bg-rose-50 active:bg-rose-100",
   accent:
-    "bg-gradient-to-r from-accent-500 to-accent-600 text-white shadow-sm shadow-accent-600/25 hover:from-accent-600 hover:to-accent-700",
+    "bg-accent-400 text-slate-900 shadow-sm shadow-accent-500/30 hover:bg-accent-500 active:bg-accent-600",
+  ceremonial:
+    "bg-gradient-to-r from-violet-500 via-primary-600 to-primary-700 text-white shadow-sm shadow-primary-600/30 hover:from-violet-600 hover:via-primary-700 hover:to-primary-800 active:from-primary-700",
 };
 
 const SIZES = {
@@ -44,11 +46,13 @@ export default function Button({
   ...rest
 }) {
   const classes = [
-    "inline-flex cursor-pointer items-center justify-center rounded-full font-medium transition-colors duration-150 select-none",
+    "inline-flex cursor-pointer items-center justify-center rounded-full font-medium transition-[background-color,box-shadow,transform,color] duration-200 select-none",
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600",
     "disabled:pointer-events-none disabled:opacity-50",
+    "hover:-translate-y-px active:scale-[0.98]",
     SIZES[size] || SIZES.md,
     VARIANTS[variant] || VARIANTS.primary,
+    variant === "accent" || variant === "ceremonial" ? "sheen-sweep" : "",
     fullWidth ? "w-full" : "",
     className,
   ]
