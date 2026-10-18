@@ -48,7 +48,7 @@ function MetricChips({ metrics = [] }) {
           <dd className="mt-0.5 text-lg font-bold tracking-tight text-slate-900">
             {metric.value}
           </dd>
-          {metric.hint && <dd className="text-[11px] text-slate-400">{metric.hint}</dd>}
+          {metric.hint && <dd className="text-[11px] text-slate-500">{metric.hint}</dd>}
         </div>
       ))}
     </dl>
@@ -268,7 +268,7 @@ export default function DashboardAssistant({ role }) {
         </form>
 
         {context?.disclaimer && (
-          <p className="flex items-start gap-2 border-t border-slate-100 pt-3 text-[11px] italic leading-relaxed text-slate-400">
+          <p className="flex items-start gap-2 border-t border-slate-100 pt-3 text-[11px] italic leading-relaxed text-slate-500">
             <ChatIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             {context.disclaimer}
           </p>

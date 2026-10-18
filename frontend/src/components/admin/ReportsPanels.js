@@ -260,7 +260,7 @@ export function PerformanceReportPanel({ days }) {
                 hint="Share of requests that returned 5xx"
               />
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Samples from {new Date(api.first_sample_at).toLocaleString()} to{" "}
               {new Date(api.last_sample_at).toLocaleString()} · health probes and API docs are
               excluded.
@@ -396,7 +396,7 @@ export function ErrorReportPanel({ days }) {
                     HTTP {item.status_code}
                   </span>
                   {item.occurrences > 1 && (
-                    <span className="text-xs font-medium text-slate-400">
+                    <span className="text-xs font-medium text-slate-500">
                       ×{item.occurrences}
                     </span>
                   )}
@@ -409,7 +409,7 @@ export function ErrorReportPanel({ days }) {
                 <p className="mt-1.5 break-words text-sm text-slate-700">
                   {item.description || "No description recorded"}
                 </p>
-                <p className="mt-1 text-xs text-slate-400">
+                <p className="mt-1 text-xs text-slate-500">
                   Last seen {new Date(item.last_seen_at).toLocaleString()} · first seen{" "}
                   {new Date(item.first_seen_at).toLocaleString()}
                 </p>

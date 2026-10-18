@@ -143,7 +143,7 @@ function SidebarBody({ onNavigate }) {
       </Link>
 
       <nav className="flex-1 space-y-1" aria-label="Consultant sections">
-        <p className="px-3 pb-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+        <p className="px-3 pb-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">
           Workspace
         </p>
         {CONSULTANT_ROUTES.map((item) => (
@@ -155,7 +155,7 @@ function SidebarBody({ onNavigate }) {
           />
         ))}
 
-        <p className="px-3 pb-1 pt-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+        <p className="px-3 pb-1 pt-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">
           Account
         </p>
         {CONSULTANT_SECONDARY_ROUTES.map((item) => (
@@ -224,7 +224,7 @@ function ShellHeader({ onOpenMenu }) {
 
         <div className="min-w-0 flex-1">
           <nav aria-label="Breadcrumb" className="hidden sm:block">
-            <ol className="flex items-center gap-1.5 text-[11px] font-medium text-slate-400">
+            <ol className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500">
               <li>
                 <Link href="/consultant/dashboard" className="transition hover:text-primary-600">
                   Consultant
@@ -254,7 +254,7 @@ function ShellHeader({ onOpenMenu }) {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search clients…"
-            className="h-9 w-56 rounded-full border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-800 transition placeholder:text-slate-400 focus-border-primary-300 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary-600"
+            className="h-9 w-56 rounded-full border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-800 transition placeholder:text-slate-500 focus-border-primary-300 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary-600"
           />
         </form>
 
@@ -350,14 +350,14 @@ export default function ConsultantLayout({ children }) {
 
   if (blocked) {
     return (
-      <div className="page-glow flex min-h-screen items-center justify-center text-slate-500">
+      <div className="aurora flex min-h-screen items-center justify-center text-slate-500">
         <p className="text-sm">Redirecting…</p>
       </div>
     );
   }
 
   return (
-    <div className="page-glow flex min-h-screen text-slate-900">
+    <div className="aurora flex min-h-screen text-slate-900">
       <a
         href="#consultant-main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg bg-white px-4 py-2 text-sm font-medium shadow-md"
@@ -408,7 +408,7 @@ export default function ConsultantLayout({ children }) {
         </main>
 
         <footer className="border-t border-slate-200/70 bg-white/60 px-4 py-5 sm:px-6 lg:px-8">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
             <span className="inline-flex items-center gap-1.5">
               <CompassIcon className="h-3.5 w-3.5 text-primary-500" />
               Palmistry &amp; Tarot · Spiritual Consultant workspace

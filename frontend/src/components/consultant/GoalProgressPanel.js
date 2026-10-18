@@ -9,7 +9,7 @@ function ActivityRow({ label, value, hint }) {
     <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
       <p className="text-xs font-medium text-slate-500">{label}</p>
       <p className="mt-0.5 text-lg font-bold text-slate-900">{value}</p>
-      {hint && <p className="text-[11px] text-slate-400">{hint}</p>}
+      {hint && <p className="text-[11px] text-slate-500">{hint}</p>}
     </div>
   );
 }
@@ -57,7 +57,7 @@ export default function GoalProgressPanel({ client }) {
                     <div className="min-w-0">
                       <p className="text-sm font-medium leading-relaxed text-slate-800">{goal}</p>
                       {client?.interests?.length > 0 && (
-                        <p className="mt-1 text-[11px] text-slate-400">
+                        <p className="mt-1 text-[11px] text-slate-500">
                           Related interests: {client.interests.slice(0, 4).join(", ")}
                         </p>
                       )}
@@ -95,14 +95,14 @@ export default function GoalProgressPanel({ client }) {
               tone="emerald"
               label="Share of this client's guidance threads resolved"
             />
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-slate-500">
               Activity, not a measurement of inner progress — the platform never scores a
               seeker&rsquo;s personal growth.
             </p>
           </div>
 
           {client?.lastConsultationAt && (
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Last contact {new Date(client.lastConsultationAt).toLocaleString()}
             </p>
           )}

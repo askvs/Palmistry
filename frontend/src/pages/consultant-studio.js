@@ -121,11 +121,6 @@ export default function ConsultantStudioPage() {
         description="Publish availability, accept booking requests, run live Google Meet
           sessions, and keep private notes on every conversation."
         gradient="gold"
-        actions={
-          <Button href="/sessions" variant="secondary" icon={CalendarIcon}>
-            My sessions
-          </Button>
-        }
       />
 
       <Segmented
@@ -288,10 +283,10 @@ function OverviewTab({ onNavigate }) {
                     <>
                       <StarIcon className="h-4 w-4 text-accent-500" />
                       {Number(profile.avg_rating).toFixed(1)}
-                      <span className="text-xs text-slate-400">({profile.review_count})</span>
+                      <span className="text-xs text-slate-500">({profile.review_count})</span>
                     </>
                   ) : (
-                    <span className="text-xs text-slate-400">No reviews yet</span>
+                    <span className="text-xs text-slate-500">No reviews yet</span>
                   )}
                 </dd>
               </div>
@@ -1011,7 +1006,7 @@ function SlotsPanel() {
                       </>
                     )}
                     {slot.status === "booked" && (
-                      <span className="text-[11px] text-slate-400">booked</span>
+                      <span className="text-[11px] text-slate-500">booked</span>
                     )}
                   </div>
                 ))}
@@ -1566,7 +1561,7 @@ function SessionNotesPanel({ bookings = [], target, onTargetChange, onChanged })
 
           <ul className="space-y-2">
             {notes.length === 0 ? (
-              <li className="text-xs text-slate-400">No notes on this session yet.</li>
+              <li className="text-xs text-slate-500">No notes on this session yet.</li>
             ) : (
               notes.map((note) => (
                 <li
@@ -1580,7 +1575,7 @@ function SessionNotesPanel({ bookings = [], target, onTargetChange, onChanged })
                     </Badge>
                   </div>
                   <div className="mt-2 flex flex-wrap items-center gap-2">
-                    <span className="text-[11px] text-slate-400">
+                    <span className="text-[11px] text-slate-500">
                       {note.author_name} · {formatDateTime(note.created_at)}
                     </span>
                     <Button
@@ -1616,7 +1611,7 @@ function SessionNotesPanel({ bookings = [], target, onTargetChange, onChanged })
               rows={3}
               maxLength={4000}
               placeholder="What did you notice in this session? Symbols, themes, follow-ups…"
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             />
             <div className="flex flex-wrap items-center justify-between gap-3">
               <label className="flex items-center gap-2 text-xs text-slate-600">

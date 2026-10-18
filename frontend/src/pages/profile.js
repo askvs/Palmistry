@@ -54,7 +54,7 @@ const AVATAR_MAX_BYTES = 5 * 1024 * 1024;
 
 // Unified input class — every field on this page uses this exact string.
 const INPUT_CLASS =
-  "w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-xs transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:cursor-not-allowed disabled:opacity-60";
+  "w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:cursor-not-allowed disabled:opacity-60";
 
 const QUICK_ACTIONS = [
   { href: "/readings/palm", Icon: HandIcon, title: "New Palm Scan", hint: "Upload a palm photo for CV analysis" },
@@ -484,7 +484,7 @@ export default function ProfilePage() {
                 </Button>
               )}
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-slate-500">
               JPG, PNG or WEBP up to {Math.round(AVATAR_MAX_BYTES / (1024 * 1024))} MB.
             </p>
           </div>

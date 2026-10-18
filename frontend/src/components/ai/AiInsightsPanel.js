@@ -3,20 +3,42 @@ import Button from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/States";
 import { AlertIcon, BrainIcon, ClockIcon, RetryIcon, SparkleIcon } from "@/components/icons";
 
+// Older rule-engine fallbacks stored their raw payload JSON as `body`; unwrap it so the
+// narrative is displayed instead of the JSON blob.
+function unwrapLegacyRuleBody(ai) {
+  const body = ai.body;
+  if (typeof body !== "string" || !body.trim().startsWith("{")) return ai;
+  try {
+    const payload = JSON.parse(body);
+    if (payload && typeof payload === "object" && typeof payload.narrative === "string") {
+      return {
+        ...ai,
+        rule_based: ai.rule_based || payload.rule_based === true,
+        body: payload.narrative,
+        guidance: ai.guidance?.length ? ai.guidance : payload.guidance,
+      };
+    }
+  } catch {
+    // Not JSON — keep the original body.
+  }
+  return ai;
+}
+
 // Map any known AI interpretation payload onto the panel's display shape.
 export function normalizeAiInterpretation(ai) {
   if (!ai || typeof ai !== "object") return null;
+  const source = unwrapLegacyRuleBody(ai);
   const domainInsights =
-    ai.domain_insights && Object.keys(ai.domain_insights).length > 0
-      ? ai.domain_insights
-      : ai.action_plan?.length > 0
-        ? { "Action plan": ai.action_plan.map((step, i) => `${i + 1}. ${step}`).join(" ") }
+    source.domain_insights && Object.keys(source.domain_insights).length > 0
+      ? source.domain_insights
+      : source.action_plan?.length > 0
+        ? { "Action plan": source.action_plan.map((step, i) => `${i + 1}. ${step}`).join(" ") }
         : null;
   return {
-    ...ai,
-    summary: ai.summary || ai.deep_narrative || "",
-    body: ai.body || ai.contextual_insight || "",
-    guidance: ai.guidance?.length ? ai.guidance : ai.wisdom_points || [],
+    ...source,
+    summary: source.summary || source.deep_narrative || "",
+    body: source.body || source.contextual_insight || "",
+    guidance: source.guidance?.length ? source.guidance : source.wisdom_points || [],
     domain_insights: domainInsights || undefined,
   };
 }
@@ -71,7 +93,7 @@ export default function AiInsightsPanel({
       {loading && (
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-primary-100 bg-white/80 px-4 py-10">
           <Spinner label="Generating your AI interpretation…" />
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             The model is reading your {readingTypeLabel} — this usually takes a few seconds.
           </p>
         </div>
@@ -103,9 +125,15 @@ export default function AiInsightsPanel({
               <BrainIcon className="h-4 w-4" />
               Interpretation
             </h3>
-            {(ai.engine || ai.provider) && (
-              <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[11px] font-medium text-slate-500">
-                {ai.engine || ai.provider}
+            {(ai.rule_based || ai.engine || ai.provider) && (
+              <span
+                className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${
+                  ai.rule_based
+                    ? "border-amber-200 bg-amber-50 text-amber-700"
+                    : "border-slate-200 bg-slate-50 text-slate-500"
+                }`}
+              >
+                {ai.rule_based ? "Rule-based fallback" : ai.engine || ai.provider}
               </span>
             )}
           </div>
@@ -149,9 +177,17 @@ export default function AiInsightsPanel({
           )}
 
           {ai.disclaimer && (
-            <p className="border-t border-slate-100 pt-3 text-[11px] italic leading-relaxed text-slate-400">
+            <p className="border-t border-slate-100 pt-3 text-[11px] italic leading-relaxed text-slate-500">
               {ai.disclaimer}
             </p>
+          )}
+
+          {ai.rule_based && onGenerate && (
+            <div className="flex justify-end">
+              <Button variant="secondary" size="sm" icon={RetryIcon} onClick={onGenerate}>
+                Retry AI interpretation
+              </Button>
+            </div>
           )}
         </div>
       )}
@@ -175,7 +211,7 @@ export default function AiInsightsPanel({
             <Button variant="accent" className="mt-5" icon={SparkleIcon} onClick={onGenerate}>
               Generate AI Insight
             </Button>
-            <p className="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+            <p className="mt-3 flex items-center gap-1.5 text-[11px] text-slate-500">
               <ClockIcon className="h-3.5 w-3.5" />
               Takes a few seconds · saved to this reading once generated
             </p>

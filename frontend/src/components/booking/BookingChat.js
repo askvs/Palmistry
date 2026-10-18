@@ -106,7 +106,7 @@ export default function BookingChat({ bookingId, counterpartName = "the other pa
               >
                 {message.body}
               </div>
-              <span className="mt-1 text-[11px] text-slate-400">
+              <span className="mt-1 text-[11px] text-slate-500">
                 {message.is_me ? "You" : message.sender_name || "—"} ·{" "}
                 {formatDateTime(message.created_at)}
               </span>
@@ -122,7 +122,7 @@ export default function BookingChat({ bookingId, counterpartName = "the other pa
           onChange={(event) => setDraft(event.target.value)}
           placeholder="Write a message…"
           maxLength={4000}
-          className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+          className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
         />
         <Button type="submit" size="sm" icon={SendIcon} disabled={sending || !draft.trim()}>
           Send

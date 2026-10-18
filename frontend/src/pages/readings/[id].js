@@ -273,7 +273,7 @@ export default function ReadingDetailPage() {
                     <Badge tone="emerald">{reading.status}</Badge>
                   </div>
 
-                  <div className="text-xs text-slate-400">
+                  <div className="text-xs text-slate-500">
                     {reading.created_at ? new Date(reading.created_at).toLocaleString() : ""}
                   </div>
                 </div>
@@ -425,7 +425,7 @@ export default function ReadingDetailPage() {
                                     {card.arcana} {card.suit && card.suit !== "None" ? `• ${card.suit}` : ""}
                                   </div>
                                   <div className="text-xs text-slate-500">
-                                    <span className="text-slate-400">Role:</span> {posMeaning}
+                                    <span className="text-slate-500">Role:</span> {posMeaning}
                                   </div>
                                 </div>
                               </div>
@@ -620,7 +620,7 @@ export default function ReadingDetailPage() {
 
             {/* Safety Disclaimer */}
             <div className="rounded-xl border border-slate-200/70 bg-white/60 p-4 text-center">
-              <p className="text-[11px] italic text-slate-400">
+              <p className="text-[11px] italic text-slate-500">
                 Safety Notice: Interpretations and readings are intended solely for self-reflection,
                 mindfulness, and entertainment. They do not constitute formal medical or financial advice.
               </p>

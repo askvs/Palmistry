@@ -20,8 +20,11 @@ import {
   FeedbackForm,
 } from "@/components/booking/shared";
 import BookingChat from "@/components/booking/BookingChat";
+import MeetingCard from "@/components/booking/MeetingCard";
 import TimeProposalForm from "@/components/booking/TimeProposalForm";
 import { useAsyncData } from "@/hooks/useAsyncData";
+import { useNow } from "@/hooks/useNow";
+import { useRoleGuard } from "@/hooks/useRoleGuard";
 import {
   cancelBooking,
   confirmBooking,
@@ -48,6 +51,11 @@ const PAGE_SIZE = 20;
 // One booking row; onChanged refreshes the list after a mutation.
 function BookingRow({ booking, onChanged }) {
   const toast = useToast();
+  // Ticking clock so the Join button unlocks without a page reload; parked
+  // unless this row is a confirmed session with a link to join.
+  const now = useNow({
+    enabled: booking.status === "accepted" && Boolean(booking.meet_link),
+  });
   const [open, setOpen] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -55,8 +63,8 @@ function BookingRow({ booking, onChanged }) {
   const [showChat, setShowChat] = useState(false);
   const [showCounter, setShowCounter] = useState(false);
 
-  const joinable = canJoinMeet(booking);
   const meta = BOOKING_STATUS[booking.status] || {};
+  const joinable = canJoinMeet(booking, now);
   const isNegotiating = booking.status === "pending" || booking.status === "countered";
   const awaitingSeeker = booking.status === "countered";
   const canChat = isNegotiating || booking.status === "accepted";
@@ -131,17 +139,24 @@ function BookingRow({ booking, onChanged }) {
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          {joinable && (
-            <Button
-              href={booking.meet_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              size="sm"
-              icon={VideoIcon}
-            >
-              Join Google Meet
-            </Button>
-          )}
+          {/* Confirmed sessions get a one-click Join at the top of the row. */}
+          {booking.status === "accepted" &&
+            booking.meet_link &&
+            (joinable ? (
+              <Button
+                href={booking.meet_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                size="sm"
+                icon={VideoIcon}
+              >
+                Join Google Meet
+              </Button>
+            ) : (
+              <Button disabled size="sm" icon={VideoIcon}>
+                Join Google Meet
+              </Button>
+            ))}
           {canChat && (
             <Button
               variant="ghost"
@@ -238,6 +253,9 @@ function BookingRow({ booking, onChanged }) {
         </div>
       )}
 
+      {/* Confirmed sessions surface the meeting card up-front so joining is one click. */}
+      {booking.status === "accepted" && <MeetingCard booking={booking} />}
+
       {canChat && showChat && (
         <div className="mt-3">
           <BookingChat bookingId={booking.id} counterpartName={booking.consultant_name} compact />
@@ -252,27 +270,6 @@ function BookingRow({ booking, onChanged }) {
 
       {open && (
         <div className="mt-4 space-y-4 border-t border-slate-100 pt-4">
-          {booking.status === "accepted" && booking.meet_link && (
-            <div className="rounded-2xl border border-emerald-200/60 bg-emerald-50 px-4 py-3">
-              <p className="text-xs font-bold uppercase tracking-wide text-emerald-700">
-                Google Meet
-              </p>
-              <a
-                href={booking.meet_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-1 block break-all text-sm font-semibold text-emerald-800 underline decoration-emerald-300 underline-offset-2 hover:text-emerald-900"
-              >
-                {booking.meet_link}
-              </a>
-              {!joinable && (
-                <p className="mt-1.5 text-xs text-emerald-700">
-                  The link opens 30 minutes before the session starts.
-                </p>
-              )}
-            </div>
-          )}
-
           {booking.notes && (
             <div>
               <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
@@ -301,7 +298,7 @@ function BookingRow({ booking, onChanged }) {
                     className="rounded-2xl border border-slate-200 bg-white px-4 py-3"
                   >
                     <p className="text-xs leading-relaxed text-slate-700">{note.body}</p>
-                    <p className="mt-1 text-[11px] text-slate-400">
+                    <p className="mt-1 text-[11px] text-slate-500">
                       {note.author_name || "Consultant"} · {formatDateTime(note.created_at)}
                     </p>
                   </li>
@@ -339,6 +336,9 @@ function BookingRow({ booking, onChanged }) {
 
 export default function SessionsPage() {
   const router = useRouter();
+  // Seeker/reader hub: consultants are redirected to their dashboard — they run
+  // their sessions from Live Consultation and never book as seekers.
+  const blocked = useRoleGuard();
   const [scope, setScope] = useState("upcoming");
   const [offset, setOffset] = useState(0);
   const justBooked = Array.isArray(router.query.booked)
@@ -357,6 +357,14 @@ export default function SessionsPage() {
 
   // The just-booked booking stays highlighted while it is still in the URL.
   const highlight = justBooked ?? null;
+
+  if (blocked) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center text-sm text-slate-500">
+        Redirecting…
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-in space-y-8">

@@ -202,7 +202,7 @@ export default function ClientTrendChart({
               <Line data={chartData} options={options} />
             </div>
 
-            <p className="text-[11px] leading-relaxed text-slate-400">
+            <p className="text-[11px] leading-relaxed text-slate-500">
               Scores are relative signal strengths (0–100%), not absolute outcomes. They describe
               the direction and consistency of the themes behind {clientLabel.toLowerCase()}&rsquo;s
               readings for the selected period.

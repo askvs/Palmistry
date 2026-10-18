@@ -210,7 +210,7 @@ export default function CardReveal({ cards = [], onCardSelect, activeIndex = 0 }
                 <div className="border-t border-slate-100 pt-2">
                   <h4 className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-500">
                     {currentCard.is_reversed ? "Shadow Insights" : "Light Insights"}
-                    <span className="ml-1 font-normal normal-case text-slate-400">
+                    <span className="ml-1 font-normal normal-case text-slate-500">
                       — deeper symbolism for this orientation
                     </span>
                   </h4>

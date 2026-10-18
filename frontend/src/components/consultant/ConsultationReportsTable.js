@@ -100,7 +100,7 @@ export default function ConsultationReportsTable({
             <div className="hidden overflow-x-auto md:block">
               <table className="w-full min-w-[42rem] border-collapse text-left">
                 <thead>
-                  <tr className="border-b border-slate-100 text-[11px] uppercase tracking-wider text-slate-400">
+                  <tr className="border-b border-slate-100 text-[11px] uppercase tracking-wider text-slate-500">
                     <th scope="col" className="px-4 py-3 font-semibold">
                       Client
                     </th>
@@ -208,7 +208,7 @@ export default function ConsultationReportsTable({
                         {ready ? "Ready" : "Generating"}
                       </span>
                     </div>
-                    <p className="mt-2 text-xs text-slate-400">{formatDate(report.date)}</p>
+                    <p className="mt-2 text-xs text-slate-500">{formatDate(report.date)}</p>
                     <div className="mt-3 flex items-center gap-2">
                       <Button
                         variant="secondary"

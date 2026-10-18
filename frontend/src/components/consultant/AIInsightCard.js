@@ -21,7 +21,7 @@ export function AIInsightCard({ insight, action }) {
             <h4 className="text-sm font-semibold text-slate-900">{insight.category}</h4>
             <SourceBadge source="demo" />
           </div>
-          <p className="mt-0.5 text-[11px] text-slate-400">
+          <p className="mt-0.5 text-[11px] text-slate-500">
             {formatDateTime(insight.createdAt)}
             {insight.reviewed ? " · reviewed by you" : ""}
           </p>

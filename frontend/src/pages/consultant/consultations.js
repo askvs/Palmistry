@@ -120,7 +120,7 @@ export default function ConsultantConsultationsPage() {
           {error ? (
             <SectionError title="Unable to load your consultations." onRetry={refresh} />
           ) : loading ? (
-            <p className="py-6 text-center text-sm text-slate-400">Loading consultations…</p>
+            <p className="py-6 text-center text-sm text-slate-500">Loading consultations…</p>
           ) : rows.length === 0 ? (
             <EmptyState
               icon={ChatIcon}
@@ -145,7 +145,7 @@ export default function ConsultantConsultationsPage() {
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="truncate text-sm font-semibold text-slate-900">{row.title}</p>
-                        <span className="text-xs text-slate-400">· {row.clientName}</span>
+                        <span className="text-xs text-slate-500">· {row.clientName}</span>
                       </div>
                       <p className="mt-0.5 truncate text-xs text-slate-500">
                         {formatDateTime(row.when)} · {row.meta} · {relativeLabel(row.when)}

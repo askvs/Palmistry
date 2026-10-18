@@ -50,11 +50,11 @@ export default function AuditLogPanel({ limit = 100 }) {
                 <span className="text-xs font-medium text-slate-500">
                   {entry.actor_email || "system"}
                 </span>
-                <span className="shrink-0 text-xs text-slate-400">
+                <span className="shrink-0 text-xs text-slate-500">
                   {new Date(entry.created_at).toLocaleString()}
                 </span>
               </div>
-              {entry.detail && <p className="mt-1 pl-1 text-xs text-slate-400">{entry.detail}</p>}
+              {entry.detail && <p className="mt-1 pl-1 text-xs text-slate-500">{entry.detail}</p>}
             </li>
           ))}
         </ul>

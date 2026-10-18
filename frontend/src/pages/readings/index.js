@@ -275,7 +275,7 @@ export default function ReadingsIndexPage() {
       {/* 4. SUCCESS STATE: READINGS GRID */}
       {!loading && !error && filteredReadings.length > 0 && (
         <>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Showing {filteredReadings.length} of {total}{" "}
             {filterType === "all" ? "readings" : `${filterType} readings`}
           </p>
@@ -301,7 +301,7 @@ export default function ReadingsIndexPage() {
                       <Badge tone={isPalm ? "accent" : "primary"}>
                         {isPalm ? "Palm" : "Tarot"}
                       </Badge>
-                      <span className="text-xs text-slate-400">{dateStr}</span>
+                      <span className="text-xs text-slate-500">{dateStr}</span>
                     </div>
 
                     {/* Title & Summary */}
@@ -368,7 +368,7 @@ export default function ReadingsIndexPage() {
 
       {/* Ethical Notice */}
       <div className="rounded-2xl border border-slate-200/80 bg-white/60 p-5 text-center">
-        <p className="mx-auto max-w-3xl text-xs italic leading-relaxed text-slate-400">
+        <p className="mx-auto max-w-3xl text-xs italic leading-relaxed text-slate-500">
           Safety &amp; Ethics Notice: All palmistry biometric analyses, tarot spreads, and personal
           intelligence reports are intended strictly for introspective guidance, personal reflection,
           and entertainment. They do not substitute for professional medical, psychiatric, or

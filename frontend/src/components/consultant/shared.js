@@ -174,7 +174,7 @@ export function FieldLabel({ children, hint }) {
       <span className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
         {children}
       </span>
-      {hint && <span className="mt-0.5 block text-xs text-slate-400">{hint}</span>}
+      {hint && <span className="mt-0.5 block text-xs text-slate-500">{hint}</span>}
     </span>
   );
 }

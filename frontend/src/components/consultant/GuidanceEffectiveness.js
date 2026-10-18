@@ -120,7 +120,7 @@ export default function GuidanceEffectiveness({ data, loading = false, error = n
         {loading ? (
           <SkeletonRow lines={4} />
         ) : breakdown.length === 0 ? (
-          <p className="py-6 text-center text-sm text-slate-400">No breakdown available yet.</p>
+          <p className="py-6 text-center text-sm text-slate-500">No breakdown available yet.</p>
         ) : (
           <ul className="space-y-4">
             {breakdown.map((row) => (
@@ -128,7 +128,7 @@ export default function GuidanceEffectiveness({ data, loading = false, error = n
                 <div className="mb-1.5 flex items-center justify-between gap-3 text-xs">
                   <span className="font-medium text-slate-600">
                     {row.area}
-                    <span className="ml-2 text-slate-400">{row.sessions} sessions</span>
+                    <span className="ml-2 text-slate-500">{row.sessions} sessions</span>
                   </span>
                   <span className="font-bold text-slate-900">{Math.round(row.value * 100)}%</span>
                 </div>

@@ -83,7 +83,7 @@ export default function TarotHistoryTable({
                   <span className="text-sm font-semibold text-slate-900">{entry.spread}</span>
                   <Badge tone="accent">{entry.topic}</Badge>
                 </div>
-                <p className="mt-0.5 text-xs text-slate-400">{formatDate(entry.date)}</p>
+                <p className="mt-0.5 text-xs text-slate-500">{formatDate(entry.date)}</p>
               </div>
               <Button
                 variant="secondary"

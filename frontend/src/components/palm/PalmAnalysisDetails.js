@@ -106,7 +106,7 @@ export function PalmMountProfiles({ mounts = [] }) {
                 <h4 className="font-display text-sm font-bold text-slate-900">
                   {mount.name?.replace("Mount of ", "")}
                 </h4>
-                <p className="text-[10px] uppercase tracking-wider text-slate-400">
+                <p className="text-[10px] uppercase tracking-wider text-slate-500">
                   Ruled by {mount.planetary_ruler || "—"}
                 </p>
               </div>
@@ -190,7 +190,7 @@ export function PalmLinesList({ lines = [], activeLineId = null, onHoverLine }) 
                 />
                 <h4 className="text-sm font-bold text-slate-900">{line.name}</h4>
               </div>
-              <span className="text-xs italic text-slate-400">{line.classical_name}</span>
+              <span className="text-xs italic text-slate-500">{line.classical_name}</span>
             </div>
 
             <div className="mt-2 flex flex-wrap gap-1.5">

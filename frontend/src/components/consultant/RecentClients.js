@@ -18,7 +18,7 @@ function TableRow({ client, onStartConsultation }) {
           <ClientAvatar name={client.name} size="sm" />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-slate-900">{client.name}</p>
-            <p className="truncate text-xs text-slate-400">
+            <p className="truncate text-xs text-slate-500">
               {client.ageGroup || "—"} · {client.consultationCount} consultation
               {client.consultationCount === 1 ? "" : "s"}
             </p>
@@ -60,7 +60,7 @@ function CardRow({ client, onStartConsultation }) {
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-slate-900">{client.name}</p>
-              <p className="truncate text-xs text-slate-400">
+              <p className="truncate text-xs text-slate-500">
                 {client.ageGroup || "—"} · {client.consultationCount} consultation
                 {client.consultationCount === 1 ? "" : "s"}
               </p>
@@ -70,19 +70,19 @@ function CardRow({ client, onStartConsultation }) {
 
           <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
             <div>
-              <dt className="text-slate-400">Last reading</dt>
+              <dt className="text-slate-500">Last reading</dt>
               <dd className="font-medium text-slate-700">
                 {client.latestReadingAt ? formatDate(client.latestReadingAt) : "—"}
               </dd>
             </div>
             <div>
-              <dt className="text-slate-400">Reading type</dt>
+              <dt className="text-slate-500">Reading type</dt>
               <dd className="font-medium text-slate-700">
                 {READING_TYPE_LABELS[client.latestReading] || client.latestReading || "—"}
               </dd>
             </div>
             <div>
-              <dt className="text-slate-400">Last consultation</dt>
+              <dt className="text-slate-500">Last consultation</dt>
               <dd className="font-medium text-slate-700">
                 {relativeLabel(client.lastConsultationAt)}
               </dd>
@@ -157,7 +157,7 @@ export default function RecentClients({
           <div className="hidden overflow-x-auto md:block">
             <table className="w-full min-w-[46rem] border-collapse text-left">
               <thead>
-                <tr className="border-b border-slate-100 text-[11px] uppercase tracking-wider text-slate-400">
+                <tr className="border-b border-slate-100 text-[11px] uppercase tracking-wider text-slate-500">
                   <th scope="col" className="px-4 py-3 font-semibold">
                     Client
                   </th>

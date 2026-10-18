@@ -302,10 +302,10 @@ export default function ConsultantDetailPage() {
                     <>
                       <StarIcon className="h-4 w-4 text-accent-500" />
                       {Number(profile.avg_rating).toFixed(1)}
-                      <span className="text-xs text-slate-400">({profile.review_count})</span>
+                      <span className="text-xs text-slate-500">({profile.review_count})</span>
                     </>
                   ) : (
-                    <span className="text-xs text-slate-400">No reviews yet</span>
+                    <span className="text-xs text-slate-500">No reviews yet</span>
                   )}
                 </dd>
               </div>
@@ -346,7 +346,7 @@ export default function ConsultantDetailPage() {
                         {review.review}
                       </p>
                     )}
-                    <p className="mt-1.5 text-[11px] text-slate-400">
+                    <p className="mt-1.5 text-[11px] text-slate-500">
                       {review.booking_subject} · {formatDateTime(review.created_at)}
                     </p>
                   </li>
@@ -426,7 +426,7 @@ export default function ConsultantDetailPage() {
                       placeholder="e.g. Career clarity, relationship guidance"
                       maxLength={200}
                       required
-                      className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-xs transition focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                      className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
                     />
                   </div>
 
@@ -444,7 +444,7 @@ export default function ConsultantDetailPage() {
                       rows={4}
                       maxLength={2000}
                       placeholder="Share context, dates, or the question you would like guidance on…"
-                      className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-xs transition focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                      className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
                     />
                   </div>
 
@@ -463,7 +463,7 @@ export default function ConsultantDetailPage() {
                       onChange={(event) => setMeetingLink(event.target.value)}
                       placeholder="Paste the meeting link for this session…"
                       maxLength={500}
-                      className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-xs transition focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                      className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -488,7 +488,7 @@ export default function ConsultantDetailPage() {
                   </Button>
                 </div>
 
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Requests stay pending until the consultant accepts. Once confirmed, the Google
                   Meet link shows on your{" "}
                   <Link href="/sessions" className="text-primary-600 hover:underline">
@@ -512,7 +512,7 @@ export default function ConsultantDetailPage() {
                 submitLabel="Send time request"
                 onSubmit={handlePropose}
               />
-              <p className="mt-3 text-xs text-slate-400">
+              <p className="mt-3 text-xs text-slate-500">
                 Proposed-time requests stay pending until the consultant accepts. You can
                 keep negotiating the time and chat with them from your{" "}
                 <Link href="/sessions" className="text-primary-600 hover:underline">

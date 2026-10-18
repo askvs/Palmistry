@@ -117,7 +117,7 @@ export default function SessionOversightPanel() {
                     {session.consultant_name || "Consultant"} ·{" "}
                     {new Date(session.start_time).toLocaleString()} · {session.duration_minutes} min
                   </p>
-                  <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+                  <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-slate-500">
                     {session.meet_link_booked ? (
                       <span className="inline-flex items-center gap-1">
                         <VideoIcon className="h-3 w-3" />
@@ -176,7 +176,7 @@ export default function SessionOversightPanel() {
                   tone="accent"
                   label="Average session rating out of five"
                 />
-                <p className="mt-1 text-xs text-slate-400">
+                <p className="mt-1 text-xs text-slate-500">
                   {sessions.review_count} review{sessions.review_count === 1 ? "" : "s"} submitted
                 </p>
               </div>
@@ -209,7 +209,7 @@ export default function SessionOversightPanel() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           Session oversight is read-only: administrators govern accounts, analytics and
           configuration. Booking and hosting belong to readers and consultants.
         </p>

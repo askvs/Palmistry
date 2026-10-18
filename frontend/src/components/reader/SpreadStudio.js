@@ -62,7 +62,7 @@ function PositionEditor({ positions, onChange }) {
           className="rounded-2xl border border-slate-200 bg-slate-50/50 p-3"
         >
           <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-bold uppercase tracking-wide text-slate-400">
+            <span className="text-xs font-bold uppercase tracking-wide text-slate-500">
               Card {index + 1}
             </span>
             <div className="flex items-center gap-1">
@@ -105,7 +105,7 @@ function PositionEditor({ positions, onChange }) {
                 onChange={(event) => update(index, "name", event.target.value)}
                 placeholder="e.g. The Obstacle"
                 maxLength={80}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
               />
             </label>
             <label className="block">
@@ -116,7 +116,7 @@ function PositionEditor({ positions, onChange }) {
                 onChange={(event) => update(index, "description", event.target.value)}
                 placeholder="What this position answers (optional)"
                 maxLength={500}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
               />
             </label>
           </div>
@@ -275,7 +275,7 @@ export default function SpreadStudio() {
                     {spread.description && (
                       <p className="mt-0.5 text-xs text-slate-500">{spread.description}</p>
                     )}
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-1 text-xs text-slate-500">
                       {spread.positions.map((p) => p.name).join(" · ")}
                     </p>
                   </div>
@@ -323,7 +323,7 @@ export default function SpreadStudio() {
                   onChange={(event) => setDraft({ ...draft, name: event.target.value })}
                   placeholder="e.g. Three Doors"
                   maxLength={120}
-                  className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                 />
               </label>
               <label className="block">
@@ -336,7 +336,7 @@ export default function SpreadStudio() {
                   onChange={(event) => setDraft({ ...draft, description: event.target.value })}
                   placeholder="When should this spread be used?"
                   maxLength={2000}
-                  className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                 />
               </label>
             </div>
@@ -386,7 +386,7 @@ export default function SpreadStudio() {
             {formError && <InlineError message={formError} />}
 
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 {draft.positions.length} of {MAX_POSITIONS} positions · order is the reading order
               </p>
               <div className="flex items-center gap-2">

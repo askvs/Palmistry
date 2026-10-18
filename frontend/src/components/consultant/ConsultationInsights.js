@@ -74,7 +74,7 @@ export default function ConsultationInsights({
                   </span>
                 </div>
                 <p className="mt-1 text-xs leading-relaxed text-slate-600">{item.explanation}</p>
-                <p className="mt-1.5 text-[11px] text-slate-400">
+                <p className="mt-1.5 text-[11px] text-slate-500">
                   {item.date ? formatDateTime(item.date) : "Live figure · updated now"}
                 </p>
               </div>

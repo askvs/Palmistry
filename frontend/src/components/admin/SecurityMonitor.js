@@ -153,7 +153,7 @@ export default function SecurityMonitor() {
                     </span>
                   </div>
                   <p className="mt-1 text-xs text-slate-600">{entry.message}</p>
-                  <p className="mt-0.5 text-xs text-slate-400">
+                  <p className="mt-0.5 text-xs text-slate-500">
                     {entry.occurrences} occurrence{entry.occurrences === 1 ? "" : "s"} · last seen{" "}
                     {new Date(entry.last_seen_at).toLocaleString()}
                     {entry.actor_email ? ` · ${entry.actor_email}` : ""}
@@ -185,7 +185,7 @@ export default function SecurityMonitor() {
         )}
       </Panel>
 
-      <p className="text-xs text-slate-400">
+      <p className="text-xs text-slate-500">
         Entries are deduplicated per (kind, method, path, status, message). The log is
         append-only: triaging records an audit entry and never deletes history.
       </p>

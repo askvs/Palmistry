@@ -223,7 +223,7 @@ export function MeetingLinkEditor({ booking, onSaved }) {
           value={value}
           onChange={(event) => setValue(event.target.value)}
           placeholder="https://meet.google.com/abc-defg-hij"
-          className="w-full rounded-2xl border border-slate-200 px-3.5 py-2 text-sm text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+          className="w-full rounded-2xl border border-slate-200 px-3.5 py-2 text-sm text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
         />
         <div className="shrink-0">
           <KitButton type="submit" size="sm" loading={busy} disabled={busy}>
@@ -289,7 +289,7 @@ export function SlotPicker({
               <span className="text-base font-bold text-slate-900">{day.dayOfMonth}</span>
               <span
                 className={`text-[10px] font-semibold ${
-                  hasSlots ? "text-emerald-600" : "text-slate-400"
+                  hasSlots ? "text-emerald-600" : "text-slate-500"
                 }`}
               >
                 {hasSlots ? `${day.available_slots} open` : "full"}
@@ -466,7 +466,7 @@ export function FeedbackForm({ booking, onSubmitted }) {
         rows={3}
         maxLength={4000}
         aria-label="Your review"
-        className="w-full rounded-2xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+        className="w-full rounded-2xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
       />
       {error && <InlineError message={error} />}
       <div className="flex justify-end">
@@ -496,7 +496,7 @@ export function BookingTimeline({ events = [] }) {
           <span className="absolute -left-[23px] top-1.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-primary-600 ring-2 ring-primary-200" />
           <p className="text-xs font-semibold text-slate-800">
             {(BOOKING_STATUS[event.to_status]?.label || event.to_status || event.event_type)}
-            <span className="ml-2 font-normal text-slate-400">
+            <span className="ml-2 font-normal text-slate-500">
               {formatDateTime(event.created_at)}
             </span>
           </p>

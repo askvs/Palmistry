@@ -145,7 +145,7 @@ export default function ConsultantsPage() {
                 value={searchInput}
                 onChange={(event) => setSearchInput(event.target.value)}
                 placeholder="Tarot, career, a name…"
-                className="w-full rounded-2xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm text-slate-900 placeholder:text-slate-400 shadow-xs transition focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="w-full rounded-2xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
               />
             </div>
           </div>

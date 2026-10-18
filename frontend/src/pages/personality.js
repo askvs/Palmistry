@@ -43,7 +43,7 @@ const ELEMENT_TONES = { Fire: "accent", Water: "blue", Air: "slate", Earth: "eme
 
 // Unified input class — every field on this page uses this exact string.
 const INPUT_CLASS =
-  "w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-xs transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:cursor-not-allowed disabled:opacity-60";
+  "w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:cursor-not-allowed disabled:opacity-60";
 
 const READING_DATE_FORMAT = {
   month: "short",
@@ -246,7 +246,7 @@ export default function PersonalityPage() {
                     <Badge tone="emerald">{Math.round(s.confidence || 0)}%</Badge>
                   </div>
                   <p className="text-xs leading-relaxed text-slate-500">{s.description}</p>
-                  <span className="mt-1 block text-[11px] text-slate-400">via {s.source}</span>
+                  <span className="mt-1 block text-[11px] text-slate-500">via {s.source}</span>
                 </div>
               ))}
             </div>
@@ -272,7 +272,7 @@ export default function PersonalityPage() {
                     </Badge>
                   </div>
                   <p className="text-xs leading-relaxed text-slate-500">{w.description}</p>
-                  <span className="mt-1 block text-[11px] text-slate-400">via {w.source}</span>
+                  <span className="mt-1 block text-[11px] text-slate-500">via {w.source}</span>
                 </div>
               ))}
             </div>
@@ -293,12 +293,12 @@ export default function PersonalityPage() {
                 <div key={i} className="rounded-2xl border border-slate-200 bg-white p-4">
                   <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                     <Badge tone="primary">{insight.category}</Badge>
-                    <span className="text-xs font-medium text-slate-400">
+                    <span className="text-xs font-medium text-slate-500">
                       {Math.round(insight.confidence || 0)}% confidence
                     </span>
                   </div>
                   <p className="text-sm leading-relaxed text-slate-700">{insight.insight}</p>
-                  <p className="mt-1 text-xs text-slate-400">{insight.context}</p>
+                  <p className="mt-1 text-xs text-slate-500">{insight.context}</p>
                 </div>
               ))}
             </div>
@@ -324,7 +324,7 @@ export default function PersonalityPage() {
                     <Badge tone="slate">{rec.type}</Badge>
                   </div>
                   <p className="text-sm leading-relaxed text-slate-700">{rec.recommendation}</p>
-                  <span className="mt-1 block text-[11px] text-slate-400">
+                  <span className="mt-1 block text-[11px] text-slate-500">
                     category: {rec.category} — via {rec.source}
                   </span>
                 </div>
@@ -420,7 +420,7 @@ export default function PersonalityPage() {
               <div>
                 <label htmlFor="tarot-reading" className="mb-1.5 block text-sm font-medium text-slate-700">
                   Tarot reading{" "}
-                  <span className="font-normal text-slate-400">(optional — for a combined profile)</span>
+                  <span className="font-normal text-slate-500">(optional — for a combined profile)</span>
                 </label>
                 {readingsLoading ? (
                   <SkeletonRow lines={2} />
@@ -450,7 +450,7 @@ export default function PersonalityPage() {
 
           <div>
             <label htmlFor="focus-question" className="mb-1.5 block text-sm font-medium text-slate-700">
-              Focus question <span className="font-normal text-slate-400">(optional)</span>
+              Focus question <span className="font-normal text-slate-500">(optional)</span>
             </label>
             <input
               id="focus-question"

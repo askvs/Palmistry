@@ -31,12 +31,12 @@ export default function ConsultantNotes({
             disabled={disabled}
             placeholder="Write private consultation notes…"
             aria-labelledby="consultant-notes-label"
-            className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm leading-relaxed text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:opacity-60"
+            className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm leading-relaxed text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:opacity-60"
           />
         </label>
 
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             {saved ? (
               <span className="inline-flex items-center gap-1.5 font-medium text-emerald-600">
                 <CheckIcon className="h-3.5 w-3.5" />

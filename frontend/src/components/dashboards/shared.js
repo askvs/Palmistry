@@ -58,7 +58,7 @@ export function PerDayBars({ series, days = 7, ariaLabel = "Daily activity chart
           </div>
         ))}
       </div>
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 px-1 text-xs text-slate-400">
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 px-1 text-xs text-slate-500">
         <div className="flex items-center gap-3">
           {counts.map((s) => (
             <span key={s.key} className="inline-flex items-center gap-1.5">
@@ -193,7 +193,7 @@ export function PersonalPracticeRow({ note, className = "" }) {
         <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
           Personal practice
         </p>
-        <p className="mt-0.5 text-xs text-slate-400">{note}</p>
+        <p className="mt-0.5 text-xs text-slate-500">{note}</p>
       </div>
       <KitButton href="/readings/tarot" variant="ghost" size="sm" icon={CardsIcon}>
         Tarot session
@@ -265,7 +265,7 @@ export function ReadingTimeline({ readings = [] }) {
             <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-2xs transition-all hover:border-primary-200 hover:shadow-md">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-slate-400">
+                  <span className="text-xs font-semibold text-slate-500">
                     {new Date(r.created_at).toLocaleDateString(undefined, {
                       month: "short",
                       day: "numeric",

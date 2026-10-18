@@ -71,7 +71,7 @@ function AskConsultantForm({ onCreated }) {
           placeholder="Topic (e.g. Career path, Relationship clarity)"
           aria-label="Question topic"
           maxLength={200}
-          className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+          className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
         />
         <textarea
           value={question}
@@ -79,7 +79,7 @@ function AskConsultantForm({ onCreated }) {
           placeholder="What would you like guidance on? Share as much context as you like…"
           aria-label="Your question"
           rows={3}
-          className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+          className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
         />
       </div>
       {error && (

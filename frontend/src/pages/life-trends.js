@@ -423,7 +423,7 @@ export default function LifeTrendsPage() {
               {Math.round((coverage.completeness ?? 0) * 100)}%
             </p>
 
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Engine {trends.engine}
               {trends.engine_version ? ` v${trends.engine_version}` : ""} · {trends.method}
               {generatedAt ? ` · generated ${generatedAt}` : ""}

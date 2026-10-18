@@ -53,17 +53,17 @@ export function ClientOverviewHeader({
 
             <dl className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
               <div>
-                <dt className="text-xs text-slate-400">Age group</dt>
+                <dt className="text-xs text-slate-500">Age group</dt>
                 <dd className="font-medium text-slate-700">{client.ageGroup || "—"}</dd>
               </div>
               <div>
-                <dt className="text-xs text-slate-400">Interests</dt>
+                <dt className="text-xs text-slate-500">Interests</dt>
                 <dd className="font-medium text-slate-700">
                   {client.interests.join(", ") || "Not recorded"}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs text-slate-400">Last consultation</dt>
+                <dt className="text-xs text-slate-500">Last consultation</dt>
                 <dd className="font-medium text-slate-700">
                   {client.lastConsultationAt
                     ? `${formatDate(client.lastConsultationAt)} · ${relativeLabel(
@@ -131,7 +131,7 @@ export function ClientOverviewCards({ client }) {
                   label={`${metric.label} score`}
                 />
               </div>
-              <p className="mt-2 text-[11px] text-slate-400">{metric.hint}</p>
+              <p className="mt-2 text-[11px] text-slate-500">{metric.hint}</p>
             </li>
           ))}
         </ul>
@@ -165,7 +165,7 @@ export function ClientConsultationHistory({ consultations = [], source }) {
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-slate-900">{session.purpose}</p>
-                  <p className="mt-0.5 text-xs text-slate-400">
+                  <p className="mt-0.5 text-xs text-slate-500">
                     {formatDate(session.startedAt)}
                     {session.durationMinutes ? ` · ${session.durationMinutes} min` : ""}
                     {session.followUpDate ? ` · follow-up ${formatDate(session.followUpDate)}` : ""}

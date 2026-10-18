@@ -84,7 +84,7 @@ export default function Home() {
           </Button>
         </div>
 
-        <p className="mt-4 text-xs text-slate-400">
+        <p className="mt-4 text-xs text-slate-500">
           Free during early access · No account required
         </p>
       </section>

@@ -218,7 +218,7 @@ function SelectionBoard({ spread, selections = [] }) {
                       This is the next slot you&rsquo;ll draw from the arc below.
                     </span>
                   ) : (
-                    <span className="italic text-slate-400">Awaiting card</span>
+                    <span className="italic text-slate-500">Awaiting card</span>
                   )}
                 </p>
                 {sel?.core_meaning ? (
@@ -539,7 +539,7 @@ export default function TarotReadingPage() {
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
                     placeholder="e.g., What underlying energies are shaping my career path?"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-500 transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
                   />
                 </div>
 
@@ -816,7 +816,7 @@ export default function TarotReadingPage() {
               </p>
             )}
 
-            <p className="mt-4 text-center text-[10px] text-slate-400">
+            <p className="mt-4 text-center text-[10px] text-slate-500">
               {result.metadata?.engine} • relevance{" "}
               {Math.round((result.metadata?.overall_relevance || 0.95) * 100)}% • Fisher-Yates PRNG
             </p>

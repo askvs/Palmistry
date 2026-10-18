@@ -34,7 +34,7 @@ function ClientCard({ client, onStartConsultation }) {
             <h3 className="truncate text-sm font-semibold text-slate-900">{client.name}</h3>
             <ClientStatusBadge status={client.status} />
           </div>
-          <p className="mt-0.5 truncate text-xs text-slate-400">
+          <p className="mt-0.5 truncate text-xs text-slate-500">
             Age {client.ageGroup || "—"} · {client.consultationCount} session
             {client.consultationCount === 1 ? "" : "s"} · {client.readingCount} reading
             {client.readingCount === 1 ? "" : "s"}
@@ -58,25 +58,25 @@ function ClientCard({ client, onStartConsultation }) {
 
       <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4 text-xs">
         <div>
-          <dt className="text-slate-400">Last consultation</dt>
+          <dt className="text-slate-500">Last consultation</dt>
           <dd className="mt-0.5 font-semibold text-slate-800">
             {client.lastConsultationAt ? relativeLabel(client.lastConsultationAt) : "—"}
           </dd>
         </div>
         <div>
-          <dt className="text-slate-400">Latest reading</dt>
+          <dt className="text-slate-500">Latest reading</dt>
           <dd className="mt-0.5 font-semibold text-slate-800">
             {client.latestReadingAt ? formatDate(client.latestReadingAt) : "—"}
           </dd>
         </div>
         <div>
-          <dt className="text-slate-400">Reading type</dt>
+          <dt className="text-slate-500">Reading type</dt>
           <dd className="mt-0.5 font-semibold text-slate-800">
             {READING_TYPE_LABELS[client.latestReading] || client.latestReading || "—"}
           </dd>
         </div>
         <div>
-          <dt className="text-slate-400">Follow-up</dt>
+          <dt className="text-slate-500">Follow-up</dt>
           <dd className="mt-0.5 font-semibold text-slate-800">
             {client.status === "follow_up" ? "Required" : "Not required"}
           </dd>
@@ -140,7 +140,7 @@ export default function ClientDirectory({
               value={search}
               onChange={(event) => onSearchChange?.(event.target.value)}
               placeholder="Search by name, interest or reading type…"
-              className="h-9 w-full rounded-full border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+              className="h-9 w-full rounded-full border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
             />
           </div>
 

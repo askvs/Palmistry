@@ -178,7 +178,7 @@ export default function ReaderDashboard() {
                         Verify & certify
                       </Button>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 transition group-hover:text-primary-600">
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 transition group-hover:text-primary-600">
                         View details
                         <ArrowRightIcon className="h-3.5 w-3.5" />
                       </span>
@@ -234,7 +234,7 @@ export default function ReaderDashboard() {
             Spread studio
           </Button>
         </div>
-        <p className="mt-3 text-xs text-slate-400">
+        <p className="mt-3 text-xs text-slate-500">
           Certification marks a reading as reviewed. Reports export as a publication-grade PDF
           or a multi-sheet Excel workbook.
         </p>

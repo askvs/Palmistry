@@ -110,7 +110,7 @@ export default function ReaderEngagementPanel() {
                       label={`${querent.email} reading share of the top querent`}
                     />
                   </div>
-                  <p className="mt-1 text-xs text-slate-400">
+                  <p className="mt-1 text-xs text-slate-500">
                     Last read {new Date(querent.last_reading_at).toLocaleString()}
                   </p>
                 </li>
@@ -158,7 +158,7 @@ export default function ReaderEngagementPanel() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           Review coverage: {engagement ? Math.round(engagement.review_rate * 100) : 0}% of
           readings have been reviewed by a reader.
         </p>

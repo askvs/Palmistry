@@ -403,7 +403,7 @@ export default function PalmReadingPage() {
               className={`flex items-center gap-2.5 rounded-xl border p-3 transition ${
                 loadingStep >= 0
                   ? "border-violet-200 bg-violet-50/70 text-violet-900 font-medium"
-                  : "border-slate-200 bg-slate-50 text-slate-400"
+                  : "border-slate-200 bg-slate-50 text-slate-500"
               }`}
             >
               <CheckIcon className={`h-4 w-4 ${loadingStep >= 0 ? "text-violet-600" : "text-slate-300"}`} />
@@ -413,7 +413,7 @@ export default function PalmReadingPage() {
               className={`flex items-center gap-2.5 rounded-xl border p-3 transition ${
                 loadingStep >= 1
                   ? "border-violet-200 bg-violet-50/70 text-violet-900 font-medium"
-                  : "border-slate-200 bg-slate-50 text-slate-400"
+                  : "border-slate-200 bg-slate-50 text-slate-500"
               }`}
             >
               <CheckIcon className={`h-4 w-4 ${loadingStep >= 1 ? "text-violet-600" : "text-slate-300"}`} />
@@ -423,7 +423,7 @@ export default function PalmReadingPage() {
               className={`flex items-center gap-2.5 rounded-xl border p-3 transition ${
                 loadingStep >= 2
                   ? "border-violet-200 bg-violet-50/70 text-violet-900 font-medium"
-                  : "border-slate-200 bg-slate-50 text-slate-400"
+                  : "border-slate-200 bg-slate-50 text-slate-500"
               }`}
             >
               <CheckIcon className={`h-4 w-4 ${loadingStep >= 2 ? "text-violet-600" : "text-slate-300"}`} />
@@ -433,7 +433,7 @@ export default function PalmReadingPage() {
               className={`flex items-center gap-2.5 rounded-xl border p-3 transition ${
                 loadingStep >= 3
                   ? "border-violet-200 bg-violet-50/70 text-violet-900 font-medium"
-                  : "border-slate-200 bg-slate-50 text-slate-400"
+                  : "border-slate-200 bg-slate-50 text-slate-500"
               }`}
             >
               <CheckIcon className={`h-4 w-4 ${loadingStep >= 3 ? "text-violet-600" : "text-slate-300"}`} />
@@ -454,7 +454,7 @@ export default function PalmReadingPage() {
                 <h3 className="font-display text-sm font-bold uppercase tracking-wider text-slate-700">
                   Biometric Scan Overlay
                 </h3>
-                <span className="text-[11px] text-slate-400">
+                <span className="text-[11px] text-slate-500">
                   Hover lines or mounts
                 </span>
               </div>
@@ -716,11 +716,17 @@ export default function PalmReadingPage() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-lg font-bold text-amber-700">
-                      AI Interpretation {result.ai_interpretation.provider === "groq" ? "(Groq)" : ""}
+                      AI Interpretation {result.ai_interpretation.provider === "groq" && !result.ai_interpretation.rule_based ? "(Groq)" : ""}
                     </h3>
-                    <span className="text-xs text-amber-500">
-                      {result.ai_interpretation.engine || "AI Engine"}
-                    </span>
+                    {result.ai_interpretation.rule_based ? (
+                      <span className="rounded-full border border-amber-300 bg-amber-100 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
+                        Rule-based fallback
+                      </span>
+                    ) : (
+                      <span className="text-xs text-amber-500">
+                        {result.ai_interpretation.engine || "AI Engine"}
+                      </span>
+                    )}
                   </div>
 
                   {result.ai_interpretation.summary && (
@@ -767,6 +773,19 @@ export default function PalmReadingPage() {
                           </div>
                         ))}
                       </div>
+                    </div>
+                  )}
+
+                  {result.ai_interpretation.rule_based && (
+                    <div>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        icon={RetryIcon}
+                        onClick={handleGenerateAi}
+                      >
+                        Retry AI interpretation
+                      </Button>
                     </div>
                   )}
 

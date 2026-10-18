@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 // One input class for every field in the form.
 const INPUT_CLASS =
-  "w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-xs transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:cursor-not-allowed disabled:opacity-60";
+  "w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:cursor-not-allowed disabled:opacity-60";
 const LABEL_CLASS = "mb-1.5 block text-sm font-medium text-slate-700";
 
 // Header tile per portal, mirroring the portal chooser cards.

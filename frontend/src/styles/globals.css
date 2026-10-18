@@ -1,11 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-  /* Typography: Inter for UI/body, Fraunces for display headings.
-     The --font-* variables are provided by next/font in src/pages/_app.js. */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
-
   /* Semantic brand tokens. `primary` is the mystic violet used across the app;
      `accent` is the warm gold reserved for tarot + highlights. Values mirror the
      Tailwind violet/amber scales so contrast relationships are preserved. */
@@ -32,8 +27,45 @@
   --color-accent-800: #92400e;
   --color-accent-900: #78350f;
 
+  /* Porcelain neutral ramp — replaces Tailwind slate globally (spec §4.1.1). */
+  --color-slate-50: #f8f7fd;
+  --color-slate-100: #f1eff9;
+  --color-slate-200: #e7e3f3;
+  --color-slate-300: #d3cde7;
+  --color-slate-400: #8f88ac;
+  --color-slate-500: #5b5675;
+  --color-slate-600: #46415f;
+  --color-slate-700: #34304b;
+  --color-slate-800: #292543;
+  --color-slate-900: #1e1836;
+  --color-slate-950: #15112b;
+
+  /* Radii (spec §4.3) */
+  --radius-control: 10px;
+  --radius-card: 16px;
+  --radius-panel: 20px;
+
+  /* Shadows (spec §4.3) */
+  --shadow-rest: 0 1px 2px rgba(30, 24, 54, 0.05);
+  --shadow-raise: 0 2px 8px -2px rgba(30, 24, 54, 0.08), 0 1px 2px rgba(30, 24, 54, 0.04);
+  --shadow-lift: 0 12px 28px -12px rgba(76, 58, 140, 0.18), 0 2px 6px -2px rgba(30, 24, 54, 0.05);
+  --shadow-float: 0 28px 56px -20px rgba(76, 58, 140, 0.26);
+
+  /* Motion (spec §4.4) */
+  --ease-standard: cubic-bezier(0.2, 0.7, 0.25, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 0.85, 1);
+  --ease-celebrate: cubic-bezier(0.34, 1.4, 0.64, 1);
+
   --animate-fade-in: fade-in 0.45s ease-out both;
   --animate-rise-in: rise-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Fonts MUST live in an inline theme so generated utilities keep the var()
+   reference and resolve where next/font sets the variables (the _app wrapper
+   element). This is the P0 font-bug fix (spec §8.1). */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
 }
 
 @keyframes fade-in {
@@ -49,23 +81,116 @@
 /* ---------------------------------- Base ---------------------------------- */
 
 body {
-  background-color: #f7f7fb;
-  color: #0f172a;
+  background-color: #f7f6fc;
+  color: #1e1836;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 ::selection {
-  background-color: rgb(139 92 246 / 0.18);
+  background-color: rgb(124 58 237 / 0.22);
 }
 
-/* Soft ambient color washes behind the whole app — keeps the light theme
-   from feeling flat without adding visual noise. */
-.page-glow {
+/* Aurora ambient wash + 2.8% film grain (spec §4.1.3). Page level only. */
+.aurora {
+  background-color: #f7f6fc;
   background-image:
-    radial-gradient(56rem 28rem at 50% -8rem, rgb(124 58 237 / 0.07), transparent 60%),
-    radial-gradient(40rem 22rem at 88% 6%, rgb(245 158 11 / 0.05), transparent 65%),
-    radial-gradient(36rem 20rem at 4% 24%, rgb(99 102 241 / 0.04), transparent 60%);
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.33 0 0 0 0 0.62 0 0 0 0.028 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(56rem 28rem at 50% -8rem, rgb(124 58 237 / 0.12), transparent 60%),
+    radial-gradient(40rem 22rem at 88% 6%, rgb(244 114 182 / 0.07), transparent 65%),
+    radial-gradient(36rem 20rem at 4% 24%, rgb(245 158 11 / 0.07), transparent 60%);
 }
+
+/* ------------------------------- Components -------------------------------- */
+
+@layer components {
+  .surface-card {
+    background-color: #fff;
+    border: 1px solid #eae6f5;
+    border-radius: var(--radius-card);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), var(--shadow-rest);
+  }
+
+  .surface-panel {
+    background-color: #fff;
+    border: 1px solid #eae6f5;
+    border-radius: var(--radius-panel);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), var(--shadow-raise);
+  }
+
+  .foil {
+    padding: 1px;
+    border-radius: calc(var(--radius-card) + 1px);
+    background: linear-gradient(135deg, #c4b5fd, #7c3aed 40%, #e9b44c);
+  }
+
+  .foil > * {
+    border-radius: var(--radius-card);
+    background-color: #fff;
+  }
+
+  .divider-rule {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .divider-rule::before,
+  .divider-rule::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, transparent, rgba(180, 83, 9, 0.35), transparent);
+  }
+
+  .divider-rule > span {
+    color: #b45309;
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+  .dropcap::first-letter {
+    font-family: var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
+    font-weight: 600;
+    font-size: 3.25rem;
+    line-height: 0.85;
+    float: left;
+    padding: 0.25rem 0.5rem 0 0;
+    color: #6d28d9;
+  }
+
+  .sheen-sweep {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sheen-sweep::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-120%);
+    background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .sheen-sweep:hover::after {
+    animation: sheen-once 900ms var(--ease-standard) 1;
+  }
+}
+
+@keyframes sheen-once {
+  to { transform: translateX(120%); }
+}
+
+/* Scrollbar tint (spec §4.1.3) */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #c4b5fd #efebfa;
+}
+
+html::-webkit-scrollbar { width: 8px; height: 8px; }
+html::-webkit-scrollbar-thumb { background: #c4b5fd; border-radius: 999px; }
+html::-webkit-scrollbar-thumb:hover { background: #a78bfa; }
+html::-webkit-scrollbar-track { background: #efebfa; }
 
 /* -------------------------------- Motion ---------------------------------- */
 

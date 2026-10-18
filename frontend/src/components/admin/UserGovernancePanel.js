@@ -99,7 +99,7 @@ export default function UserGovernancePanel() {
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search email or name…"
               aria-label="Search users by email or name"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 py-1.5 pl-9 pr-3 text-xs text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 py-1.5 pl-9 pr-3 text-xs text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
             />
           </div>
           <select
@@ -145,7 +145,7 @@ export default function UserGovernancePanel() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-slate-200 text-xs uppercase tracking-wider text-slate-400">
+              <tr className="border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
                 <th className="py-2.5 pr-4">Email</th>
                 <th className="py-2.5 pr-4">Name</th>
                 <th className="py-2.5 pr-4">Assigned Role</th>
@@ -197,7 +197,7 @@ export default function UserGovernancePanel() {
               ))}
             </tbody>
           </table>
-          <p className="mt-3 text-xs text-slate-400">
+          <p className="mt-3 text-xs text-slate-500">
             Showing {visible.length} of {usersData?.total ?? visible.length} account(s)
             {searchQuery || roleFilter || statusFilter ? " matching the current filters" : ""}.
           </p>

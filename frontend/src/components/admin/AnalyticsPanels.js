@@ -26,7 +26,7 @@ const PERIOD_OPTIONS = [
 export function AnalyticsWindowPicker({ days, onChange, label = "Analytics window" }) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
-      <span className="text-xs font-medium text-slate-400">{label}</span>
+      <span className="text-xs font-medium text-slate-500">{label}</span>
       <div role="group" aria-label={label} className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100/80 p-0.5">
         {PERIOD_OPTIONS.map((option) => {
           const active = String(days) === option.value;
@@ -226,7 +226,7 @@ export function EngagementPanel({ platform, readings, loading }) {
               tone="primary"
               label="Share of accounts with at least one reading"
             />
-            <p className="mt-1 text-xs text-slate-400">Accounts with at least one reading</p>
+            <p className="mt-1 text-xs text-slate-500">Accounts with at least one reading</p>
           </div>
           <div>
             <div className="mb-1.5 flex items-center justify-between text-xs">
@@ -244,7 +244,7 @@ export function EngagementPanel({ platform, readings, loading }) {
               tone="blue"
               label="Share of accounts with two or more readings"
             />
-            <p className="mt-1 text-xs text-slate-400">Accounts with two or more readings</p>
+            <p className="mt-1 text-xs text-slate-500">Accounts with two or more readings</p>
           </div>
           <div>
             <div className="mb-1.5 flex items-center justify-between text-xs">
@@ -258,7 +258,7 @@ export function EngagementPanel({ platform, readings, loading }) {
               tone="emerald"
               label="Completed readings share of all readings"
             />
-            <p className="mt-1 text-xs text-slate-400">Completed vs pending divinations</p>
+            <p className="mt-1 text-xs text-slate-500">Completed vs pending divinations</p>
           </div>
         </div>
       )}
@@ -475,7 +475,7 @@ export function SystemStatusPanel({ health, error }) {
             ok={health.ai_provider === "configured"}
             warn={health.ai_provider !== "configured"}
           />
-          <p className="pt-1 text-xs text-slate-400">
+          <p className="pt-1 text-xs text-slate-500">
             Environment: {health.environment} · Version: {health.version}
           </p>
         </div>

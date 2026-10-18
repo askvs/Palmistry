@@ -46,7 +46,7 @@ function MetricRow({ label, value, hint }) {
         <span className="font-bold text-slate-900">{value}%</span>
       </div>
       <MeterBar value={value / 100} tone="primary" label={label} />
-      {hint && <p className="mt-1 text-[11px] text-slate-400">{hint}</p>}
+      {hint && <p className="mt-1 text-[11px] text-slate-500">{hint}</p>}
     </div>
   );
 }
@@ -97,7 +97,7 @@ function ClientInfoRail({ client }) {
                   </span>
                 ))
               ) : (
-                <span className="text-xs text-slate-400">Not recorded</span>
+                <span className="text-xs text-slate-500">Not recorded</span>
               )}
             </dd>
           </div>
@@ -115,21 +115,21 @@ function ClientInfoRail({ client }) {
 
           <div className="grid grid-cols-2 gap-3 border-t border-slate-100 pt-3">
             <div>
-              <dt className="text-xs text-slate-400">Previous sessions</dt>
+              <dt className="text-xs text-slate-500">Previous sessions</dt>
               <dd className="text-sm font-semibold text-slate-900">{client.consultationCount}</dd>
             </div>
             <div>
-              <dt className="text-xs text-slate-400">Readings</dt>
+              <dt className="text-xs text-slate-500">Readings</dt>
               <dd className="text-sm font-semibold text-slate-900">{client.readingCount}</dd>
             </div>
             <div>
-              <dt className="text-xs text-slate-400">Last consultation</dt>
+              <dt className="text-xs text-slate-500">Last consultation</dt>
               <dd className="text-sm font-semibold text-slate-900">
                 {relativeLabel(client.lastConsultationAt)}
               </dd>
             </div>
             <div>
-              <dt className="text-xs text-slate-400">Current trend</dt>
+              <dt className="text-xs text-slate-500">Current trend</dt>
               <dd className="mt-0.5">
                 <TrendBadge trend={client.trend} />
               </dd>
@@ -210,7 +210,7 @@ function ConsultationSummary({
             Key insights
           </p>
           {insights.length === 0 ? (
-            <p className="mt-1.5 text-xs text-slate-400">
+            <p className="mt-1.5 text-xs text-slate-500">
               Generate AI insights from the AI Insights tab to populate this summary.
             </p>
           ) : (
@@ -236,13 +236,13 @@ function ConsultationSummary({
               {client.recommendations.slice(0, 3).map((recommendation) => (
                 <li key={recommendation.id} className="text-xs leading-relaxed text-slate-700">
                   <span className="font-semibold text-slate-800">{recommendation.title}</span>
-                  <span className="ml-1 text-slate-400">({recommendation.priority})</span>
+                  <span className="ml-1 text-slate-500">({recommendation.priority})</span>
                   <p className="mt-0.5 text-slate-600">{recommendation.text}</p>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="mt-1.5 text-xs text-slate-400">No recommendations recorded yet.</p>
+            <p className="mt-1.5 text-xs text-slate-500">No recommendations recorded yet.</p>
           )}
         </div>
 
@@ -347,7 +347,7 @@ export default function ConsultationWorkspace({
 
         <Panel title="Previous sessions" subtitle="Earlier work with this client">
           {pastSessions.length === 0 ? (
-            <p className="text-xs text-slate-400">No earlier sessions recorded.</p>
+            <p className="text-xs text-slate-500">No earlier sessions recorded.</p>
           ) : (
             <ul className="space-y-2.5">
               {pastSessions.map((row) => (
@@ -356,7 +356,7 @@ export default function ConsultationWorkspace({
                     <p className="text-xs font-semibold text-slate-800">{row.purpose}</p>
                     <StatusBadge status={row.status} />
                   </div>
-                  <p className="mt-0.5 text-[11px] text-slate-400">
+                  <p className="mt-0.5 text-[11px] text-slate-500">
                     {formatDate(row.startedAt)}
                     {row.durationMinutes ? ` · ${row.durationMinutes} min` : ""}
                   </p>
@@ -458,17 +458,17 @@ export default function ConsultationWorkspace({
             >
               <dl className="grid gap-3 sm:grid-cols-3">
                 <div>
-                  <dt className="text-xs text-slate-400">Latest reading</dt>
+                  <dt className="text-xs text-slate-500">Latest reading</dt>
                   <dd className="text-sm font-semibold text-slate-900">
                     {client?.latestReadingAt ? formatDate(client.latestReadingAt) : "—"}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-slate-400">Readings on file</dt>
+                  <dt className="text-xs text-slate-500">Readings on file</dt>
                   <dd className="text-sm font-semibold text-slate-900">{client?.readingCount ?? 0}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-slate-400">Consultations</dt>
+                  <dt className="text-xs text-slate-500">Consultations</dt>
                   <dd className="text-sm font-semibold text-slate-900">
                     {client?.consultationCount ?? 0}
                   </dd>
@@ -581,10 +581,10 @@ export default function ConsultationWorkspace({
                 rows={5}
                 placeholder="Write the guidance you will share with this client…"
                 aria-label="Guidance to the client"
-                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm leading-relaxed text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm leading-relaxed text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
               />
               {!session.liveConsultationId && (
-                <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
+                <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
                   This session is not linked to a live guidance thread, so the text is saved with
                   the consultation only.
                 </p>

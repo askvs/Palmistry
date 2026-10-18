@@ -312,7 +312,7 @@ export default function StartConsultationDialog({
                               <span className="text-sm font-semibold text-slate-900">
                                 {row.label}
                               </span>
-                              <span className="text-[11px] text-slate-400">
+                              <span className="text-[11px] text-slate-500">
                                 {formatDate(row.date)}
                               </span>
                             </span>
@@ -386,7 +386,7 @@ export default function StartConsultationDialog({
                           <span className="text-xs font-bold uppercase tracking-wide text-primary-700">
                             {insight.category}
                           </span>
-                          <span className="text-[11px] text-slate-400">
+                          <span className="text-[11px] text-slate-500">
                             Relevance {insight.relevance}% · {formatDate(insight.createdAt)}
                           </span>
                         </div>
@@ -433,7 +433,7 @@ export default function StartConsultationDialog({
                   onChange={(event) => setNotes(event.target.value)}
                   rows={6}
                   placeholder="Write private consultation notes…"
-                  className="w-full rounded-2xl border border-slate-200 px-3.5 py-2.5 text-sm leading-relaxed text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  className="w-full rounded-2xl border border-slate-200 px-3.5 py-2.5 text-sm leading-relaxed text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                 />
               </label>
 
@@ -448,7 +448,7 @@ export default function StartConsultationDialog({
                   onChange={(event) => setGuidance(event.target.value)}
                   rows={4}
                   placeholder="Write the guidance you will share with this client…"
-                  className="w-full rounded-2xl border border-slate-200 px-3.5 py-2.5 text-sm leading-relaxed text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  className="w-full rounded-2xl border border-slate-200 px-3.5 py-2.5 text-sm leading-relaxed text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                 />
               </label>
 
@@ -507,7 +507,7 @@ export default function StartConsultationDialog({
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] text-slate-400">
+            <span className="text-[11px] text-slate-500">
               {step === 2 && !reviewed && insights?.length
                 ? "Review the insights to continue"
                 : step === 3 && !canSave

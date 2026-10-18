@@ -131,7 +131,7 @@ export default function ShuffleAnimation({ onComplete, deckName = "Rider-Waite T
           </Button>
         )}
 
-        <span className="text-xs text-slate-400">
+        <span className="text-xs text-slate-500">
           Shuffled with cryptographically secure Fisher-Yates randomization
         </span>
       </div>

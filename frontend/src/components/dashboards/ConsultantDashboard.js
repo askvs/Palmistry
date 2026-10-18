@@ -176,7 +176,7 @@ export default function ConsultantDashboard() {
                   </span>
                 </li>
               </ul>
-              <p className="text-xs italic text-slate-400">
+              <p className="text-xs italic text-slate-500">
                 First-response timing is measured from real thread messages — questions to a
                 verified reader&apos;s or consultant&apos;s first reply.
               </p>
@@ -214,7 +214,7 @@ export default function ConsultantDashboard() {
                   />
                 </div>
               ))}
-              <p className="text-xs italic text-slate-400">
+              <p className="text-xs italic text-slate-500">
                 {statusCounts.open || 0} open · {statusCounts.in_review || 0} in review ·{" "}
                 {statusCounts.resolved || 0} resolved across {queueTotal} threads.
               </p>
@@ -309,7 +309,7 @@ export default function ConsultantDashboard() {
                 onChange={(e) => setQueueSearch(e.target.value)}
                 placeholder="Search topics…"
                 aria-label="Search consultations by topic"
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-1.5 pl-9 pr-3 text-xs text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-1.5 pl-9 pr-3 text-xs text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
               />
             </div>
             <Segmented
@@ -353,7 +353,7 @@ export default function ConsultantDashboard() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <h3 className="text-sm font-bold text-slate-900">{c.topic}</h3>
-                    <p className="mt-0.5 text-xs text-slate-400">
+                    <p className="mt-0.5 text-xs text-slate-500">
                       Inquiry ID: {c.id.slice(0, 8)}… · {new Date(c.created_at).toLocaleString()}
                     </p>
                   </div>
@@ -381,7 +381,7 @@ export default function ConsultantDashboard() {
                       placeholder="Type deep, compassionate spiritual counsel for this seeker…"
                       rows={2}
                       aria-label={`Guidance for inquiry ${c.topic}`}
-                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs text-slate-800 transition placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                     />
                     <Button
                       size="sm"

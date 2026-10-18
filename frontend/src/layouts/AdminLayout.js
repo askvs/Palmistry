@@ -75,7 +75,7 @@ function SidebarBody({ onNavigate }) {
       </Link>
 
       <nav aria-label="Admin sections" className="flex-1 space-y-1">
-        <p className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+        <p className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-500">
           Console
         </p>
         {ADMIN_ROUTES.map((route) => (
@@ -87,7 +87,7 @@ function SidebarBody({ onNavigate }) {
           />
         ))}
 
-        <p className="px-3 pb-1 pt-5 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+        <p className="px-3 pb-1 pt-5 text-[11px] font-bold uppercase tracking-wider text-slate-500">
           Account
         </p>
         {ADMIN_SECONDARY_ROUTES.map((route) => (
@@ -189,7 +189,7 @@ function ShellHeader({ onOpenMenu }) {
 
         <div className="min-w-0 flex-1">
           <nav aria-label="Breadcrumb" className="hidden sm:block">
-            <ol className="flex items-center gap-1.5 text-[11px] font-medium text-slate-400">
+            <ol className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500">
               <li>
                 <Link href="/admin" className="transition hover:text-primary-600">
                   Admin
@@ -295,14 +295,14 @@ export default function AdminLayout({ children }) {
 
   if (blocked) {
     return (
-      <div className="page-glow flex min-h-screen items-center justify-center text-slate-500">
+      <div className="aurora flex min-h-screen items-center justify-center text-slate-500">
         <p className="text-sm">Redirecting…</p>
       </div>
     );
   }
 
   return (
-    <div className="page-glow flex min-h-screen text-slate-900">
+    <div className="aurora flex min-h-screen text-slate-900">
       <a
         href="#admin-main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg bg-white px-4 py-2 text-sm font-medium shadow-md"
@@ -353,7 +353,7 @@ export default function AdminLayout({ children }) {
         </main>
 
         <footer className="border-t border-slate-200/70 bg-white/60 px-4 py-5 sm:px-6 lg:px-8">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
             <span className="inline-flex items-center gap-1.5">
               <ShieldIcon className="h-3.5 w-3.5 text-primary-500" />
               Palmistry &amp; Tarot · Platform administration

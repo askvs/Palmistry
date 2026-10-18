@@ -169,9 +169,9 @@ export default function NotificationBell() {
 
           <div className="max-h-96 overflow-y-auto">
             {loadingItems ? (
-              <p className="px-4 py-6 text-center text-sm text-slate-400">Loading…</p>
+              <p className="px-4 py-6 text-center text-sm text-slate-500">Loading…</p>
             ) : items.length === 0 ? (
-              <p className="px-4 py-6 text-center text-sm text-slate-400">You&rsquo;re all caught up</p>
+              <p className="px-4 py-6 text-center text-sm text-slate-500">You&rsquo;re all caught up</p>
             ) : (
               <ul className="divide-y divide-slate-100">
                 {items.map((n) => (
@@ -192,7 +192,7 @@ export default function NotificationBell() {
                           <span className="mt-0.5 block truncate text-xs text-slate-500">{n.message}</span>
                         ) : null}
                       </span>
-                      <span className="shrink-0 text-[11px] text-slate-400">{timeAgo(n.created_at)}</span>
+                      <span className="shrink-0 text-[11px] text-slate-500">{timeAgo(n.created_at)}</span>
                     </button>
                   </li>
                 ))}

@@ -350,7 +350,7 @@ export function PerformancePanel() {
                     label={`Average latency for ${route.path}`}
                   />
                 </div>
-                <p className="mt-1 text-xs text-slate-400">
+                <p className="mt-1 text-xs text-slate-500">
                   {route.count} request{route.count === 1 ? "" : "s"} · error rate{" "}
                   {(route.error_rate * 100).toFixed(1)}% · {minutes.toFixed(0)} min of uptime
                 </p>
@@ -486,7 +486,7 @@ export function SystemReportsPanel() {
               <p className="mt-0.5 text-lg font-bold text-slate-900">
                 {report.payload?.platform?.users_total ?? "—"}
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 {report.payload?.platform?.users_active ?? 0} active
               </p>
             </div>
@@ -495,7 +495,7 @@ export function SystemReportsPanel() {
               <p className="mt-0.5 text-lg font-bold text-slate-900">
                 {report.payload?.platform?.readings_total ?? "—"}
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 {report.payload?.readings?.reviewed_total ?? 0} reviewed by a reader
               </p>
             </div>
@@ -504,14 +504,14 @@ export function SystemReportsPanel() {
               <p className="mt-0.5 text-lg font-bold text-slate-900">
                 {report.payload?.platform?.consultations_total ?? "—"}
               </p>
-              <p className="text-xs text-slate-400">Guidance threads on platform</p>
+              <p className="text-xs text-slate-500">Guidance threads on platform</p>
             </div>
             <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
               <p className="text-xs font-medium text-slate-500">Signups (7d)</p>
               <p className="mt-0.5 text-lg font-bold text-slate-900">
                 {report.payload?.platform?.signups_in_period ?? "—"}
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Prev. period: {report.payload?.platform?.signups_previous_period ?? 0}
               </p>
             </div>
