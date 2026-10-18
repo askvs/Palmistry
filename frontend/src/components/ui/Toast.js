@@ -41,7 +41,7 @@ function ToastItem({ toast, onDismiss }) {
 
   return (
     <div
-      className={`pointer-events-auto flex w-full items-start gap-3 rounded-2xl bg-white p-4 shadow-lg shadow-slate-900/10 ring-1 ${tone.ring} transition-all duration-200 ${
+      className={`pointer-events-auto flex w-full items-start gap-3 rounded-2xl bg-white p-4 ring-1 ${tone.ring} shadow-[inset_0_1px_0_rgba(255,255,255,.85),var(--shadow-lift)] transition-all duration-200 ${
         leaving ? "translate-y-1 opacity-0" : "animate-rise-in"
       }`}
     >

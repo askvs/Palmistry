@@ -1,10 +1,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { CloseIcon, MenuIcon, SparkleIcon } from "@/components/icons";
+import { CloseIcon, MenuIcon } from "@/components/icons";
 import { useAuth } from "@/hooks/useAuth";
 import { GUEST_NAV_KEYS, NAV_ITEMS, roleMeta } from "@/lib/roles";
 import NotificationBell from "@/components/ui/NotificationBell";
+import BrandMark from "@/components/BrandMark";
 
 // Public footer links (visible to guests and every role alike).
 const FOOTER_NAV = [
@@ -16,21 +17,13 @@ const FOOTER_NAV = [
   { href: "/personality", label: "Personality" },
 ];
 
-function BrandMark() {
-  return (
-    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary-600 via-indigo-600 to-accent-500 text-white shadow-md shadow-primary-500/25">
-      <SparkleIcon className="h-4 w-4" />
-    </span>
-  );
-}
-
 function NavLink({ href, label, active, onClick }) {
   return (
     <Link
       href={href}
       onClick={onClick}
       aria-current={active ? "page" : undefined}
-      className={`cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
+      className={`cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium transition-[background-color,color] duration-200 ease-standard focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
         active
           ? "bg-primary-50 font-semibold text-primary-700"
           : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
@@ -148,7 +141,7 @@ export default function MainLayout({ children }) {
         Skip to content
       </a>
 
-      <header className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-20 border-b border-[#eae6f5] bg-white/85 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Link
             href="/"
@@ -156,7 +149,7 @@ export default function MainLayout({ children }) {
             className="flex items-center gap-2.5 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
           >
             <BrandMark />
-            <span className="text-[17px] font-semibold tracking-tight">MysticLens</span>
+            <span className="text-[15px] font-semibold tracking-[-0.01em]">MysticLens</span>
           </Link>
 
           <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
@@ -186,7 +179,7 @@ export default function MainLayout({ children }) {
 
         {menuOpen && (
           <nav
-            className="border-t border-slate-200/70 bg-white px-4 pb-4 pt-3 md:hidden"
+            className="border-t border-[#eae6f5] bg-white px-4 pb-4 pt-3 md:hidden"
             aria-label="Primary mobile"
           >
             <div className="flex flex-col gap-1">
@@ -199,7 +192,7 @@ export default function MainLayout({ children }) {
                 />
               ))}
             </div>
-            <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-slate-200/70 pt-3">
+            <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[#eae6f5] pt-3">
               <AuthButtons />
             </div>
           </nav>
@@ -210,28 +203,37 @@ export default function MainLayout({ children }) {
         {children}
       </main>
 
-      <footer className="border-t border-slate-200/70 bg-white/60">
-        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 sm:flex-row sm:items-start sm:justify-between sm:px-6">
-          <div className="max-w-sm">
-            <div className="flex items-center gap-2.5">
-              <BrandMark />
-              <span className="text-sm font-semibold tracking-tight">MysticLens Divination</span>
-            </div>
-            <p className="mt-2 text-xs leading-relaxed text-slate-500">
-              Sacred tarot divination and chirognomic palm analysis crafted for intuitive
-              self-reflection, mindfulness, and archetypal guidance.
-            </p>
+      <footer className="mt-4">
+        <div className="divider-rule mx-auto max-w-6xl px-4 sm:px-6" aria-hidden="true">
+          <span className="font-display">✦</span>
+        </div>
+        <div className="relative overflow-hidden bg-gradient-to-b from-[#1e1836] to-[#241b3f] text-[#c4b5fd]">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 text-accent-300/[0.04]">
+            <span className="absolute left-[8%] top-6 text-4xl">✦</span>
+            <span className="absolute left-[38%] top-12 text-2xl">✦</span>
+            <span className="absolute right-[14%] top-8 text-3xl">✦</span>
+            <span className="absolute right-[34%] bottom-6 text-xl">✦</span>
+            <span className="absolute left-[64%] bottom-10 text-sm">✦</span>
           </div>
-          <nav
-            className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-medium text-slate-500"
-            aria-label="Footer"
-          >
-            {FOOTER_NAV.map((link) => (
-              <Link key={link.href} href={link.href} className="transition hover:text-primary-700">
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+          <div className="relative mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:flex-row sm:items-start sm:justify-between sm:px-6">
+            <div className="max-w-sm">
+              <div className="flex items-center gap-2.5">
+                <BrandMark />
+                <span className="text-sm font-semibold tracking-tight text-[#ede9fe]">MysticLens Divination</span>
+              </div>
+              <p className="mt-2.5 text-xs leading-relaxed text-[#a79fc6]">
+                Sacred tarot divination and chirognomic palm analysis crafted for intuitive
+                self-reflection, mindfulness, and archetypal guidance.
+              </p>
+            </div>
+            <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-medium" aria-label="Footer">
+              {FOOTER_NAV.map((link) => (
+                <Link key={link.href} href={link.href} className="transition-colors hover:text-accent-300">
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
         </div>
       </footer>
     </div>

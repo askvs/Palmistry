@@ -10,13 +10,13 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useRoleGuard } from "@/hooks/useRoleGuard";
 import NotificationBell from "@/components/ui/NotificationBell";
+import BrandMark from "@/components/BrandMark";
 import {
   CloseIcon,
   LogOutIcon,
   MenuIcon,
   SettingsIcon,
   ShieldIcon,
-  SparkleIcon,
   UserIcon,
 } from "@/components/icons";
 import { initialsOf } from "@/lib/format";
@@ -27,14 +27,6 @@ function isActive(pathname, href) {
   if (pathname === href) return true;
   // Prefix match so a nested admin route keeps its section highlighted.
   return pathname.startsWith(`${href}/`);
-}
-
-function BrandMark() {
-  return (
-    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary-600 via-indigo-600 to-accent-500 text-white shadow-md shadow-primary-500/25">
-      <SparkleIcon className="h-4 w-4" />
-    </span>
-  );
 }
 
 function NavRow({ href, label, icon: Icon, active, onClick }) {
@@ -75,7 +67,7 @@ function SidebarBody({ onNavigate }) {
       </Link>
 
       <nav aria-label="Admin sections" className="flex-1 space-y-1">
-        <p className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+        <p className="px-3 pb-1 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">
           Console
         </p>
         {ADMIN_ROUTES.map((route) => (
@@ -87,7 +79,7 @@ function SidebarBody({ onNavigate }) {
           />
         ))}
 
-        <p className="px-3 pb-1 pt-5 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+        <p className="px-3 pb-1 pt-5 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">
           Account
         </p>
         {ADMIN_SECONDARY_ROUTES.map((route) => (
@@ -176,7 +168,7 @@ function ShellHeader({ onOpenMenu }) {
   const name = user ? user.full_name || user.email.split("@")[0] : "";
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/80 backdrop-blur-md">
+    <header className="sticky top-0 z-20 border-b border-[#eae6f5] bg-white/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6 lg:px-8">
         <button
           type="button"
@@ -352,10 +344,10 @@ export default function AdminLayout({ children }) {
           {children}
         </main>
 
-        <footer className="border-t border-slate-200/70 bg-white/60 px-4 py-5 sm:px-6 lg:px-8">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+        <footer className="border-t border-[rgba(255,255,255,0.08)] bg-gradient-to-b from-[#1e1836] to-[#241b3f] px-4 py-5 text-[#a79fc6] sm:px-6 lg:px-8">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 text-xs">
             <span className="inline-flex items-center gap-1.5">
-              <ShieldIcon className="h-3.5 w-3.5 text-primary-500" />
+              <ShieldIcon className="h-3.5 w-3.5 text-accent-300" />
               Palmistry &amp; Tarot · Platform administration
             </span>
             <span>

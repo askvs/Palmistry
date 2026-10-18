@@ -4,6 +4,7 @@ export { default as Badge } from "./Badge";
 export { default as Panel } from "./Panel";
 export { default as PageHeader } from "./PageHeader";
 export { default as ConfirmDialog } from "./ConfirmDialog";
+export { default as Tooltip } from "./Tooltip";
 export { useToast, ToastProvider } from "./Toast";
 export {
   Spinner,

@@ -15,19 +15,36 @@ export default function ConfirmDialog({
   onCancel,
 }) {
   const cancelRef = useRef(null);
+  const dialogRef = useRef(null);
 
   useEffect(() => {
     if (!open) return undefined;
-    const previouslyFocused = document.activeElement;
-    cancelRef.current?.focus();
-
+    const previous = document.activeElement;
+    const node = dialogRef.current;
+    const focusables = () =>
+      node.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    (node.querySelector("[data-autofocus]") || focusables()[0])?.focus();
     const onKeyDown = (event) => {
       if (event.key === "Escape") onCancel?.();
+      if (event.key !== "Tab") return;
+      const list = Array.from(focusables()).filter((el) => !el.disabled);
+      if (list.length === 0) return;
+      const first = list[0];
+      const last = list[list.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener("keydown", onKeyDown);
+    document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKeyDown);
-      previouslyFocused?.focus?.();
+      document.body.style.overflow = "";
+      previous?.focus?.();
     };
   }, [open, onCancel]);
 
@@ -41,11 +58,14 @@ export default function ConfirmDialog({
       aria-labelledby="confirm-dialog-title"
     >
       <div
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm animate-fade-in"
+        className="absolute inset-0 bg-slate-950/40 backdrop-blur-[4px] animate-fade-in"
         onClick={onCancel}
         aria-hidden="true"
       />
-      <div className="relative w-full max-w-md animate-rise-in rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+      <div
+        ref={dialogRef}
+        className="surface-panel shadow-float relative w-full max-w-md animate-rise-in p-6"
+      >
         <button
           type="button"
           onClick={onCancel}
@@ -72,7 +92,7 @@ export default function ConfirmDialog({
         </div>
 
         <div className="mt-6 flex justify-end gap-2.5">
-          <Button ref={cancelRef} variant="secondary" onClick={onCancel} disabled={loading}>
+          <Button ref={cancelRef} data-autofocus variant="secondary" onClick={onCancel} disabled={loading}>
             {cancelLabel}
           </Button>
           <Button
