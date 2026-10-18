@@ -302,10 +302,34 @@ html::-webkit-scrollbar-track { background: #efebfa; }
   animation: shimmer-sweep 1.8s infinite;
 }
 
-/* Mystic deck back styling */
+/* Mystic deck back styling (spec §4.1.5, Appendix A.9) */
 .tarot-card-back {
-  background: radial-gradient(circle at center, #1e1b4b 0%, #0f0c29 70%, #050414 100%);
-  border: 2px solid rgba(216, 180, 254, 0.35);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(147, 51, 234, 0.2);
+  background: radial-gradient(circle at center, #2e1065 0%, #1e1b4b 45%, #0f0c29 100%);
+  border: 1px solid rgba(196, 181, 253, 0.28);
+  box-shadow:
+    0 10px 25px -5px rgba(15, 12, 41, 0.5),
+    0 0 15px rgba(124, 58, 237, 0.18);
+}
+
+/* Landing hero candlelight + fan float (spec §4.4, Appendix A.7) */
+.hero-candlelight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 420px;
+  height: 420px;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle, rgb(245 158 11 / 0.06), rgb(124 58 237 / 0.045) 45%, transparent 70%);
+  transition: transform 0.3s var(--ease-standard);
+}
+
+@keyframes fan-float {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -6px); }
+}
+
+.animate-fan-float {
+  animation: fan-float 4s var(--ease-standard) infinite;
 }
 

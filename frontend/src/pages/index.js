@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 import BackendStatus from "@/components/BackendStatus";
+import Seo from "@/components/Seo";
+import DeckBackOrnaments from "@/components/tarot/DeckBackOrnaments";
 import { Button } from "@/components/ui";
 import {
   ArrowRightIcon,
@@ -18,7 +21,7 @@ const READING_TYPES = [
       "Upload a palm photo and let computer vision trace your major lines — heart, head, life, and fate.",
     cta: "Start a palm reading",
     icon: HandIcon,
-    tile: "bg-gradient-to-br from-primary-600 to-fuchsia-500 shadow-primary-500/30",
+    tile: "bg-primary-600 text-white",
   },
   {
     href: "/readings/tarot",
@@ -27,7 +30,7 @@ const READING_TYPES = [
       "Choose from six guided spreads, draw your cards, and receive a personalized interpretation.",
     cta: "Draw tarot cards",
     icon: CardsIcon,
-    tile: "bg-gradient-to-br from-accent-400 to-accent-600 shadow-accent-500/30",
+    tile: "bg-accent-400 text-slate-900",
   },
 ];
 
@@ -56,16 +59,44 @@ const FEATURES = [
 ];
 
 export default function Home() {
+  const heroRef = useRef(null);
+
+  useEffect(() => {
+    const el = heroRef.current;
+    if (!el) return undefined;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+    if (!window.matchMedia("(pointer: fine)").matches) return undefined;
+    const glow = document.createElement("div");
+    glow.className = "hero-candlelight";
+    el.prepend(glow); // first child so hero content paints above the glow
+    let raf = 0;
+    const onMove = (event) => {
+      const rect = el.getBoundingClientRect();
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        glow.style.transform = `translate(${event.clientX - rect.left - 210}px, ${event.clientY - rect.top - 210}px)`;
+      });
+    };
+    el.addEventListener("pointermove", onMove);
+    return () => {
+      el.removeEventListener("pointermove", onMove);
+      cancelAnimationFrame(raf);
+      glow.remove();
+    };
+  }, []);
+
   return (
     <div className="space-y-16 sm:space-y-20">
+      <Seo />
+
       {/* Hero */}
-      <section className="text-center">
+      <section ref={heroRef} className="relative overflow-hidden text-center">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200/80 bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700">
           <SparkleIcon className="h-3 w-3" />
           AI-guided readings · Early access
         </span>
 
-        <h1 className="mx-auto mt-6 max-w-3xl font-display text-4xl leading-tight tracking-tight text-slate-900 sm:text-6xl sm:leading-[1.08]">
+        <h1 className="mx-auto mt-6 max-w-3xl font-display font-semibold tracking-[-0.02em] text-4xl leading-tight text-slate-900 sm:text-[56px] sm:leading-[1.06]">
           Self-insight,{" "}
           <em className="font-display italic text-primary-600">beautifully decoded</em>.
         </h1>
@@ -87,6 +118,17 @@ export default function Home() {
         <p className="mt-4 text-xs text-slate-500">
           Free during early access · No account required
         </p>
+
+        <div className="relative mx-auto mt-12 h-48 w-72" aria-hidden="true">
+          <span className="tarot-card-back absolute left-1/2 top-3 h-40 w-24 -translate-x-[128%] -rotate-[10deg] rounded-[10px] shadow-lift" />
+          <span className="tarot-card-back animate-fan-float absolute left-1/2 top-0 h-44 w-24 rounded-[10px] shadow-float">
+            <DeckBackOrnaments />
+          </span>
+          <span className="tarot-card-back absolute left-1/2 top-3 h-40 w-24 translate-x-[28%] rotate-[10deg] rounded-[10px] shadow-lift" />
+          <span className="absolute left-1/2 top-24 -translate-x-1/2 text-xs text-accent-300">✦</span>
+          <span className="absolute left-[18%] top-10 text-[10px] text-accent-300/80">✦</span>
+          <span className="absolute right-[16%] top-16 text-[10px] text-accent-300/80">✦</span>
+        </div>
       </section>
 
       <BackendStatus />
@@ -99,10 +141,10 @@ export default function Home() {
             <Link
               key={item.href}
               href={item.href}
-              className="group flex flex-col rounded-3xl border border-slate-200/90 bg-white p-8 shadow-xs transition duration-200 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-lg hover:shadow-slate-900/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+              className="group flex flex-col surface-card p-8 transition duration-200 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-lift focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
             >
               <span
-                className={`flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-lg ${item.tile}`}
+                className={`flex h-12 w-12 items-center justify-center rounded-2xl shadow-lg ${item.tile}`}
               >
                 <Icon className="h-6 w-6" />
               </span>
@@ -119,7 +161,7 @@ export default function Home() {
 
       {/* Features */}
       <section>
-        <p className="text-center text-xs font-semibold uppercase tracking-widest text-primary-600">
+        <p className="text-center text-[11px] font-bold uppercase tracking-[0.16em] text-primary-700">
           Why MysticLens
         </p>
         <div className="mt-8 grid gap-10 sm:grid-cols-3">
@@ -139,6 +181,28 @@ export default function Home() {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* Trust band — reuses existing product facts; do NOT invent metrics (spec §6.1 honesty note) */}
+      <section className="text-center">
+        <div className="divider-rule mx-auto max-w-xl" aria-hidden="true"><span className="font-display">✦</span></div>
+        <p className="mx-auto mt-6 max-w-2xl font-display text-xl leading-relaxed text-slate-800 sm:text-2xl">
+          Built for reflection first — never judgment or diagnosis.
+        </p>
+      </section>
+
+      {/* Closing CTA */}
+      <section className="aurora rounded-[20px] border border-slate-200/70 px-6 py-12 text-center sm:py-14">
+        <h2 className="font-display text-2xl font-semibold tracking-[-0.02em] text-slate-900 sm:text-3xl">
+          Begin with a single reading.
+        </h2>
+        <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-slate-600">
+          Free during early access · No account required
+        </p>
+        <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Button href="/readings/palm" size="lg" iconRight={ArrowRightIcon}>Read my palm</Button>
+          <Button href="/readings/tarot" variant="secondary" size="lg">Draw tarot cards</Button>
         </div>
       </section>
     </div>
