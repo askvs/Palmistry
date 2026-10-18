@@ -91,22 +91,22 @@ export default function Home() {
 
       {/* Hero */}
       <section ref={heroRef} className="relative overflow-hidden text-center">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-200/80 bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700">
+        <span className="animate-rise-in inline-flex items-center gap-1.5 rounded-full border border-primary-200/80 bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700">
           <SparkleIcon className="h-3 w-3" />
           AI-guided readings · Early access
         </span>
 
-        <h1 className="mx-auto mt-6 max-w-3xl font-display font-semibold tracking-[-0.02em] text-4xl leading-tight text-slate-900 sm:text-[56px] sm:leading-[1.06]">
+        <h1 className="animate-rise-in [animation-delay:90ms] mx-auto mt-6 max-w-3xl font-display font-semibold tracking-[-0.02em] text-4xl leading-tight text-slate-900 sm:text-[56px] sm:leading-[1.06]">
           Self-insight,{" "}
           <em className="font-display italic text-primary-600">beautifully decoded</em>.
         </h1>
 
-        <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
+        <p className="animate-rise-in [animation-delay:180ms] mx-auto mt-5 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
           MysticLens pairs modern AI with centuries-old symbolism. Upload a palm photo or draw
           tarot cards — and receive thoughtful, personal guidance for reflection and growth.
         </p>
 
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <div className="animate-rise-in [animation-delay:270ms] mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button href="/readings/palm" size="lg" iconRight={ArrowRightIcon}>
             Read my palm
           </Button>
