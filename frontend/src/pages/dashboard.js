@@ -9,6 +9,7 @@ import ReaderDashboard from "@/components/dashboards/ReaderDashboard";
 import UserDashboard from "@/components/dashboards/UserDashboard";
 import ConsultantSessionsPanel from "@/components/booking/ConsultantSessionsPanel";
 import SeekerSessionsPanel from "@/components/booking/SeekerSessionsPanel";
+import Seo from "@/components/Seo";
 import { Button, PageHeader, Spinner } from "@/components/ui";
 import {
   CardsIcon,
@@ -53,7 +54,7 @@ const SECONDARY_ACTIONS = {
 function LifeTrendSkeleton() {
   return (
     <div
-      className="animate-pulse rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-7"
+      className="animate-pulse rounded-[20px] border border-slate-200/90 bg-white p-6 shadow-xs sm:p-7"
       aria-hidden="true"
     >
       <div className="h-5 w-56 rounded bg-slate-200/80" />
@@ -148,6 +149,11 @@ export default function DashboardPage() {
 
   return (
     <div className="animate-fade-in space-y-8">
+      <Seo
+        title="Dashboard"
+        description="Your readings, sessions and progress in one calm workspace."
+      />
+
       <PageHeader
         icon={meta.icon}
         avatarUrl={avatarUrl}
@@ -169,11 +175,17 @@ export default function DashboardPage() {
       />
 
       {blockedFeature && (
-        <div className="flex items-start gap-3 rounded-2xl border border-primary-100 bg-primary-50/70 p-4 text-sm text-primary-900">
-          <meta.icon className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" />
-          <p>
-            The <span className="font-semibold">{blockedFeature}</span> workspace is part of the
-            seeker experience. As a {meta.label}, your tools live right here on this dashboard.
+        <div className="surface-card flex items-start gap-3 p-4 sm:p-5">
+          <span
+            className="mt-0.5 font-display text-sm leading-none text-accent-700"
+            aria-hidden="true"
+          >
+            ✦
+          </span>
+          <p className="text-[13px] leading-relaxed text-slate-600">
+            The <span className="font-semibold text-slate-800">{blockedFeature}</span> workspace is
+            part of the seeker experience. As a {meta.label}, your tools live right here on this
+            dashboard.
           </p>
         </div>
       )}

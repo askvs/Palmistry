@@ -59,8 +59,8 @@ function AskConsultantForm({ onCreated }) {
   }
 
   return (
-    <form onSubmit={submit} className="mb-5 rounded-2xl border border-slate-200 bg-white/70 p-4">
-      <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">
+    <form onSubmit={submit} className="mb-5 rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+      <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
         Ask a new question
       </p>
       <div className="space-y-2.5">
@@ -71,7 +71,7 @@ function AskConsultantForm({ onCreated }) {
           placeholder="Topic (e.g. Career path, Relationship clarity)"
           aria-label="Question topic"
           maxLength={200}
-          className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+          className="h-10 w-full rounded-[10px] border border-slate-200 bg-white px-3.5 text-sm text-slate-800 shadow-xs transition placeholder:text-slate-500 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
         />
         <textarea
           value={question}
@@ -79,7 +79,7 @@ function AskConsultantForm({ onCreated }) {
           placeholder="What would you like guidance on? Share as much context as you like…"
           aria-label="Your question"
           rows={3}
-          className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+          className="w-full rounded-[10px] border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 shadow-xs transition placeholder:text-slate-500 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
         />
       </div>
       {error && (
@@ -107,7 +107,7 @@ function AskConsultantForm({ onCreated }) {
 function ConsultationCard({ consultation, onReply }) {  const [open, setOpen] = useState(false);
   const c = consultation;
   return (
-    <li className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
+    <li className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm font-semibold text-slate-800">{c.topic}</p>
         <Badge tone={c.guidance ? "emerald" : "accent"}>{c.status}</Badge>
@@ -198,7 +198,7 @@ export default function UserDashboard() {
         <Button href="/readings" variant="secondary" icon={FileTextIcon}>
           Reading archives
         </Button>
-        <Button href="/personality" variant="ghost" icon={BrainIcon}>
+        <Button href="/personality" variant="secondary" icon={BrainIcon}>
           Personality insight
         </Button>
       </div>
@@ -223,7 +223,7 @@ export default function UserDashboard() {
             </Button>
           }
         >
-          <h3 className="font-display text-xl font-medium tracking-tight text-slate-900">
+          <h3 className="font-display text-xl font-semibold tracking-tight text-slate-900">
             {latestReading.title}
           </h3>
           <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-slate-600">
@@ -324,7 +324,7 @@ export default function UserDashboard() {
                     <p className="truncate text-sm font-semibold text-slate-800 transition group-hover:text-primary-700">
                       {reading.title}
                     </p>
-                    <p className="mt-0.5 text-xs text-slate-500">
+                    <p className="mt-0.5 text-xs tabular-nums text-slate-500">
                       {new Date(reading.created_at).toLocaleString()} · {reading.summary}
                     </p>
                   </div>
@@ -382,13 +382,13 @@ export default function UserDashboard() {
               {recs.slice(0, 4).map((rec) => (
                 <div
                   key={rec.id}
-                  className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4"
+                  className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4"
                 >
                   <div className="mb-2 flex items-start justify-between gap-2">
                     <Badge tone={REC_TYPE_TONES[rec.rec_type] || "primary"}>
                       {rec.rec_type.replace(/_/g, " ")}
                     </Badge>
-                    <span className="text-xs font-semibold text-slate-600">
+                    <span className="text-xs font-semibold tabular-nums text-slate-600">
                       {Math.round((rec.score || 0) * 100)}%
                     </span>
                   </div>
