@@ -27,6 +27,7 @@ import {
   formatTime,
   relativeFromNow,
 } from "@/lib/datetime";
+import { initialsOf } from "@/lib/format";
 
 export { Panel, Badge, Button, EmptyState, SkeletonRow, useToast, InlineError };
 
@@ -279,16 +280,16 @@ export function SlotPicker({
               aria-selected={active}
               disabled={!hasSlots}
               onClick={() => onSelectDate(day.date)}
-              className={`flex w-16 shrink-0 flex-col items-center gap-0.5 rounded-2xl border px-2 py-2.5 text-xs transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:cursor-not-allowed disabled:opacity-40 ${
+              className={`flex w-16 shrink-0 flex-col items-center gap-0.5 rounded-2xl border px-2 py-2.5 text-xs transition duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:cursor-not-allowed disabled:opacity-40 ${
                 active
-                  ? "border-primary-500 bg-primary-50 text-primary-700 shadow-xs"
+                  ? "border-primary-300 bg-primary-50 text-primary-700 ring-2 ring-primary-600/20"
                   : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
               }`}
             >
               <span className="font-bold uppercase tracking-wide">{day.weekday}</span>
               <span className="text-base font-bold text-slate-900">{day.dayOfMonth}</span>
               <span
-                className={`text-[10px] font-semibold ${
+                className={`text-xs font-semibold ${
                   hasSlots ? "text-emerald-600" : "text-slate-500"
                 }`}
               >
@@ -313,10 +314,12 @@ export function SlotPicker({
                 aria-pressed={active}
                 disabled={disabled || busy}
                 onClick={() => onSelectSlot(slot)}
-                className={`rounded-xl border px-2 py-2 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:cursor-not-allowed disabled:opacity-40 ${
-                  active
-                    ? "border-primary-500 bg-primary-600 text-white shadow-sm"
-                    : "border-slate-200 bg-white text-slate-700 hover:border-primary-300 hover:bg-primary-50"
+                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:cursor-not-allowed ${
+                  disabled || busy
+                    ? "border-dashed border-slate-300 text-slate-500"
+                    : active
+                      ? "border-primary-300 bg-primary-50 text-primary-700 ring-2 ring-primary-600/20"
+                      : "border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50"
                 }`}
               >
                 {formatTime(slot.start_time)}
@@ -329,24 +332,59 @@ export function SlotPicker({
   );
 }
 
+// Deterministic violet / gold / emerald gradient rotation for consultant avatars.
+const AVATAR_TONES = [
+  { bg: "from-violet-500 to-primary-700", text: "text-white" },
+  { bg: "from-accent-400 to-accent-600", text: "text-slate-900" },
+  { bg: "from-emerald-500 to-emerald-700", text: "text-white" },
+];
+
+function avatarToneFor(seed = "") {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i += 1) hash = (hash * 31 + seed.charCodeAt(i)) % 997;
+  return AVATAR_TONES[hash % AVATAR_TONES.length];
+}
+
+// Initials avatar shared by consultant cards and the profile header band.
+export function ConsultantAvatar({ name = "", className = "" }) {
+  const tone = avatarToneFor(String(name));
+  return (
+    <span
+      aria-hidden="true"
+      className={`flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br font-semibold ${tone.bg} ${tone.text} ${className}`}
+    >
+      {initialsOf(name)}
+    </span>
+  );
+}
+
 // Marketing-style card for one consultant in the directory grid.
 export function ConsultantCard({ consultant }) {
+  const name = consultant.full_name || "Consultant";
   return (
     <Link
       href={`/consultants/${consultant.id}`}
-      className="group block rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+      className="group block surface-card p-6 transition duration-200 hover:-translate-y-0.5 hover:shadow-lift focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
     >
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="truncate text-base font-semibold text-slate-900 transition group-hover:text-primary-700">
-            {consultant.full_name || "Consultant"}
-          </h3>
-          <p className="mt-0.5 truncate text-xs text-slate-500">{consultant.headline}</p>
+        <div className="flex min-w-0 items-start gap-3.5">
+          <ConsultantAvatar name={name} className="h-[42px] w-[42px] text-[13px]" />
+          <div className="min-w-0">
+            <h3 className="truncate text-[13.5px] font-semibold text-slate-900 transition group-hover:text-primary-700">
+              {name}
+            </h3>
+            <p className="mt-0.5 truncate text-xs text-slate-500">{consultant.headline}</p>
+          </div>
         </div>
         {consultant.avg_rating != null && (
-          <span className="flex shrink-0 items-center gap-1 rounded-full bg-accent-50 px-2 py-0.5 text-xs font-bold text-accent-700">
-            <StarIcon className="h-3.5 w-3.5" />
-            {Number(consultant.avg_rating).toFixed(1)}
+          <span className="flex shrink-0 items-center gap-1">
+            <StarIcon className="h-3.5 w-3.5 text-accent-500" />
+            <span className="text-xs font-bold tabular-nums text-accent-700">
+              {Number(consultant.avg_rating).toFixed(1)}
+            </span>
+            {consultant.review_count > 0 && (
+              <span className="text-xs text-slate-500">({consultant.review_count})</span>
+            )}
           </span>
         )}
       </div>
@@ -366,7 +404,7 @@ export function ConsultantCard({ consultant }) {
         <p className="text-xs text-slate-500">
           {consultant.years_experience}+ yrs · {consultant.session_duration_minutes} min
         </p>
-        <p className="text-sm font-bold text-slate-900">
+        <p className="text-sm font-bold tabular-nums text-slate-900">
           {consultant.currency} {consultant.session_rate}
         </p>
       </div>

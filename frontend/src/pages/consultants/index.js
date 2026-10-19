@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { Button, EmptyState, ErrorState, InlineError, Panel, PageHeader, SkeletonCards } from "@/components/ui";
 import { CompassIcon, SearchIcon, UsersIcon } from "@/components/icons";
 import { ConsultantCard } from "@/components/booking/shared";
+import Seo from "@/components/Seo";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { fetchConsultants } from "@/services/booking";
 import { useAuth } from "@/hooks/useAuth";
@@ -94,6 +95,7 @@ export default function ConsultantsPage() {
   if (!authLoading && !user) {
     return (
       <div className="animate-fade-in space-y-8">
+        <Seo title="Consultants" description="Browse palm and tarot consultants — real human sessions, booked in a few taps." />
         <PageHeader
           icon={CompassIcon}
           eyebrow="Live consultations"
@@ -111,6 +113,7 @@ export default function ConsultantsPage() {
 
   return (
     <div className="animate-fade-in space-y-8">
+      <Seo title="Consultants" description="Browse palm and tarot consultants — real human sessions, booked in a few taps." />
       <PageHeader
         icon={CompassIcon}
         eyebrow="Live consultations"
@@ -138,14 +141,14 @@ export default function ConsultantsPage() {
               Search
             </label>
             <div className="relative mt-1.5">
-              <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <input
                 id="consultant-search"
                 type="search"
                 value={searchInput}
                 onChange={(event) => setSearchInput(event.target.value)}
                 placeholder="Tarot, career, a name…"
-                className="w-full rounded-2xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                className="w-full rounded-[10px] border border-[#e1dcf0] bg-white py-2.5 pl-9 pr-4 text-sm text-slate-900 placeholder:text-slate-500 transition focus:border-[#8b5cf6] focus:ring-[3px] focus:ring-primary-600/25 focus:outline-none"
               />
             </div>
           </div>
@@ -164,7 +167,7 @@ export default function ConsultantsPage() {
                 setOffset(0);
                 setFilters((prev) => ({ ...prev, maxRate: event.target.value }));
               }}
-              className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-xs transition focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="mt-1.5 w-full rounded-[10px] border border-[#e1dcf0] bg-white px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-[#8b5cf6] focus:ring-[3px] focus:ring-primary-600/25 focus:outline-none"
             >
               <option value="">Any price</option>
               <option value="25">Up to 25</option>
@@ -186,9 +189,9 @@ export default function ConsultantsPage() {
                   setOffset(0);
                   setFilters((prev) => ({ ...prev, specialization: "" }));
                 }}
-                className={`cursor-pointer rounded-full border px-3 py-1 text-xs font-medium transition ${
+                className={`cursor-pointer rounded-full border px-3 py-1 text-xs font-medium transition duration-150 ${
                   !specialization
-                    ? "border-primary-500 bg-primary-50 text-primary-700"
+                    ? "border-primary-200 bg-primary-50 text-primary-700"
                     : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                 }`}
               >
@@ -206,9 +209,9 @@ export default function ConsultantsPage() {
                       specialization: specialization === tag ? "" : tag,
                     }));
                   }}
-                  className={`cursor-pointer rounded-full border px-3 py-1 text-xs font-medium transition ${
+                  className={`cursor-pointer rounded-full border px-3 py-1 text-xs font-medium transition duration-150 ${
                     specialization === tag
-                      ? "border-primary-500 bg-primary-50 text-primary-700"
+                      ? "border-primary-200 bg-primary-50 text-primary-700"
                       : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                   }`}
                 >
@@ -263,7 +266,7 @@ export default function ConsultantsPage() {
 
           {(canPaginate.next || canPaginate.prev) && (
             <div className="flex items-center justify-between gap-3">
-              <p className="text-xs text-slate-500">
+              <p className="text-xs tabular-nums text-slate-500">
                 Showing {offset + 1}–{Math.min(offset + PAGE_SIZE, total)} of {total}
               </p>
               <div className="flex gap-2">
