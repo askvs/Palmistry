@@ -1,21 +1,25 @@
 import Link from "next/link";
 import { ArrowRightIcon, SparkleIcon } from "@/components/icons";
+import Seo from "@/components/Seo";
 import { PageHeader } from "@/components/ui";
 import { ROLES } from "@/lib/roles";
 import { ROLE_PORTALS } from "@/services/auth";
 
 // Portal tile styling shared by the chooser cards and form headers.
 const PORTAL_TILES = {
-  user: "bg-gradient-to-br from-primary-600 to-fuchsia-500 text-white shadow-md shadow-primary-500/30",
-  "tarot-reader":
-    "bg-gradient-to-br from-accent-400 to-accent-600 text-white shadow-md shadow-accent-500/30",
-  "spiritual-consultant": "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100",
-  admin: "bg-slate-100 text-slate-600 ring-1 ring-slate-200",
+  user: "bg-primary-600 text-white",
+  "tarot-reader": "bg-accent-400 text-slate-900",
+  "spiritual-consultant": "bg-emerald-500 text-white",
+  admin: "bg-slate-200 text-slate-700",
 };
 
 export default function LoginPage() {
   return (
     <div className="animate-fade-in">
+      <Seo
+        title="Sign in"
+        description="Sign in to MysticLens through your role portal — AI-guided palm and tarot readings, private by design."
+      />
       <PageHeader
         icon={SparkleIcon}
         gradient="violet"
@@ -31,7 +35,7 @@ export default function LoginPage() {
             <Link
               key={portal.slug}
               href={`/login/${portal.slug}`}
-              className="group flex cursor-pointer flex-col rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs transition hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-lg hover:shadow-slate-900/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+              className="surface-card group flex cursor-pointer flex-col p-6 transition duration-200 hover:-translate-y-0.5 hover:shadow-lift focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
             >
               <span
                 className={`flex h-11 w-11 items-center justify-center rounded-2xl ${

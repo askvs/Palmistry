@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import PortalAuthForm from "@/components/PortalAuthForm";
+import Seo from "@/components/Seo";
 import { ArrowLeftIcon, CompassIcon } from "@/components/icons";
 import { Button, EmptyState, Spinner } from "@/components/ui";
 import { findPortal } from "@/services/auth";
@@ -34,5 +35,10 @@ export default function PortalLoginPage() {
     );
   }
 
-  return <PortalAuthForm portal={portal} mode="login" />;
+  return (
+    <>
+      <Seo title={`${portal.label} sign in`} description={portal.tagline} />
+      <PortalAuthForm portal={portal} mode="login" />
+    </>
+  );
 }
