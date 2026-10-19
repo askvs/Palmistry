@@ -7,7 +7,6 @@ import {
   ErrorState,
   InlineError,
   Panel,
-  PageHeader,
   SkeletonRow,
   useToast,
 } from "@/components/ui";
@@ -16,12 +15,12 @@ import {
   CalendarIcon,
   CheckCircleIcon,
   ClockIcon,
-  CompassIcon,
   StarIcon,
   VideoIcon,
 } from "@/components/icons";
-import { EmptyRow, SlotPicker } from "@/components/booking/shared";
+import { ConsultantAvatar, EmptyRow, SlotPicker } from "@/components/booking/shared";
 import TimeProposalForm from "@/components/booking/TimeProposalForm";
+import Seo from "@/components/Seo";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import {
   createBooking,
@@ -135,6 +134,7 @@ export default function ConsultantDetailPage() {
   if (consultantLoading) {
     return (
       <div className="animate-fade-in space-y-6">
+        <Seo title="Consultant profile" description="See availability, reviews and book a live palm or tarot session." />
         <SkeletonRow lines={4} />
         <SkeletonRow lines={6} />
       </div>
@@ -144,6 +144,7 @@ export default function ConsultantDetailPage() {
   if (consultantError || !consultantData) {
     return (
       <div className="animate-fade-in space-y-6">
+        <Seo title="Consultant profile" description="See availability, reviews and book a live palm or tarot session." />
         <ErrorState
           title="Consultant not found"
           message={consultantError?.message || "This consultant profile is no longer available."}
@@ -213,19 +214,62 @@ export default function ConsultantDetailPage() {
 
   return (
     <div className="animate-fade-in space-y-8">
-      <PageHeader
-        icon={CompassIcon}
-        tileTone="emerald"
-        eyebrow="Consultant profile"
-        title={profile.full_name || "Consultant"}
-        description={profile.headline}
-        gradient="gold"
-        actions={
-          <Button href="/consultants" variant="secondary" icon={CalendarIcon}>
-            All consultants
-          </Button>
-        }
-      />
+      <Seo title="Consultant profile" description="See availability, reviews and book a live palm or tarot session." />
+
+      {/* Nocturne header band */}
+      <header className="rounded-[20px] bg-gradient-to-br from-[#1e1836] to-[#241b3f] p-6 sm:p-8">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex min-w-0 items-start gap-4">
+            <ConsultantAvatar
+              name={profile.full_name || "Consultant"}
+              className="h-14 w-14 text-lg ring-1 ring-white/15"
+            />
+            <div className="min-w-0">
+              <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#a79fc6]">
+                Consultant profile
+              </p>
+              <h1 className="mt-1.5 font-display text-2xl font-semibold tracking-[-0.02em] text-[#ede9fe] sm:text-3xl">
+                {profile.full_name || "Consultant"}
+              </h1>
+              {profile.headline && (
+                <p className="mt-1.5 text-sm leading-relaxed text-[#c4b5fd]">
+                  {profile.headline}
+                </p>
+              )}
+              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                {profile.avg_rating != null && (
+                  <span className="flex items-center gap-1.5">
+                    <StarIcon className="h-4 w-4 text-[#e9b44c]" />
+                    <span className="text-sm font-semibold tabular-nums text-[#e9b44c]">
+                      {Number(profile.avg_rating).toFixed(1)}
+                    </span>
+                    {(profile.review_count || 0) > 0 && (
+                      <span className="text-xs text-[#a79fc6]">({profile.review_count})</span>
+                    )}
+                  </span>
+                )}
+                {(profile.specializations || []).length > 0 && (
+                  <span className="flex flex-wrap gap-1.5">
+                    {profile.specializations.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full bg-white/[0.06] px-2.5 py-[3px] text-xs font-semibold text-[#c4b5fd]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
+            <Button href="/consultants" variant="secondary" icon={CalendarIcon}>
+              All consultants
+            </Button>
+          </div>
+        </div>
+      </header>
 
       <div className="grid gap-6 lg:grid-cols-5">
         {/* Profile column */}
@@ -320,17 +364,17 @@ export default function ConsultantDetailPage() {
             {!reviewsData || reviewsData.items.length === 0 ? (
               <EmptyRow>No reviews yet. Be the first to book.</EmptyRow>
             ) : (
-              <ul className="space-y-3">
+              <ul>
                 {reviewsData.items.map((review) => (
                   <li
                     key={review.id}
-                    className="rounded-2xl border border-slate-200 bg-slate-50/60 p-3.5"
+                    className="border-b border-slate-100 py-3.5 first:pt-0 last:border-0 last:pb-0"
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-xs font-semibold text-slate-700">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="text-[13.5px] font-semibold text-slate-700">
                         {review.author_name || "Seeker"}
                       </p>
-                      <span className="flex items-center gap-0.5 text-accent-500">
+                      <span className="flex items-center gap-0.5">
                         {[1, 2, 3, 4, 5].map((n) => (
                           <StarIcon
                             key={n}
@@ -342,11 +386,11 @@ export default function ConsultantDetailPage() {
                       </span>
                     </div>
                     {review.review && (
-                      <p className="mt-1.5 text-xs leading-relaxed text-slate-600">
+                      <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
                         {review.review}
                       </p>
                     )}
-                    <p className="mt-1.5 text-[11px] text-slate-500">
+                    <p className="mt-1.5 text-xs tabular-nums text-slate-500">
                       {review.booking_subject} · {formatDateTime(review.created_at)}
                     </p>
                   </li>
@@ -357,7 +401,7 @@ export default function ConsultantDetailPage() {
         </div>
 
         {/* Booking column */}
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-3 lg:sticky lg:top-24 lg:self-start">
           <Panel
             title="Book a session"
             subtitle="Pick a date and time that works for you"
@@ -398,7 +442,7 @@ export default function ConsultantDetailPage() {
                     <p className="text-xs font-bold uppercase tracking-wide text-primary-700">
                       Selected slot
                     </p>
-                    <p className="mt-1 text-sm font-semibold text-primary-900">
+                    <p className="mt-1 text-sm font-semibold tabular-nums text-primary-900">
                       {selectedDate &&
                         `${selectedDate.slice(8, 10)}/${selectedDate.slice(5, 7)} · `}
                       {formatDateTime(selectedSlot.start_time)} —{" "}
@@ -426,7 +470,7 @@ export default function ConsultantDetailPage() {
                       placeholder="e.g. Career clarity, relationship guidance"
                       maxLength={200}
                       required
-                      className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                      className="mt-1.5 w-full rounded-[10px] border border-[#e1dcf0] bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 transition focus:border-[#8b5cf6] focus:ring-[3px] focus:ring-primary-600/25 focus:outline-none"
                     />
                   </div>
 
@@ -444,7 +488,7 @@ export default function ConsultantDetailPage() {
                       rows={4}
                       maxLength={2000}
                       placeholder="Share context, dates, or the question you would like guidance on…"
-                      className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                      className="mt-1.5 w-full rounded-[10px] border border-[#e1dcf0] bg-white px-4 py-2.5 text-sm leading-normal text-slate-900 placeholder:text-slate-500 transition focus:border-[#8b5cf6] focus:ring-[3px] focus:ring-primary-600/25 focus:outline-none"
                     />
                   </div>
 
@@ -463,7 +507,7 @@ export default function ConsultantDetailPage() {
                       onChange={(event) => setMeetingLink(event.target.value)}
                       placeholder="Paste the meeting link for this session…"
                       maxLength={500}
-                      className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+                      className="mt-1.5 w-full rounded-[10px] border border-[#e1dcf0] bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 transition focus:border-[#8b5cf6] focus:ring-[3px] focus:ring-primary-600/25 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -473,7 +517,7 @@ export default function ConsultantDetailPage() {
                 <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
                   <p className="text-sm text-slate-600">
                     Total:{" "}
-                    <span className="font-bold text-slate-900">
+                    <span className="font-bold tabular-nums text-slate-900">
                       {profile.currency} {profile.session_rate}
                     </span>{" "}
                     · {formatDuration(profile.session_duration_minutes)}
@@ -484,7 +528,7 @@ export default function ConsultantDetailPage() {
                     loading={busy}
                     disabled={busy || !selectedSlot}
                   >
-                    Request this session
+                    Book session
                   </Button>
                 </div>
 
@@ -501,26 +545,33 @@ export default function ConsultantDetailPage() {
           </Panel>
 
           {profile.is_accepting_bookings && (
-            <Panel
-              title="Or propose your own time"
-              subtitle="Suggest a time that suits you — the consultant can accept it or counter with another."
-              className="mt-6"
-            >
-              <TimeProposalForm
-                mode="propose"
-                defaultDurationMinutes={profile.session_duration_minutes}
-                submitLabel="Send time request"
-                onSubmit={handlePropose}
-              />
-              <p className="mt-3 text-xs text-slate-500">
-                Proposed-time requests stay pending until the consultant accepts. You can
-                keep negotiating the time and chat with them from your{" "}
-                <Link href="/sessions" className="text-primary-600 hover:underline">
-                  sessions
-                </Link>{" "}
-                page.
-              </p>
-            </Panel>
+            <section className="surface-card mt-6">
+              <div className="border-b border-slate-100 px-5 pb-4 pt-4.5 sm:px-6 sm:pt-5">
+                <h2 className="text-[15px] font-semibold tracking-tight text-slate-900">
+                  Or propose your own time
+                </h2>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  Suggest a time that suits you — the consultant can accept it or counter with
+                  another.
+                </p>
+              </div>
+              <div className="p-5 sm:p-6">
+                <TimeProposalForm
+                  mode="propose"
+                  defaultDurationMinutes={profile.session_duration_minutes}
+                  submitLabel="Send time request"
+                  onSubmit={handlePropose}
+                />
+                <p className="mt-3 text-xs text-slate-500">
+                  Proposed-time requests stay pending until the consultant accepts. You can
+                  keep negotiating the time and chat with them from your{" "}
+                  <Link href="/sessions" className="text-primary-600 hover:underline">
+                    sessions
+                  </Link>{" "}
+                  page.
+                </p>
+              </div>
+            </section>
           )}
         </div>
       </div>
