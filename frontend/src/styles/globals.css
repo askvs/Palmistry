@@ -60,13 +60,13 @@
   --animate-rise-in: rise-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Typography — REVERTED to the original rendering at the user's request
-   (2026-10-18): the app keeps its pre-redesign system-font stack everywhere.
-   The next/font variables are provided on the _app wrapper element, so with a
-   NON-inline theme `font-sans` / `font-display` fall back to the inherited
-   system font (Segoe UI on Windows). Do NOT move these into `@theme inline`
-   again — the earlier "font fix" (spec §8.1) was intentionally rolled back. */
-@theme {
+/* Typography — premium faces ACTIVE (user direction 2026-10-19: the system
+   stack reads cheap — use the approved type system). Inter = UI/body,
+   Fraunces = display. These MUST live in an inline theme so generated
+   utilities keep the var() reference and resolve where next/font sets the
+   variables (the _app wrapper element) — this is the P0 font fix (spec §8.1),
+   reinstated at the user's request. */
+@theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
 }

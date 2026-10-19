@@ -17,6 +17,8 @@ const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-fraunces",
   display: "swap",
+  axes: ["opsz"], // optical sizing 9–144 — display sizes get sharp, high-contrast serifs
+  style: ["normal", "italic"], // true italics for the signature serif phrase
 });
 
 // Staff shells get their own layout; other routes use the public shell.
