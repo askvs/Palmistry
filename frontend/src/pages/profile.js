@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuth } from "@/hooks/useAuth";
+import Seo from "@/components/Seo";
 import { getReadingAnalytics, listReadings } from "@/services/readings";
 import {
   AGE_GROUP_OPTIONS,
@@ -54,7 +55,7 @@ const AVATAR_MAX_BYTES = 5 * 1024 * 1024;
 
 // Unified input class — every field on this page uses this exact string.
 const INPUT_CLASS =
-  "w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:cursor-not-allowed disabled:opacity-60";
+  "w-full rounded-[10px] border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:cursor-not-allowed disabled:opacity-60";
 
 const QUICK_ACTIONS = [
   { href: "/readings/palm", Icon: HandIcon, title: "New Palm Scan", hint: "Upload a palm photo for CV analysis" },
@@ -88,10 +89,10 @@ function fieldErrorsFrom(err) {
 // Saved confirmation pill shown briefly after each save.
 function SavedFlash() {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700">
+    <Badge tone="emerald">
       <CheckIcon className="h-3 w-3" />
       Saved
-    </span>
+    </Badge>
   );
 }
 
@@ -388,6 +389,11 @@ export default function ProfilePage() {
 
   return (
     <div className="animate-fade-in space-y-6">
+      <Seo
+        title="Profile"
+        description="Manage your identity, interests and reflection preferences."
+      />
+
       <PageHeader
         icon={UserIcon}
         tileTone="primary"
@@ -414,13 +420,15 @@ export default function ProfilePage() {
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
           {/* Avatar with camera overlay */}
           <div className="relative shrink-0 self-center sm:self-start">
-            <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-primary-600 to-fuchsia-500 text-3xl font-semibold text-white shadow-lg shadow-primary-500/30 ring-4 ring-white">
-              {avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element -- blob object URL, not optimizable by next/image
-                <img src={avatarUrl} alt={`${displayName} avatar`} className="h-full w-full object-cover" />
-              ) : (
-                displayName.charAt(0).toUpperCase()
-              )}
+            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-primary-600 via-primary-500 to-accent-400 p-[3px] shadow-lg shadow-primary-500/25">
+              <span className="flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-white text-3xl font-semibold text-primary-700">
+                {avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- blob object URL, not optimizable by next/image
+                  <img src={avatarUrl} alt={`${displayName} avatar`} className="h-full w-full object-cover" />
+                ) : (
+                  displayName.charAt(0).toUpperCase()
+                )}
+              </span>
             </div>
             <input
               ref={fileInputRef}
@@ -484,7 +492,7 @@ export default function ProfilePage() {
                 </Button>
               )}
             </div>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[11.5px] text-slate-500">
               JPG, PNG or WEBP up to {Math.round(AVATAR_MAX_BYTES / (1024 * 1024))} MB.
             </p>
           </div>
@@ -498,7 +506,7 @@ export default function ProfilePage() {
             noValidate
           >
             <div>
-              <label htmlFor="fullName" className="mb-1.5 block text-sm font-medium text-slate-700">
+              <label htmlFor="fullName" className="mb-1.5 block text-[12.5px] font-semibold text-slate-700">
                 Name
               </label>
               <input
@@ -516,7 +524,7 @@ export default function ProfilePage() {
               )}
             </div>
             <div>
-              <label htmlFor="ageGroup" className="mb-1.5 block text-sm font-medium text-slate-700">
+              <label htmlFor="ageGroup" className="mb-1.5 block text-[12.5px] font-semibold text-slate-700">
                 Age group
               </label>
               <select
@@ -579,7 +587,7 @@ export default function ProfilePage() {
                     disabled={saving}
                     className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:cursor-not-allowed disabled:opacity-60 ${
                       selected
-                        ? "border-primary-600 bg-primary-600 text-white shadow-sm shadow-primary-500/30"
+                        ? "border-primary-200 bg-primary-50 text-primary-700"
                         : "border-slate-200 bg-white text-slate-600 hover:border-primary-200 hover:bg-primary-50 hover:text-primary-700"
                     }`}
                   >
@@ -610,7 +618,7 @@ export default function ProfilePage() {
               {profile.goals.map((goal) => (
                 <li
                   key={goal.id}
-                  className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3 transition hover:border-primary-200 hover:bg-primary-50/40"
+                  className="group flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/60 px-4 py-3 transition hover:border-primary-200 hover:bg-primary-50/40"
                 >
                   {editingGoal?.id === goal.id ? (
                     <form
@@ -620,7 +628,7 @@ export default function ProfilePage() {
                       <div className="min-w-0 flex-1">
                         <label
                           htmlFor={`goal-edit-${goal.id}`}
-                          className="mb-1.5 block text-xs font-medium text-slate-600"
+                          className="mb-1.5 block text-[12.5px] font-semibold text-slate-700"
                         >
                           Edit goal
                         </label>
@@ -667,7 +675,7 @@ export default function ProfilePage() {
                           disabled={saving}
                           aria-label={`Edit goal: ${goal.text}`}
                           title="Edit"
-                          className="cursor-pointer rounded-full p-2 text-slate-400 transition hover:bg-white hover:text-primary-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="cursor-pointer rounded-full p-2 text-slate-500 transition hover:bg-white hover:text-primary-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           <PencilIcon className="h-4 w-4" />
                         </button>
@@ -677,7 +685,7 @@ export default function ProfilePage() {
                           disabled={saving}
                           aria-label={`Remove goal: ${goal.text}`}
                           title="Remove"
-                          className="cursor-pointer rounded-full p-2 text-slate-400 transition hover:bg-white hover:text-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="cursor-pointer rounded-full p-2 text-slate-500 transition hover:bg-white hover:text-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           <TrashIcon className="h-4 w-4" />
                         </button>
@@ -693,7 +701,7 @@ export default function ProfilePage() {
               className="mt-5 flex flex-col gap-2 border-t border-slate-100 pt-5 sm:flex-row sm:items-end"
             >
               <div className="min-w-0 flex-1">
-                <label htmlFor="new-goal" className="mb-1.5 block text-xs font-medium text-slate-600">
+                <label htmlFor="new-goal" className="mb-1.5 block text-[12.5px] font-semibold text-slate-700">
                   Add a goal
                 </label>
                 <input
@@ -726,7 +734,7 @@ export default function ProfilePage() {
           >
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
-                <label htmlFor="deck" className="mb-1.5 block text-sm font-medium text-slate-700">
+                <label htmlFor="deck" className="mb-1.5 block text-[12.5px] font-semibold text-slate-700">
                   Default deck
                 </label>
                 <select
@@ -744,7 +752,7 @@ export default function ProfilePage() {
                 </select>
               </div>
               <div>
-                <label htmlFor="spread" className="mb-1.5 block text-sm font-medium text-slate-700">
+                <label htmlFor="spread" className="mb-1.5 block text-[12.5px] font-semibold text-slate-700">
                   Favorite spread
                 </label>
                 <select
@@ -762,7 +770,7 @@ export default function ProfilePage() {
                 </select>
               </div>
               <fieldset className="sm:col-span-2">
-                <legend className="mb-2 text-sm font-medium text-slate-700">
+                <legend className="mb-2 text-[12.5px] font-semibold text-slate-700">
                   Interpretation tone
                 </legend>
                 <div className="grid grid-cols-3 gap-2">
@@ -788,7 +796,7 @@ export default function ProfilePage() {
                 </div>
               </fieldset>
               <fieldset className="sm:col-span-2">
-                <legend className="mb-2 text-sm font-medium text-slate-700">Notifications</legend>
+                <legend className="mb-2 text-[12.5px] font-semibold text-slate-700">Notifications</legend>
                 <div className="grid gap-2 sm:grid-cols-3">
                   {[
                     ["Daily guidance", "notify_daily_guidance"],
@@ -809,7 +817,7 @@ export default function ProfilePage() {
                         checked={profile[key]}
                         onChange={(e) => patchPreference({ [key]: e.target.checked })}
                         disabled={saving}
-                        className="h-4 w-4 cursor-pointer rounded border-slate-300 text-primary-600 focus:ring-primary-400"
+                        className="h-4 w-4 cursor-pointer rounded border-slate-300 accent-primary-600 focus:ring-primary-400"
                       />
                     </label>
                   ))}
@@ -860,7 +868,7 @@ export default function ProfilePage() {
                         <span className="block truncate text-sm font-medium text-slate-800 group-hover:text-primary-700">
                           {r.title}
                         </span>
-                        <span className="block text-xs text-slate-500">
+                        <span className="block text-xs tabular-nums text-slate-500">
                           {new Date(r.created_at).toLocaleDateString(undefined, {
                             month: "short",
                             day: "numeric",
@@ -889,11 +897,11 @@ export default function ProfilePage() {
                 { label: "Palm", value: typeCounts.palm, tint: "text-accent-700" },
                 { label: "Tarot", value: typeCounts.tarot, tint: "text-indigo-700" },
               ].map((stat) => (
-                <div key={stat.label} className="rounded-2xl border border-slate-200 bg-slate-50/70 p-3">
-                  <div className={`font-display text-2xl font-bold ${stat.tint}`}>
+                <div key={stat.label} className="rounded-2xl border border-slate-100 bg-slate-50/60 p-3">
+                  <div className={`font-display text-2xl font-semibold tabular-nums ${stat.tint}`}>
                     {analytics ? stat.value : "·"}
                   </div>
-                  <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+                  <div className="mt-0.5 text-xs font-semibold uppercase tracking-widest text-slate-500">
                     {stat.label}
                   </div>
                 </div>
@@ -923,7 +931,7 @@ export default function ProfilePage() {
                 <Link
                   key={href}
                   href={href}
-                  className="group flex items-center gap-3 rounded-2xl p-2.5 transition hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-2.5 transition hover:border-slate-300 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-primary-100 bg-primary-50 text-primary-600">
                     <Icon className="h-5 w-5" />
