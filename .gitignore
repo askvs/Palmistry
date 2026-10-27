@@ -56,6 +56,17 @@ pytest-report.xml
 AGENT_PROGRESS.md
 PROGRESS.md
 
+# Documentation files
+ARCHITECTURE.md
+CHANGELOG.md
+CLAUDE.md
+PALMISTRY_TAROT_AI_AGENT_SPEC.md
+tests/README.md
+data/README.md
+frontend/AGENTS.md
+frontend/CLAUDE.md
+frontend/README.md
+
 # Unused packages (empty placeholder tree)
 /ai/
 
@@ -64,4 +75,4 @@ frontend/.git
 
 # Dev-only API collections
 backend/postman/
-docs
+docs/
