@@ -1,17 +1,8 @@
 // Life trend summary with chart.js history.
 import Link from "next/link";
 import { useMemo } from "react";
-import {
-  CategoryScale,
-  Chart as ChartJS,
-  Filler,
-  Legend,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Tooltip,
-} from "chart.js";
 import { Line } from "react-chartjs-2";
+import { CHART_COLORS, lineChartOptions } from "@/lib/chartjs";
 import { Badge, EmptyState, ErrorState, Panel, SkeletonRow } from "@/components/ui";
 import {
   DIRECTION_META,
@@ -21,8 +12,6 @@ import {
 } from "@/components/life-trends/shared";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { AlertIcon, ArrowRightIcon, TrendingUpIcon } from "@/components/icons";
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler, Legend);
 
 function TrendCard({ trend }) {
   const dir = DIRECTION_META[trend.direction] || DIRECTION_META.stable;
@@ -76,31 +65,18 @@ function HistoryChart({ history }) {
           label: "Overall signal",
           data: points.map((p) => p.overall_signal),
           fill: true,
-          borderColor: "#8b5cf6",
-          backgroundColor: "rgba(139, 92, 246, 0.12)",
-          pointBackgroundColor: "#8b5cf6",
-          pointRadius: 3,
-          tension: 0.3,
+          borderColor: CHART_COLORS[0],
+          backgroundColor: "rgba(124, 58, 237, 0.12)",
+          tension: 0.35,
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
         },
       ],
     };
   }, [history]);
 
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: { min: 0, max: 1, ticks: { color: "#64748b" }, grid: { color: "rgba(148, 163, 184, 0.2)" } },
-      x: { ticks: { color: "#64748b" }, grid: { display: false } },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        labels: { color: "#475569", usePointStyle: true, boxWidth: 8, boxHeight: 8 },
-      },
-      tooltip: { enabled: true },
-    },
-  };
+  const options = lineChartOptions();
 
   return (
     <div className="h-64">
@@ -131,10 +107,10 @@ export default function LifeTrendDashboard() {
   if (loading || !trends) {
     return (
       <Panel title="Life Trend Analysis" subtitle="Signals drawn from your own readings">
-        <div className="animate-pulse space-y-4" aria-hidden="true">
+        <div className="space-y-4" aria-hidden="true">
           <SkeletonRow lines={3} />
-          <div className="h-24 rounded-2xl bg-slate-100" />
-          <div className="h-64 rounded-2xl bg-slate-100" />
+          <div className="skeleton-shimmer h-24 rounded-card" />
+          <div className="skeleton-shimmer h-64 rounded-card" />
         </div>
       </Panel>
     );

@@ -14,7 +14,7 @@ const STATUS_META = {
 function PalmFeatureRow({ feature }) {
   const meta = STATUS_META[feature.status] || STATUS_META.pending;
   return (
-    <li className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs">
+    <li className="surface-card hover-lift p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2.5">
           <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary-50 text-primary-600 ring-1 ring-primary-100">
@@ -35,7 +35,7 @@ function PalmFeatureRow({ feature }) {
             tone="primary"
             label={`${feature.label} confidence`}
           />
-          <span className="w-9 text-right text-[11px] font-bold text-slate-700">
+          <span className="w-9 text-right text-[11px] font-bold text-slate-700 tabular-nums">
             {feature.confidence}%
           </span>
         </div>
@@ -76,7 +76,7 @@ export default function PalmAnalysisSummary({
     }
     return (
       <>
-        <p className="mb-4 text-xs text-slate-500">
+        <p className="mb-4 text-xs text-slate-500 tabular-nums">
           {features.filter((feature) => feature.status === "analyzed").length} of {features.length}{" "}
           features analysed
           {palm.analyzedAt ? ` · last scan ${formatDate(palm.analyzedAt)}` : ""}

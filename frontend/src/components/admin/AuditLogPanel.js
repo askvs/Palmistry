@@ -41,20 +41,22 @@ export default function AuditLogPanel({ limit = 100 }) {
           description="Administrative overrides, role updates and system operations appear here."
         />
       ) : (
-        <ul className="divide-y divide-slate-100 text-sm">
+        <ul className="divide-y divide-slate-100">
           {items.map((entry) => (
-            <li key={entry.id} className="-mx-2 rounded-lg px-2 py-3 transition hover:bg-slate-50/60">
+            <li key={entry.id} className="-mx-2 rounded-lg px-2 py-2.5 transition hover:bg-slate-50/60">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <Badge tone={ACTION_TONES[entry.action] || "slate"}>{entry.action}</Badge>
-                <span className="min-w-0 flex-1 truncate text-xs text-slate-600">{entry.target}</span>
-                <span className="text-xs font-medium text-slate-500">
+                <span className="min-w-0 flex-1 truncate text-[13px] text-slate-600">{entry.target}</span>
+                <span className="text-[12.5px] font-medium text-slate-500">
                   {entry.actor_email || "system"}
                 </span>
-                <span className="shrink-0 text-xs text-slate-500">
+                <span className="shrink-0 text-[12.5px] tabular-nums text-slate-500">
                   {new Date(entry.created_at).toLocaleString()}
                 </span>
               </div>
-              {entry.detail && <p className="mt-1 pl-1 text-xs text-slate-500">{entry.detail}</p>}
+              {entry.detail && (
+                <p className="mt-1 pl-1 text-[12.5px] leading-relaxed text-slate-500">{entry.detail}</p>
+              )}
             </li>
           ))}
         </ul>

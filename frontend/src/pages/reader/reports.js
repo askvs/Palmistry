@@ -1,11 +1,17 @@
 // Tarot reader report management (role-guarded, backend stays authoritative).
 import { PageHeader } from "@/components/ui";
+import Seo from "@/components/Seo";
 import ReadingReportsTable from "@/components/reader/ReadingReportsTable";
 import { TableIcon } from "@/components/icons";
 
 export default function ReaderReportsPage() {
   return (
     <div className="space-y-6">
+      <Seo
+        title="Reading reports"
+        description="Review every platform reading, certify what you have checked, and export publication-grade PDF or Excel reports."
+      />
+
       <PageHeader
         icon={TableIcon}
         eyebrow="Reader workspace"

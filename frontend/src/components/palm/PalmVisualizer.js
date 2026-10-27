@@ -19,7 +19,7 @@ const LINE_CONFIGS = {
   fate_line: {
     color: "#8b5cf6",
     label: "Fate Line",
-    accent: "text-violet-600 bg-violet-50 border-violet-200",
+    accent: "text-primary-600 bg-primary-50 border-primary-100",
   },
   sun_line: {
     color: "#f59e0b",
@@ -86,7 +86,7 @@ export default function PalmVisualizer({
   return (
     <div className="flex flex-col gap-3">
       {/* Visualizer Frame */}
-      <div className="relative w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-900 shadow-lg">
+      <div className="relative w-full overflow-hidden rounded-[16px] bg-slate-900 ring-1 ring-white/10">
         {/* Underlay Image */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -266,7 +266,7 @@ export default function PalmVisualizer({
         {/* Floating Tooltip for Hovered Mount */}
         {hoveredMount && hoveredMount.center && (
           <div
-            className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded-xl border border-white/20 bg-slate-900/90 px-3 py-1.5 text-xs text-white shadow-xl backdrop-blur-md"
+            className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded-xl border border-white/20 bg-slate-900/90 px-3 py-1.5 text-sm text-white shadow-xl backdrop-blur-md"
             style={{
               left: `${hoveredMount.center.x * 100}%`,
               top: `calc(${hoveredMount.center.y * 100}% - 14px)`,
@@ -276,7 +276,7 @@ export default function PalmVisualizer({
               <span>{MOUNT_SYMBOLS[hoveredMount.mount_id]}</span>
               <span>{hoveredMount.name}</span>
             </div>
-            <div className="text-[10px] text-slate-300">
+            <div className="text-[12.5px] text-slate-300">
               Prominence: <span className="capitalize font-medium text-white">{hoveredMount.prominence}</span>
             </div>
           </div>
@@ -291,7 +291,7 @@ export default function PalmVisualizer({
               onChange={(e) => setShowLines(e.target.checked)}
               className="rounded accent-violet-500"
             />
-            <span className="text-[11px] font-medium">Lines</span>
+            <span className="text-[12.5px] font-medium">Lines</span>
           </label>
           <span className="text-white/30">|</span>
           <label className="flex items-center gap-1 cursor-pointer select-none">
@@ -301,7 +301,7 @@ export default function PalmVisualizer({
               onChange={(e) => setShowMounts(e.target.checked)}
               className="rounded accent-violet-500"
             />
-            <span className="text-[11px] font-medium">Mounts</span>
+            <span className="text-[12.5px] font-medium">Mounts</span>
           </label>
           <span className="text-white/30">|</span>
           <label className="flex items-center gap-1 cursor-pointer select-none">
@@ -311,12 +311,12 @@ export default function PalmVisualizer({
               onChange={(e) => setShowLandmarks(e.target.checked)}
               className="rounded accent-violet-500"
             />
-            <span className="text-[11px] font-medium">Mesh</span>
+            <span className="text-[12.5px] font-medium">Mesh</span>
           </label>
         </div>
 
         {/* Bottom Overlay Hint */}
-        <div className="pointer-events-none absolute bottom-3 left-3 right-3 flex items-center justify-between text-[11px] text-white/80">
+        <div className="pointer-events-none absolute bottom-3 left-3 right-3 flex items-center justify-between text-[12.5px] text-white/80">
           <span className="rounded-full bg-slate-900/60 px-2.5 py-0.5 backdrop-blur-sm">
             Biometric Crease Overlay
           </span>

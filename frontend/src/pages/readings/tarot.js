@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Seo from "@/components/Seo";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -44,11 +45,14 @@ import {
 } from "@/components/ui";
 
 const RITUAL_STEPS = [
-  { id: "setup", label: "1. Spread" },
-  { id: "shuffling", label: "2. Shuffle" },
-  { id: "selecting", label: "3. Select" },
-  { id: "results", label: "4. Insight" },
+  { id: "setup", label: "Spread" },
+  { id: "shuffling", label: "Shuffle" },
+  { id: "selecting", label: "Select" },
+  { id: "results", label: "Insight" },
 ];
+
+// Roman numerals for the ritual progress pills (spec §6.4).
+const ROMAN = ["I", "II", "III", "IV"];
 
 function SpreadLayout({ spreadDef, cards }) {
   const coords = useMemo(() => {
@@ -71,7 +75,7 @@ function SpreadLayout({ spreadDef, cards }) {
   const count = cards ? cards.length : spreadDef?.card_count || 3;
 
   return (
-    <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-visible rounded-3xl border border-primary-200 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.10),rgba(245,243,255,0.7)_50%,white_85%)] p-[7%] shadow-inner">
+    <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-visible rounded-panel border border-primary-200 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.10),rgba(245,243,255,0.7)_50%,white_85%)] p-[7%] shadow-inner">
       {cards
         ? placed.map(({ card, coord, crossing }) => (
             <figure
@@ -94,15 +98,16 @@ function SpreadLayout({ spreadDef, cards }) {
                     alt={`${card.card_name} (${card.orientation})`}
                     width={280}
                     height={480}
+                    sizes="(min-width:640px) 220px, 160px"
                     className={`aspect-[7/12] w-full object-cover ${card.is_reversed ? "rotate-180" : ""}`}
                   />
                 ) : (
-                  <div className="aspect-[7/12] w-full bg-primary-950 flex items-center justify-center text-[10px] text-accent-200 p-1 text-center">
+                  <div className="aspect-[7/12] w-full bg-primary-950 flex items-center justify-center text-[12.5px] text-accent-200 p-1 text-center">
                     {card.card_name}
                   </div>
                 )}
               </div>
-              <figcaption className="mt-1 truncate text-center text-[11px] font-medium text-primary-800">
+              <figcaption className="mt-1 truncate text-center text-[12.5px] font-medium text-primary-800">
                 {card.position_name}
               </figcaption>
             </figure>
@@ -143,11 +148,11 @@ function CardThumb({ card, reversed }) {
           sizes="72px"
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-primary-950 p-1 text-center text-[9px] leading-tight text-accent-200">
+        <div className="flex h-full w-full items-center justify-center bg-primary-950 p-1 text-center text-[12.5px] leading-tight text-accent-200">
           {card.name}
         </div>
       )}
-      <span className="absolute inset-x-0 bottom-0 truncate bg-slate-950/75 px-1 py-0.5 text-center text-[9px] font-medium text-white">
+      <span className="absolute inset-x-0 bottom-0 truncate bg-slate-950/75 px-1 py-0.5 text-center text-[12.5px] font-medium text-white">
         {card.name}
       </span>
     </div>
@@ -197,16 +202,16 @@ function SelectionBoard({ spread, selections = [] }) {
               )}
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-primary-600">
+                  <span className="text-[12.5px] font-semibold uppercase tracking-wider text-primary-600">
                     {pos.position || idx + 1}. {pos.name}
                   </span>
                   {sel?.is_reversed && (
-                    <Badge tone="accent" className="px-1.5 py-0 text-[9px] font-bold uppercase">
+                    <Badge tone="accent" className="px-1.5 py-0 font-bold uppercase">
                       Rev
                     </Badge>
                   )}
                 </div>
-                <p className="mt-1 text-[11px] leading-relaxed text-slate-500">{pos.description}</p>
+                <p className="mt-1 text-sm leading-relaxed text-slate-500">{pos.description}</p>
                 <p className="mt-2 text-xs">
                   {sel ? (
                     <span className="font-semibold text-slate-800">
@@ -222,11 +227,11 @@ function SelectionBoard({ spread, selections = [] }) {
                   )}
                 </p>
                 {sel?.core_meaning ? (
-                  <p className="mt-1.5 line-clamp-2 text-[11px] italic leading-relaxed text-slate-500">
+                  <p className="mt-1.5 line-clamp-2 text-sm italic leading-relaxed text-slate-500">
                     {sel.core_meaning}
                   </p>
                 ) : sel && (sel.card.arcana || sel.card.suit) ? (
-                  <p className="mt-1.5 text-[11px] italic leading-relaxed text-slate-500">
+                  <p className="mt-1.5 text-sm italic leading-relaxed text-slate-500">
                     {String(sel.card.arcana || "").toUpperCase()}
                     {sel.card.suit ? ` Arcana • ${sel.card.suit}` : ""}
                     {typeof sel.card.number === "number" ? ` • No. ${sel.card.number}` : ""}
@@ -326,6 +331,15 @@ export default function TarotReadingPage() {
         `Could not shuffle the deck: ${err.message || err}. Check that the backend is running, then try again.`
       );
       setPhase("setup");
+    }
+  }
+
+  // Cmd/Ctrl+Enter from the question field starts the ritual — the existing
+  // setup-phase continue handler (spec §7.5 keyboard hint).
+  function handleQuestionKeyDown(event) {
+    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+      event.preventDefault();
+      handleStartRitual();
     }
   }
 
@@ -429,12 +443,18 @@ export default function TarotReadingPage() {
 
   const showLoading = !spreads && !catalogError;
 
+  // The step list carries four pills; "interpreting" belongs to the Insight
+  // stage, so it keeps IV active while the reading synthesizes.
+  const ritualPhase = phase === "interpreting" ? "results" : phase;
+  const activeIndex = RITUAL_STEPS.findIndex((step) => step.id === ritualPhase);
+
   // The shared panel normalizes the tarot payload
   // ({deep_narrative, wisdom_points, action_plan}) into its display shape.
   const aiInterpretation = result?.ai_interpretation || null;
 
   return (
     <div className="space-y-8">
+      <Seo title="Tarot reading" description="Shuffle, draw, and reveal a guided tarot spread with structured, personal interpretation." />
       <div>
         <Link
           href="/readings"
@@ -452,20 +472,31 @@ export default function TarotReadingPage() {
           actions={
             <div className="flex flex-wrap items-center gap-1.5" aria-label="Ritual progress">
               {RITUAL_STEPS.map((step, i) => (
-                <span key={step.id} className="flex items-center gap-1.5">
+                <div key={step.id} className="flex items-center gap-1.5">
                   {i > 0 && (
-                    <span aria-hidden="true" className="text-xs text-slate-300">
-                      →
-                    </span>
+                    <span
+                      aria-hidden="true"
+                      className={`h-px w-4 sm:w-6 ${
+                        i <= activeIndex
+                          ? "bg-gradient-to-r from-primary-400 to-accent-400"
+                          : "bg-slate-200"
+                      }`}
+                    />
                   )}
-                  <Badge
-                    tone={
-                      phase === step.id ? (step.id === "results" ? "accent" : "primary") : "slate"
-                    }
+                  <span
+                    aria-current={i === activeIndex ? "step" : undefined}
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
+                      i === activeIndex
+                        ? "border-primary-200 bg-primary-50 text-primary-700"
+                        : i < activeIndex
+                          ? "border-accent-200 bg-accent-50 text-accent-700"
+                          : "border-slate-200 bg-white text-slate-500"
+                    }`}
                   >
+                    <span className="font-display">{ROMAN[i]}</span>
                     {step.label}
-                  </Badge>
-                </span>
+                  </span>
+                </div>
               ))}
             </div>
           }
@@ -508,7 +539,7 @@ export default function TarotReadingPage() {
                 <div>
                   <label
                     htmlFor="tarot-spread-select"
-                    className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-primary-700"
+                    className="mb-2 block text-[12.5px] font-semibold uppercase tracking-wider text-primary-700"
                   >
                     Spread Format
                   </label>
@@ -527,19 +558,23 @@ export default function TarotReadingPage() {
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="tarot-question-input"
-                    className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-primary-700"
-                  >
-                    Your Sacred Question / Focus (Optional)
-                  </label>
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <label
+                      htmlFor="tarot-question-input"
+                      className="text-[12.5px] font-semibold uppercase tracking-wider text-primary-700"
+                    >
+                      Your Sacred Question / Focus (Optional)
+                    </label>
+                    <kbd className="rounded-md border border-slate-200 bg-slate-100 px-1.5 py-0.5 font-sans text-[10px] font-semibold text-slate-500">⌘↵</kbd>
+                  </div>
                   <textarea
                     id="tarot-question-input"
                     rows={3}
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
+                    onKeyDown={handleQuestionKeyDown}
                     placeholder="e.g., What underlying energies are shaping my career path?"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-500 transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
+                    className="w-full rounded-[10px] border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 shadow-xs transition placeholder:text-slate-500 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                   />
                 </div>
 
@@ -575,7 +610,7 @@ export default function TarotReadingPage() {
             <SpreadLayout spreadDef={selectedSpread} cards={null} />
 
             <div className="mt-6 space-y-2">
-              <span className="block text-[11px] font-semibold uppercase tracking-wider text-primary-600">
+              <span className="block text-[12.5px] font-semibold uppercase tracking-wider text-primary-600">
                 Position Meanings:
               </span>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -587,7 +622,7 @@ export default function TarotReadingPage() {
                     <span className="font-semibold text-accent-700">
                       #{pos.position}: {pos.name}
                     </span>
-                    <p className="mt-0.5 text-[11px] text-slate-500">{pos.description}</p>
+                    <p className="mt-0.5 text-sm text-slate-500">{pos.description}</p>
                   </div>
                 ))}
               </div>
@@ -816,7 +851,7 @@ export default function TarotReadingPage() {
               </p>
             )}
 
-            <p className="mt-4 text-center text-[10px] text-slate-500">
+            <p className="mt-4 text-center text-[12.5px] text-slate-500">
               {result.metadata?.engine} • relevance{" "}
               {Math.round((result.metadata?.overall_relevance || 0.95) * 100)}% • Fisher-Yates PRNG
             </p>

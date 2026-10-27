@@ -18,10 +18,10 @@ export function Spinner({ className = "h-5 w-5", label }) {
 // Row-level skeleton for lists/tables inside panels.
 export function SkeletonRow({ lines = 2, className = "" }) {
   return (
-    <div className={`animate-pulse space-y-2.5 py-2 ${className}`} aria-hidden="true">
-      <div className="h-4 w-3/4 rounded bg-slate-200/80" />
+    <div className={`space-y-2.5 py-2 ${className}`} aria-hidden="true">
+      <div className="skeleton-shimmer h-4 w-3/4 rounded-md" />
       {Array.from({ length: Math.max(0, lines - 1) }).map((_, i) => (
-        <div key={i} className="h-3 w-1/2 rounded bg-slate-100" />
+        <div key={i} className="skeleton-shimmer h-3 w-1/2 rounded-md" />
       ))}
     </div>
   );
@@ -35,11 +35,11 @@ export function SkeletonCards({ count = 3, className = "" }) {
       aria-hidden="true"
     >
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="animate-pulse rounded-[20px] border border-slate-200/70 bg-white p-6">
-          <div className="h-9 w-9 rounded-xl bg-slate-200/80" />
-          <div className="mt-4 h-4 w-2/3 rounded bg-slate-200/80" />
-          <div className="mt-2.5 h-3 w-full rounded bg-slate-100" />
-          <div className="mt-1.5 h-3 w-4/5 rounded bg-slate-100" />
+        <div key={i} className="rounded-panel border border-slate-200/70 bg-white p-6">
+          <div className="skeleton-shimmer h-9 w-9 rounded-xl" />
+          <div className="skeleton-shimmer mt-4 h-4 w-2/3 rounded-md" />
+          <div className="skeleton-shimmer mt-2.5 h-3 w-full rounded-md" />
+          <div className="skeleton-shimmer mt-1.5 h-3 w-4/5 rounded-md" />
         </div>
       ))}
     </div>

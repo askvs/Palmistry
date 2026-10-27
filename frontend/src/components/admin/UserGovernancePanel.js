@@ -99,14 +99,14 @@ export default function UserGovernancePanel() {
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search email or name…"
               aria-label="Search users by email or name"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 py-1.5 pl-9 pr-3 text-xs text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+              className="w-full rounded-[10px] border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-[13px] text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
             />
           </div>
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
             aria-label="Filter users by role"
-            className="cursor-pointer rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+            className="cursor-pointer rounded-[10px] border border-slate-200 bg-white px-2.5 py-2 text-[12.5px] font-medium text-slate-700 transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
           >
             {ROLE_FILTERS.map((option) => (
               <option key={option.value} value={option.value}>
@@ -142,31 +142,61 @@ export default function UserGovernancePanel() {
           }
         />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
-                <th className="py-2.5 pr-4">Email</th>
-                <th className="py-2.5 pr-4">Name</th>
-                <th className="py-2.5 pr-4">Assigned Role</th>
-                <th className="py-2.5 pr-4">Joined</th>
-                <th className="py-2.5 pr-4">Status</th>
-                <th className="py-2.5">Actions</th>
+        <div className="sm:overflow-x-auto">
+          <table className="block w-full text-left sm:table">
+            <thead className="hidden sm:table-header-group">
+              <tr className="border-b border-slate-200 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                <th scope="col" className="w-8 py-2.5 pr-3">
+                  <span className="sr-only">Select</span>
+                </th>
+                <th scope="col" className="py-2.5 pr-4">Email</th>
+                <th scope="col" className="py-2.5 pr-4">Name</th>
+                <th scope="col" className="py-2.5 pr-4">Assigned Role</th>
+                <th scope="col" className="py-2.5 pr-4">Joined</th>
+                <th scope="col" className="py-2.5 pr-4">Status</th>
+                <th scope="col" className="py-2.5">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="block sm:table-row-group">
               {visible.map((u) => (
                 <tr
                   key={u.id}
-                  className="border-b border-slate-100 transition last:border-0 hover:bg-slate-50/60"
+                  className="mb-3 block rounded-2xl border border-slate-100 bg-white px-4 shadow-xs transition last:mb-0 sm:mb-0 sm:table-row sm:rounded-none sm:border-x-0 sm:border-t-0 sm:bg-transparent sm:px-0 sm:shadow-none sm:last:border-b-0 sm:hover:bg-slate-50/60"
                 >
-                  <td className="py-3 pr-4 font-medium text-slate-800">{u.email}</td>
-                  <td className="py-3 pr-4 text-slate-600">{u.full_name || "—"}</td>
-                  <td className="py-3 pr-4">
+                  <td className="flex items-center justify-between gap-3 border-b border-slate-100 px-1 py-2.5 last:border-0 sm:table-cell sm:w-8 sm:border-0 sm:px-0 sm:py-2.5 sm:pr-3">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 sm:hidden">
+                      Select
+                    </span>
+                    <input
+                      type="checkbox"
+                      aria-label={`Select ${u.email}`}
+                      className="h-4 w-4 shrink-0 cursor-pointer accent-primary-600"
+                    />
+                  </td>
+                  <td className="flex items-center justify-between gap-3 border-b border-slate-100 px-1 py-2.5 last:border-0 sm:table-cell sm:border-0 sm:px-0 sm:py-2.5 sm:pr-4">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 sm:hidden">
+                      Email
+                    </span>
+                    <span className="min-w-0 truncate text-[13px] font-medium text-slate-800">
+                      {u.email}
+                    </span>
+                  </td>
+                  <td className="flex items-center justify-between gap-3 border-b border-slate-100 px-1 py-2.5 last:border-0 sm:table-cell sm:border-0 sm:px-0 sm:py-2.5 sm:pr-4">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 sm:hidden">
+                      Name
+                    </span>
+                    <span className="min-w-0 truncate text-[13px] text-slate-600">
+                      {u.full_name || "—"}
+                    </span>
+                  </td>
+                  <td className="flex items-center justify-between gap-3 border-b border-slate-100 px-1 py-2.5 last:border-0 sm:table-cell sm:border-0 sm:px-0 sm:py-2.5 sm:pr-4">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 sm:hidden">
+                      Assigned Role
+                    </span>
                     <select
                       value={u.role}
                       onChange={(e) => changeRole(u, e.target.value)}
-                      className="cursor-pointer rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                      className="cursor-pointer rounded-[10px] border border-slate-200 bg-white px-2.5 py-2 text-[12.5px] font-medium text-slate-700 transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                       aria-label={`Role for ${u.email}`}
                     >
                       {ROLE_OPTIONS.map((role) => (
@@ -176,15 +206,26 @@ export default function UserGovernancePanel() {
                       ))}
                     </select>
                   </td>
-                  <td className="py-3 pr-4 text-xs text-slate-500">
-                    {new Date(u.created_at).toLocaleDateString()}
+                  <td className="flex items-center justify-between gap-3 border-b border-slate-100 px-1 py-2.5 last:border-0 sm:table-cell sm:border-0 sm:px-0 sm:py-2.5 sm:pr-4">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 sm:hidden">
+                      Joined
+                    </span>
+                    <span className="text-[12.5px] tabular-nums text-slate-500">
+                      {new Date(u.created_at).toLocaleDateString()}
+                    </span>
                   </td>
-                  <td className="py-3 pr-4">
-                    <Badge tone={u.is_active ? "emerald" : "rose"}>
+                  <td className="flex items-center justify-between gap-3 border-b border-slate-100 px-1 py-2.5 last:border-0 sm:table-cell sm:border-0 sm:px-0 sm:py-2.5 sm:pr-4">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 sm:hidden">
+                      Status
+                    </span>
+                    <Badge tone={u.is_active ? "emerald" : "rose"} dot>
                       {u.is_active ? "Active" : "Disabled"}
                     </Badge>
                   </td>
-                  <td className="py-3">
+                  <td className="flex items-center justify-between gap-3 px-1 py-2.5 last:border-0 sm:table-cell sm:border-0 sm:px-0 sm:py-2.5">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 sm:hidden">
+                      Actions
+                    </span>
                     <Button
                       size="sm"
                       variant={u.is_active ? "dangerGhost" : "secondary"}
@@ -197,7 +238,7 @@ export default function UserGovernancePanel() {
               ))}
             </tbody>
           </table>
-          <p className="mt-3 text-xs text-slate-500">
+          <p className="mt-3 text-[12.5px] tabular-nums text-slate-500">
             Showing {visible.length} of {usersData?.total ?? visible.length} account(s)
             {searchQuery || roleFilter || statusFilter ? " matching the current filters" : ""}.
           </p>

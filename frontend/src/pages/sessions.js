@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Seo from "@/components/Seo";
 import {
   Button,
   EmptyState,
@@ -12,7 +13,7 @@ import {
 } from "@/components/ui";
 import { ConfirmDialog } from "@/components/ui";
 import { Segmented } from "@/components/dashboards/shared";
-import { CalendarIcon, ChatIcon, ClockIcon, TrashIcon, UsersIcon, VideoIcon } from "@/components/icons";
+import { CalendarIcon, ChatIcon, CheckCircleIcon, ClockIcon, TrashIcon, UsersIcon, VideoIcon } from "@/components/icons";
 import {
   BookingStatusBadge,
   BookingTimeline,
@@ -106,14 +107,14 @@ function BookingRow({ booking, onChanged }) {
   }
 
   return (
-    <li className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4 transition hover:border-primary-200">
+    <li className="rounded-[20px] border border-slate-200 bg-white p-4 transition duration-200 hover:border-primary-200 hover:shadow-rest">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h4 className="text-sm font-semibold text-slate-900">{booking.subject}</h4>
             <BookingStatusBadge status={booking.status} />
           </div>
-          <p className="mt-1 text-xs text-slate-600">
+          <p className="mt-1 text-[13.5px] text-slate-600">
             with{" "}
             <Link
               href={`/consultants/${booking.consultant_id}`}
@@ -122,7 +123,7 @@ function BookingRow({ booking, onChanged }) {
               {booking.consultant_name}
             </Link>
           </p>
-          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[12.5px] tabular-nums text-slate-500">
             <CalendarIcon className="h-3.5 w-3.5 text-slate-400" />
             {formatRange(booking.start_time, booking.end_time)}
             <span className="text-slate-300">·</span>
@@ -132,7 +133,7 @@ function BookingRow({ booking, onChanged }) {
             {relativeFromNow(booking.start_time)}
           </p>
           {booking.cancellation_reason && booking.status === "cancelled" && (
-            <p className="mt-1.5 text-xs text-rose-700">
+            <p className="mt-1.5 text-[12.5px] text-rose-700">
               Reason: {booking.cancellation_reason}
             </p>
           )}
@@ -195,18 +196,18 @@ function BookingRow({ booking, onChanged }) {
       {/* Negotiation banner: whose turn is it, and the time on the table. */}
       {isNegotiating && (
         <div
-          className={`mt-3 rounded-2xl border px-4 py-3 ${
+          className={`mt-3 rounded-[16px] border px-4 py-3 ${
             awaitingSeeker
-              ? "border-amber-200 bg-amber-50/70"
-              : "border-slate-200 bg-slate-50"
+              ? "border-accent-200 bg-accent-50"
+              : "border-slate-200 bg-slate-50/70"
           }`}
         >
           {awaitingSeeker ? (
             <>
-              <p className="text-xs font-semibold text-amber-800">
+              <p className="text-[12.5px] font-semibold text-accent-800">
                 {booking.consultant_name} proposed a new time:
               </p>
-              <p className="mt-0.5 text-sm font-semibold text-amber-900">
+              <p className="mt-0.5 text-sm font-semibold tabular-nums text-accent-900">
                 {formatRange(booking.start_time, booking.end_time)}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -223,7 +224,7 @@ function BookingRow({ booking, onChanged }) {
               </div>
             </>
           ) : (
-            <p className="text-xs text-slate-600">
+            <p className="text-[12.5px] text-slate-600">
               Waiting for {booking.consultant_name} to confirm your requested time
               {". "}
               You can suggest a different time or chat with them below.
@@ -231,7 +232,7 @@ function BookingRow({ booking, onChanged }) {
                 <button
                   type="button"
                   onClick={() => setShowCounter((v) => !v)}
-                  className="font-semibold text-primary-600 hover:underline"
+                  className="font-semibold text-accent-700 hover:underline"
                 >
                   {showCounter ? "Close" : "Suggest another time"}
                 </button>
@@ -275,7 +276,7 @@ function BookingRow({ booking, onChanged }) {
               <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
                 Your notes
               </p>
-              <p className="mt-1 text-xs leading-relaxed text-slate-600">{booking.notes}</p>
+              <p className="mt-1 text-sm leading-relaxed text-slate-600">{booking.notes}</p>
             </div>
           )}
 
@@ -297,8 +298,8 @@ function BookingRow({ booking, onChanged }) {
                     key={note.id}
                     className="rounded-2xl border border-slate-200 bg-white px-4 py-3"
                   >
-                    <p className="text-xs leading-relaxed text-slate-700">{note.body}</p>
-                    <p className="mt-1 text-[11px] text-slate-500">
+                    <p className="text-sm leading-relaxed text-slate-700">{note.body}</p>
+                    <p className="mt-1 text-[12.5px] tabular-nums text-slate-500">
                       {note.author_name || "Consultant"} · {formatDateTime(note.created_at)}
                     </p>
                   </li>
@@ -368,6 +369,10 @@ export default function SessionsPage() {
 
   return (
     <div className="animate-fade-in space-y-8">
+      <Seo
+        title="Sessions"
+        description="Manage your booked consultant sessions, links and follow-ups."
+      />
       <PageHeader
         icon={CalendarIcon}
         eyebrow="Live consultations"
@@ -382,8 +387,10 @@ export default function SessionsPage() {
       />
 
       {justBooked && highlight && (
-        <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 text-sm text-emerald-900">
-          <VideoIcon className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+        <div className="flex items-start gap-3 rounded-[16px] border border-emerald-200 bg-emerald-50/60 p-4 text-sm text-emerald-900">
+          <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-emerald-600 ring-1 ring-emerald-200">
+            <CheckCircleIcon className="h-4 w-4" />
+          </span>
           <p>
             Your booking request has been sent. It shows as{" "}
             <span className="font-semibold">Pending</span> until the consultant accepts — the
@@ -409,8 +416,8 @@ export default function SessionsPage() {
       >
         {loading ? (
           <div className="space-y-3 py-2">
-            <div className="h-20 animate-pulse rounded-2xl bg-slate-100" />
-            <div className="h-20 animate-pulse rounded-2xl bg-slate-100" />
+            <div className="skeleton-shimmer h-20 rounded-panel" />
+            <div className="skeleton-shimmer h-20 rounded-panel" />
           </div>
         ) : error ? (
           <ErrorState message={error.message} onRetry={refresh} />
@@ -437,7 +444,7 @@ export default function SessionsPage() {
                   key={booking.id}
                   className={
                     booking.id === highlight
-                      ? "rounded-3xl ring-2 ring-emerald-300 ring-offset-2 ring-offset-white"
+                      ? "rounded-[20px] ring-2 ring-emerald-300 ring-offset-2 ring-offset-white"
                       : undefined
                   }
                 >
@@ -447,7 +454,7 @@ export default function SessionsPage() {
             </ul>
             {total > PAGE_SIZE && (
               <div className="mt-5 flex items-center justify-between gap-3">
-                <p className="text-xs text-slate-500">
+                <p className="text-[12.5px] tabular-nums text-slate-500">
                   Showing {offset + 1}–{Math.min(offset + PAGE_SIZE, total)} of {total}
                 </p>
                 <div className="flex gap-2">

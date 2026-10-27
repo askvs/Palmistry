@@ -19,14 +19,19 @@ export default function Tooltip({ label, children, side = "top" }) {
       onKeyDown={(e) => { if (e.key === "Escape") hide(); }}
     >
       <span aria-describedby={open ? id : undefined}>{children}</span>
-      {open && (
-        <span
-          id={id} role="tooltip"
-          className={`pointer-events-none absolute z-30 w-max max-w-[240px] rounded-[10px] bg-white px-2.5 py-1.5 text-[11px] leading-relaxed text-slate-600 shadow-lift ring-1 ring-slate-200 animate-rise-in ${position}`}
-        >
-          {label}
-        </span>
-      )}
+      {/* Kept mounted so the exit fade can play; pointer events stay off. */}
+      <span
+        id={id}
+        role="tooltip"
+        aria-hidden={!open}
+        className={`pointer-events-none absolute z-30 w-max max-w-[240px] rounded-[10px] bg-white px-2.5 py-1.5 text-[11px] leading-relaxed text-slate-600 shadow-lift ring-1 ring-slate-200 transition-[opacity,transform] duration-150 ease-[var(--ease-standard)] motion-reduce:transition-none ${position} ${
+          open
+            ? "translate-y-0 opacity-100"
+            : `opacity-0 ${side === "top" ? "translate-y-1" : "-translate-y-1"}`
+        }`}
+      >
+        {label}
+      </span>
     </span>
   );
 }

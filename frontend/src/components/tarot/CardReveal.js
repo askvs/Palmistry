@@ -29,7 +29,7 @@ export default function CardReveal({ cards = [], onCardSelect, activeIndex = 0 }
                   : "border border-primary-200 bg-white/70 opacity-80 hover:-translate-y-1 hover:border-primary-300 hover:opacity-100"
               }`}
             >
-              <div className="mb-1 font-mono text-[10px] font-semibold text-primary-700">
+              <div className="mb-1 font-mono text-[12.5px] font-semibold text-primary-700">
                 {c.position_name || `Pos ${c.position || idx + 1}`}
               </div>
               <div className="relative h-32 w-20 overflow-hidden rounded-md bg-primary-950 shadow-md ring-1 ring-slate-200 sm:h-36 sm:w-24">
@@ -53,11 +53,11 @@ export default function CardReveal({ cards = [], onCardSelect, activeIndex = 0 }
                   )}
                 </div>
               </div>
-              <span className="mt-2 max-w-[90px] truncate text-center text-[11px] font-medium text-slate-800">
+              <span className="mt-2 max-w-[90px] truncate text-center text-[12.5px] font-medium text-slate-800">
                 {c.card_name}
               </span>
               {c.is_reversed && (
-                <Badge tone="accent" className="mt-1 text-[9px] uppercase">
+                <Badge tone="accent" className="mt-1 uppercase">
                   Reversed
                 </Badge>
               )}
@@ -72,26 +72,27 @@ export default function CardReveal({ cards = [], onCardSelect, activeIndex = 0 }
           <div className="flex flex-col items-center gap-6 sm:gap-8 md:flex-row md:items-start">
             {/* Card Visual Spotlight */}
             <div className="flex flex-shrink-0 flex-col items-center">
-              <div
-                className={`relative h-64 w-40 overflow-hidden rounded-xl border-2 border-accent-400/70 shadow-xl transition-transform duration-500 sm:h-72 sm:w-48 ${
-                  currentCard.is_reversed ? "rotate-180" : ""
-                }`}
-              >
-                {currentCard.image_path ? (
-                  <Image
-                    src={`/${currentCard.image_path.replace(/^\/+/, "")}`}
-                    alt={currentCard.card_name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 640px) 160px, 192px"
-                    priority
-                  />
-                ) : (
-                  <div className="tarot-card-back flex h-full w-full items-center justify-center text-accent-300">
-                    {currentCard.card_name}
-                  </div>
-                )}
-              </div>
+              <span className="relative before:absolute before:-inset-10 before:rounded-full before:bg-[radial-gradient(closest-side,rgba(233,180,76,0.28),transparent)]">
+                <div
+                  className={`relative h-64 w-40 overflow-hidden rounded-xl border-2 border-accent-400/70 shadow-xl transition-transform duration-500 sm:h-72 sm:w-48 ${
+                    currentCard.is_reversed ? "rotate-180" : ""
+                  }`}
+                >
+                  {currentCard.image_path ? (
+                    <Image
+                      src={`/${currentCard.image_path.replace(/^\/+/, "")}`}
+                      alt={currentCard.card_name}
+                      fill
+                      className="object-cover"
+                      sizes="200px"
+                    />
+                  ) : (
+                    <div className="tarot-card-back flex h-full w-full items-center justify-center text-accent-300">
+                      {currentCard.card_name}
+                    </div>
+                  )}
+                </div>
+              </span>
               <div className="mt-3 text-center">
                 <Badge tone="primary">
                   {currentCard.orientation || (currentCard.is_reversed ? "Reversed" : "Upright")}
@@ -102,7 +103,7 @@ export default function CardReveal({ cards = [], onCardSelect, activeIndex = 0 }
             {/* Interpretation Details */}
             <div className="flex-1 space-y-4 text-left">
               <div>
-                <div className="flex flex-wrap items-center gap-2 font-mono text-xs uppercase tracking-widest text-accent-600">
+                <div className="flex flex-wrap items-center gap-2 font-mono text-xs uppercase tracking-widest text-accent-700">
                   <span>Position {currentCard.position}:</span>
                   <span className="font-bold text-primary-700">{currentCard.position_name}</span>
                 </div>
@@ -110,7 +111,7 @@ export default function CardReveal({ cards = [], onCardSelect, activeIndex = 0 }
                   {currentCard.card_name}
                 </h3>
                 {currentCard.position_description && (
-                  <p className="mt-0.5 text-xs italic text-slate-500">
+                  <p className="mt-2 font-display text-[20px] font-semibold italic leading-snug text-slate-900">
                     &ldquo;{currentCard.position_description}&rdquo;
                   </p>
                 )}
@@ -195,7 +196,7 @@ export default function CardReveal({ cards = [], onCardSelect, activeIndex = 0 }
                         key={g.domain || i}
                         className="rounded-xl border border-primary-100 bg-primary-50/50 p-3"
                       >
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-primary-700">
+                        <p className="text-[12.5px] font-bold uppercase tracking-wider text-primary-700">
                           {g.label || g.domain}
                         </p>
                         <p className="mt-1 text-xs leading-relaxed text-slate-700">{g.text}</p>

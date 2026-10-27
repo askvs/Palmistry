@@ -27,7 +27,7 @@ export default function MeetingCard({ booking }) {
   }
 
   return (
-    <div className="mt-3 rounded-2xl border border-emerald-200/70 bg-emerald-50/50 p-4">
+    <div className="mt-3 surface-card p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs font-bold uppercase tracking-wide text-emerald-700">
           Your session is confirmed
@@ -35,7 +35,7 @@ export default function MeetingCard({ booking }) {
         <Badge tone="emerald">{countdownLabel(booking, now)}</Badge>
       </div>
 
-      <p className="mt-2 flex flex-wrap items-center gap-1.5 text-xs font-medium text-slate-700">
+      <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[12.5px] font-medium tabular-nums text-slate-700">
         <CalendarIcon className="h-3.5 w-3.5 text-slate-400" />
         {formatRange(booking.start_time, booking.end_time)}
         <span className="text-slate-300">·</span>
@@ -44,7 +44,7 @@ export default function MeetingCard({ booking }) {
       </p>
 
       {meetLink ? (
-        <div className="mt-3 flex flex-col gap-2 rounded-xl border border-emerald-200/70 bg-white px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-3 flex flex-col gap-2 rounded-[10px] border border-emerald-200/70 bg-white px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between">
           <a
             href={meetLink}
             target="_blank"
@@ -65,7 +65,7 @@ export default function MeetingCard({ booking }) {
           </div>
         </div>
       ) : (
-        <p className="mt-3 rounded-xl border border-emerald-200/70 bg-white px-3.5 py-2.5 text-xs leading-relaxed text-slate-600">
+        <p className="mt-3 rounded-[10px] border border-emerald-200/70 bg-white px-3.5 py-2.5 text-[12.5px] leading-relaxed text-slate-600">
           {booking.consultant_name} hasn&apos;t shared the Google Meet link yet — it will appear
           here as soon as they do.
         </p>
@@ -95,7 +95,7 @@ export default function MeetingCard({ booking }) {
       )}
 
       {meetLink && (
-        <p className="mt-2 text-xs text-emerald-800">
+        <p className="mt-2 text-[12.5px] leading-relaxed text-slate-500">
           The Join button up top unlocks 30 minutes before the session starts — the link above
           works any time.
         </p>

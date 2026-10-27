@@ -1,8 +1,8 @@
 // Client detail: profile, evidence panels, session history, and notes.
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 import { Button, ErrorState, Spinner, useToast } from "@/components/ui";
+import Seo from "@/components/Seo";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { useAuth } from "@/hooks/useAuth";
 import { useRoleGuard } from "@/hooks/useRoleGuard";
@@ -124,9 +124,10 @@ export default function ConsultantClientDetailPage() {
 
   return (
     <div className="animate-fade-in space-y-8">
-      <Head>
-        <title>{client.name} | Client Profile | Palmistry &amp; Tarot</title>
-      </Head>
+      <Seo
+        title={`${client.name} | Client Profile`}
+        description={`Consultant workspace profile for ${client.name}: readings, goals, palm and tarot context.`}
+      />
 
       <ClientOverviewHeader
         client={client}
@@ -134,7 +135,7 @@ export default function ConsultantClientDetailPage() {
       />
 
       {client.profilePending && (
-        <div className="rounded-3xl border border-accent-200 bg-accent-50/70 p-5">
+        <div className="surface-card border-accent-200 bg-accent-50/70 p-5">
           <h2 className="text-sm font-semibold text-accent-900">Profile pending</h2>
           <p className="mt-1 max-w-2xl text-sm leading-relaxed text-accent-800">
             This seeker has reached out to you, but the platform does not yet expose their profile
@@ -187,7 +188,7 @@ export default function ConsultantClientDetailPage() {
         />
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-200/90 bg-white p-5 shadow-xs">
+      <div className="surface-card flex flex-wrap items-center justify-between gap-3 p-5">
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary-50 text-primary-600 ring-1 ring-primary-100">
             <CompassIcon className="h-5 w-5" />

@@ -54,12 +54,12 @@ const SECONDARY_ACTIONS = {
 function LifeTrendSkeleton() {
   return (
     <div
-      className="animate-pulse rounded-[20px] border border-slate-200/90 bg-white p-6 shadow-xs sm:p-7"
+      className="surface-panel p-6 sm:p-7"
       aria-hidden="true"
     >
-      <div className="h-5 w-56 rounded bg-slate-200/80" />
-      <div className="mt-5 h-24 rounded-2xl bg-slate-100" />
-      <div className="mt-3 h-64 rounded-2xl bg-slate-100" />
+      <div className="skeleton-shimmer h-5 w-56 rounded-[6px]" />
+      <div className="skeleton-shimmer mt-5 h-24 rounded-card" />
+      <div className="skeleton-shimmer mt-3 h-64 rounded-card" />
     </div>
   );
 }

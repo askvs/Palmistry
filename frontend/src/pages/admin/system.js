@@ -2,6 +2,7 @@
 import { PageHeader } from "@/components/ui";
 import { AuthSettingsPanel, PermissionsPanel, SystemConfigPanel } from "@/components/admin/SystemPanels";
 import { SystemStatusPanel } from "@/components/admin/AnalyticsPanels";
+import Seo from "@/components/Seo";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { fetchSystemHealth } from "@/services/roles";
 import { SettingsIcon } from "@/components/icons";
@@ -11,6 +12,11 @@ export default function AdminSystemPage() {
 
   return (
     <div className="space-y-6">
+      <Seo
+        title="System"
+        description="Access permissions, authentication settings, deployment configuration and application performance."
+      />
+
       <PageHeader
         icon={SettingsIcon}
         eyebrow="Administration"

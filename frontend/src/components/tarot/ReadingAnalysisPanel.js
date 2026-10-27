@@ -11,7 +11,7 @@ const ELEMENT_STYLES = {
 function StatChip({ label, value }) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-xs">
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-primary-600">{label}</p>
+      <p className="text-[12.5px] font-semibold uppercase tracking-wider text-primary-600">{label}</p>
       <p className="mt-1 text-sm font-medium text-slate-900">{value}</p>
     </div>
   );
@@ -20,14 +20,14 @@ function StatChip({ label, value }) {
 function AnalysisCard({ title, className = "", children }) {
   return (
     <div className={`rounded-2xl border border-slate-200 bg-slate-50/60 p-4 ${className}`}>
-      <h4 className="text-[11px] font-semibold uppercase tracking-wider text-primary-700">{title}</h4>
+      <h4 className="text-[13px] font-semibold uppercase tracking-wider text-primary-700">{title}</h4>
       <div className="mt-3 space-y-2.5">{children}</div>
     </div>
   );
 }
 
 function Narrative({ children }) {
-  return <p className="text-xs leading-relaxed text-slate-600">{children}</p>;
+  return <p className="text-sm leading-relaxed text-slate-600">{children}</p>;
 }
 
 function RatioBar({ segments, ariaLabel }) {
@@ -109,7 +109,7 @@ export default function ReadingAnalysisPanel({ analysis }) {
                 { label: "Minor", count: arcana.minor_arcana, className: "bg-accent-300" },
               ]}
             />
-            <p className="text-xs font-medium text-slate-700">
+            <p className="text-[12.5px] font-medium text-slate-700">
               {arcana.major_arcana} Major • {arcana.minor_arcana} Minor
               {typeof arcana.major_ratio === "number" &&
                 ` • ${Math.round(arcana.major_ratio * 100)}% Major Arcana`}
@@ -127,7 +127,7 @@ export default function ReadingAnalysisPanel({ analysis }) {
                 { label: "Reversed", count: reversal.reversed_count, className: "bg-primary-500" },
               ]}
             />
-            <p className="text-xs font-medium text-slate-700">
+            <p className="text-[12.5px] font-medium text-slate-700">
               {reversal.upright_count} Upright • {reversal.reversed_count} Reversed
               {typeof reversal.reversal_ratio === "number" &&
                 ` • ${Math.round(reversal.reversal_ratio * 100)}% reversed`}
@@ -143,7 +143,7 @@ export default function ReadingAnalysisPanel({ analysis }) {
                 const style = ELEMENT_STYLES[element] || { bar: "bg-slate-300", text: "text-slate-600" };
                 return (
                   <div key={element} className="flex items-center gap-2.5">
-                    <span className={`w-12 shrink-0 text-[11px] font-semibold ${style.text}`}>
+                    <span className={`w-12 shrink-0 text-[13px] font-semibold ${style.text}`}>
                       {element}
                     </span>
                     <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
@@ -153,7 +153,7 @@ export default function ReadingAnalysisPanel({ analysis }) {
                         title={`${element}: ${count}`}
                       />
                     </div>
-                    <span className="w-14 shrink-0 text-right text-[11px] text-slate-500">
+                    <span className="w-14 shrink-0 text-right text-[12.5px] text-slate-500">
                       {count} card{count === 1 ? "" : "s"}
                     </span>
                   </div>
@@ -190,23 +190,23 @@ export default function ReadingAnalysisPanel({ analysis }) {
                       {r.number}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-semibold text-slate-800">
+                      <p className="text-[12.5px] font-semibold text-slate-800">
                         {r.count}&times; Number {r.number}
                       </p>
                       {r.cards?.length > 0 && (
-                        <p className="mt-0.5 truncate text-[11px] text-slate-500" title={r.cards.join(", ")}>
+                        <p className="mt-0.5 truncate text-[12.5px] text-slate-500" title={r.cards.join(", ")}>
                           {r.cards.join(" • ")}
                         </p>
                       )}
                       {r.meaning && (
-                        <p className="mt-1 text-[11px] leading-relaxed text-slate-600">{r.meaning}</p>
+                        <p className="mt-1 text-sm leading-relaxed text-slate-600">{r.meaning}</p>
                       )}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-xs italic text-slate-500">
+              <p className="text-sm italic text-slate-500">
                 Every card carries a distinct number — no repeating vibration dominates this draw.
               </p>
             )}

@@ -1,5 +1,6 @@
 // Consultation Reports — filterable table of reports the consultant generated.
 import { Button, EmptyState, Panel, SkeletonRow } from "@/components/ui";
+import { Segmented } from "@/components/dashboards/shared";
 import { DownloadIcon, EyeIcon, FileTextIcon, SearchIcon, ShareIcon } from "@/components/icons";
 import { SectionError, SourceBadge } from "@/components/consultant/shared";
 import { formatDate } from "@/lib/format";
@@ -38,24 +39,15 @@ export default function ConsultationReportsTable({
       action={<SourceBadge source={source} />}
     >
       <div className="space-y-5">
-        <div className="flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/60 p-3.5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-3 rounded-card border border-slate-100 bg-slate-50/60 p-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-medium text-slate-500">Filter:</span>
-            {STATUS_FILTERS.map((filter) => (
-              <button
-                key={filter.value}
-                type="button"
-                aria-pressed={status === filter.value}
-                onClick={() => onStatusChange?.(filter.value)}
-                className={`cursor-pointer rounded-full px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
-                  status === filter.value
-                    ? "bg-primary-600 text-white shadow-sm shadow-primary-600/25"
-                    : "bg-white text-slate-600 ring-1 ring-slate-200 hover:text-slate-900"
-                }`}
-              >
-                {filter.label}
-              </button>
-            ))}
+            <Segmented
+              label="Report status filter"
+              value={status}
+              onChange={(value) => onStatusChange?.(value)}
+              options={STATUS_FILTERS}
+            />
           </div>
 
           <label className="relative inline-flex items-center">
@@ -64,7 +56,7 @@ export default function ConsultationReportsTable({
             <select
               value={clientId}
               onChange={(event) => onClientChange?.(event.target.value)}
-              className="h-8 cursor-pointer appearance-none rounded-full border border-slate-200 bg-white pl-8 pr-3 text-xs font-medium text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+              className="h-9 cursor-pointer appearance-none rounded-control border border-slate-200 bg-white pl-8 pr-3 text-[13px] font-medium text-slate-700 transition focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             >
               <option value="">All clients</option>
               {clientOptions.map((option) => (
@@ -123,15 +115,17 @@ export default function ConsultationReportsTable({
                     const meta = REPORT_STATUS_META[report.status] || REPORT_STATUS_META.generating;
                     const ready = report.status === "ready";
                     return (
-                      <tr key={report.id} className="transition hover:bg-slate-50/70">
-                        <td className="px-4 py-3.5 text-sm font-semibold text-slate-900">
+                      <tr key={report.id} className="transition-colors hover:bg-slate-50">
+                        <td className="px-4 py-2.5 text-[13px] font-semibold text-slate-900">
                           {report.clientName}
                         </td>
-                        <td className="px-4 py-3.5 text-sm text-slate-700">{report.consultation}</td>
-                        <td className="px-4 py-3.5 text-sm text-slate-600">
+                        <td className="px-4 py-2.5 text-[13px] text-slate-700">
+                          {report.consultation}
+                        </td>
+                        <td className="px-4 py-2.5 text-[13px] text-slate-600 tabular-nums">
                           {formatDate(report.date)}
                         </td>
-                        <td className="px-4 py-3.5">
+                        <td className="px-4 py-2.5">
                           <span
                             className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${
                               meta.tone === "emerald"
@@ -142,7 +136,7 @@ export default function ConsultationReportsTable({
                             {meta.label}
                           </span>
                         </td>
-                        <td className="px-4 py-3.5">
+                        <td className="px-4 py-2.5">
                           <div className="flex items-center justify-end gap-2">
                             <Button
                               variant="secondary"
@@ -189,7 +183,7 @@ export default function ConsultationReportsTable({
                 return (
                   <li
                     key={report.id}
-                    className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs"
+                    className="surface-card p-4"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
@@ -208,7 +202,7 @@ export default function ConsultationReportsTable({
                         {ready ? "Ready" : "Generating"}
                       </span>
                     </div>
-                    <p className="mt-2 text-xs text-slate-500">{formatDate(report.date)}</p>
+                    <p className="mt-2 text-xs text-slate-500 tabular-nums">{formatDate(report.date)}</p>
                     <div className="mt-3 flex items-center gap-2">
                       <Button
                         variant="secondary"

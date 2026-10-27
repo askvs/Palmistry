@@ -12,32 +12,32 @@ import { formatDate, relativeLabel } from "@/lib/format";
 
 function TableRow({ client, onStartConsultation }) {
   return (
-    <tr className="transition hover:bg-slate-50/70">
-      <td className="px-4 py-3.5">
+    <tr className="transition-colors hover:bg-slate-50/70">
+      <td className="px-4 py-2.5">
         <div className="flex items-center gap-3">
           <ClientAvatar name={client.name} size="sm" />
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-slate-900">{client.name}</p>
-            <p className="truncate text-xs text-slate-500">
+            <p className="truncate text-[13px] font-semibold text-slate-900">{client.name}</p>
+            <p className="truncate text-xs text-slate-500 tabular-nums">
               {client.ageGroup || "—"} · {client.consultationCount} consultation
               {client.consultationCount === 1 ? "" : "s"}
             </p>
           </div>
         </div>
       </td>
-      <td className="px-4 py-3.5 text-sm text-slate-700">
+      <td className="px-4 py-2.5 text-[13px] text-slate-600 tabular-nums">
         {client.latestReadingAt ? formatDate(client.latestReadingAt) : "—"}
       </td>
-      <td className="px-4 py-3.5 text-sm text-slate-700">
+      <td className="px-4 py-2.5 text-[13px] text-slate-600">
         {READING_TYPE_LABELS[client.latestReading] || client.latestReading || "—"}
       </td>
-      <td className="px-4 py-3.5">
+      <td className="px-4 py-2.5">
         <TrendBadge trend={client.trend} />
       </td>
-      <td className="px-4 py-3.5 text-sm text-slate-600">
+      <td className="px-4 py-2.5 text-[13px] text-slate-600 tabular-nums">
         {relativeLabel(client.lastConsultationAt)}
       </td>
-      <td className="px-4 py-3.5">
+      <td className="px-4 py-2.5">
         <div className="flex items-center justify-end gap-2">
           <Button href={`/consultant/clients/${client.id}`} variant="secondary" size="sm" icon={EyeIcon}>
             View
@@ -59,8 +59,8 @@ function CardRow({ client, onStartConsultation }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-slate-900">{client.name}</p>
-              <p className="truncate text-xs text-slate-500">
+              <p className="truncate text-[13px] font-semibold text-slate-900">{client.name}</p>
+              <p className="truncate text-xs text-slate-500 tabular-nums">
                 {client.ageGroup || "—"} · {client.consultationCount} consultation
                 {client.consultationCount === 1 ? "" : "s"}
               </p>
@@ -71,7 +71,7 @@ function CardRow({ client, onStartConsultation }) {
           <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
             <div>
               <dt className="text-slate-500">Last reading</dt>
-              <dd className="font-medium text-slate-700">
+              <dd className="font-medium text-slate-700 tabular-nums">
                 {client.latestReadingAt ? formatDate(client.latestReadingAt) : "—"}
               </dd>
             </div>
@@ -83,7 +83,7 @@ function CardRow({ client, onStartConsultation }) {
             </div>
             <div>
               <dt className="text-slate-500">Last consultation</dt>
-              <dd className="font-medium text-slate-700">
+              <dd className="font-medium text-slate-700 tabular-nums">
                 {relativeLabel(client.lastConsultationAt)}
               </dd>
             </div>

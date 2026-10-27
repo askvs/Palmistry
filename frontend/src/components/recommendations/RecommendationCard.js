@@ -49,7 +49,7 @@ export default function RecommendationCard({
 
   return (
     <div
-      className={`rounded-3xl border border-slate-200/90 bg-white p-5 shadow-xs transition ${
+      className={`surface-card p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-lift ${
         isDismissed ? "opacity-60" : ""
       }`}
     >
@@ -77,7 +77,7 @@ export default function RecommendationCard({
 
       {/* Element affinity tag */}
       {recommendation.element_affinity && (
-        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-2.5 py-0.5 text-[11px] font-medium text-primary-700 ring-1 ring-primary-100">
+        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-2.5 py-0.5 text-sm font-medium text-primary-700 ring-1 ring-primary-100">
           <TargetIcon className="h-3 w-3" />
           Matches your {recommendation.element_affinity} element
         </div>

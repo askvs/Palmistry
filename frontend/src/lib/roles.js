@@ -24,6 +24,7 @@ export const NAV_ITEMS = {
   personality: { href: "/personality", label: "Personality" },
   // Live consultation and booking.
   consultants: { href: "/consultants", label: "Find a Consultant" },
+  live_consultation: { href: "/live-consultation", label: "Live Consultation" },
   sessions: { href: "/sessions", label: "My Sessions" },
   consultant_studio: { href: "/consultant-studio", label: "Consultant Studio" },
   // Reader workspace.
@@ -135,7 +136,11 @@ export const ROLES = {
     label: "Consultant",
     badgeTone: "emerald",
     icon: CompassIcon,
-    navKeys: ["home", "consultants", "sessions", "consultant_studio"],
+    // Consultant inbox: requests and confirmed sessions take the place of the
+    // seeker directory entry — "Find a Consultant" is a seeker tool. The seeker
+    // session hub ("My Sessions") is deliberately absent too: consultants run
+    // their sessions from Live Consultation, never as seekers.
+    navKeys: ["home", "live_consultation", "consultant_studio"],
     dashboardLabel: "Consultant Portal",
     // No CTA; the workspace queue is the consultant entry point.
     dashboardCta: null,
@@ -179,10 +184,17 @@ export const STAFF_ONLY_PREFIXES = [
     allowed: ["tarot_reader", "spiritual_consultant"],
     feature: "consultant studio",
   },
-  // Session hub without admins.
+  // Consultant live-consultation inbox.
+  {
+    prefix: "/live-consultation",
+    allowed: ["spiritual_consultant"],
+    feature: "live consultation inbox",
+  },
+  // Seeker/reader session hub; consultants run their sessions from Live
+  // Consultation, and admins are excluded.
   {
     prefix: "/sessions",
-    allowed: ["user", "tarot_reader", "spiritual_consultant"],
+    allowed: ["user", "tarot_reader"],
     feature: "session hub",
   },
 ];

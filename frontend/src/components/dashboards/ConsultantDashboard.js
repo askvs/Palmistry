@@ -157,21 +157,21 @@ export default function ConsultantDashboard() {
                 <MeterBar value={effectiveness.resolution_rate} tone="emerald" label="Resolution rate" />
               </div>
               <ul className="space-y-2 text-sm">
-                <li className="flex items-center justify-between rounded-xl bg-slate-50/60 p-2.5">
+                <li className="row-hover flex items-center justify-between rounded-control bg-slate-50/60 p-2.5">
                   <span className="text-slate-600">Resolved consultations</span>
-                  <span className="font-semibold text-emerald-700">
+                  <span className="font-semibold text-emerald-700 tabular-nums">
                     {statusCounts.resolved || 0}
                   </span>
                 </li>
-                <li className="flex items-center justify-between rounded-xl bg-slate-50/60 p-2.5">
+                <li className="row-hover flex items-center justify-between rounded-control bg-slate-50/60 p-2.5">
                   <span className="text-slate-600">Readings reviewed platform-wide</span>
-                  <span className="font-semibold text-primary-700">
+                  <span className="font-semibold text-primary-700 tabular-nums">
                     {effectiveness.total_guidance}
                   </span>
                 </li>
-                <li className="flex items-center justify-between rounded-xl bg-slate-50/60 p-2.5">
+                <li className="row-hover flex items-center justify-between rounded-control bg-slate-50/60 p-2.5">
                   <span className="text-slate-600">Seeker follow-ups waiting on you</span>
-                  <span className={`font-semibold ${effectiveness.awaiting_reply > 0 ? "text-accent-600" : "text-slate-500"}`}>
+                  <span className={`font-semibold tabular-nums ${effectiveness.awaiting_reply > 0 ? "text-accent-600" : "text-slate-500"}`}>
                     {effectiveness.awaiting_reply}
                   </span>
                 </li>
@@ -309,7 +309,7 @@ export default function ConsultantDashboard() {
                 onChange={(e) => setQueueSearch(e.target.value)}
                 placeholder="Search topics…"
                 aria-label="Search consultations by topic"
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-1.5 pl-9 pr-3 text-xs text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                className="w-full rounded-control border border-slate-200 bg-slate-50 py-1.5 pl-9 pr-3 text-xs text-slate-800 transition placeholder:text-slate-500 focus:border-primary-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
               />
             </div>
             <Segmented
@@ -349,11 +349,11 @@ export default function ConsultantDashboard() {
         ) : (
           <ul className="space-y-4">
             {filteredQueue.slice(0, 10).map((c) => (
-              <li key={c.id} className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs">
+              <li key={c.id} className="surface-card p-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <h3 className="text-sm font-bold text-slate-900">{c.topic}</h3>
-                    <p className="mt-0.5 text-xs text-slate-500">
+                    <p className="mt-0.5 text-xs text-slate-500 tabular-nums">
                       Inquiry ID: {c.id.slice(0, 8)}… · {new Date(c.created_at).toLocaleString()}
                     </p>
                   </div>
@@ -381,7 +381,7 @@ export default function ConsultantDashboard() {
                       placeholder="Type deep, compassionate spiritual counsel for this seeker…"
                       rows={2}
                       aria-label={`Guidance for inquiry ${c.topic}`}
-                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                      className="w-full rounded-control border border-slate-200 px-3.5 py-2.5 text-xs text-slate-800 transition placeholder:text-slate-500 focus:border-primary-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                     />
                     <Button
                       size="sm"
@@ -409,11 +409,13 @@ export default function ConsultantDashboard() {
                   </Button>
                 </div>
                 {openThreads[c.id] && (
-                  <ConsultationThread
-                    consultationId={c.id}
-                    composeLabel="Respond to this seeker…"
-                    onMessageSent={refresh}
-                  />
+                  <div className="animate-tab-in">
+                    <ConsultationThread
+                      consultationId={c.id}
+                      composeLabel="Respond to this seeker…"
+                      onMessageSent={refresh}
+                    />
+                  </div>
                 )}
               </li>
             ))}

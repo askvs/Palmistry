@@ -10,7 +10,7 @@ import {
   useToast,
 } from "@/components/ui";
 import { ConfirmDialog } from "@/components/ui";
-import { CalendarIcon, ClockIcon, TrashIcon, VideoIcon } from "@/components/icons";
+import { CalendarIcon, CheckCircleIcon, ClockIcon, TrashIcon, VideoIcon } from "@/components/icons";
 import { BookingStatusBadge, FeedbackForm } from "@/components/booking/shared";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { cancelBooking, fetchSeekerSessions } from "@/services/booking";
@@ -41,18 +41,18 @@ function UpcomingSession({ booking, onCancelled }) {
   }
 
   return (
-    <li className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
+    <li className="rounded-[20px] border border-slate-200 bg-white p-4 transition duration-200 hover:border-primary-200">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h4 className="text-sm font-semibold text-slate-900">{booking.subject}</h4>
             <BookingStatusBadge status={booking.status} />
           </div>
-          <p className="mt-1 text-xs text-slate-600">
+          <p className="mt-1 text-[13.5px] text-slate-600">
             with <span className="font-semibold">{booking.consultant_name}</span>
             {booking.consultant_headline ? ` · ${booking.consultant_headline}` : ""}
           </p>
-          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[12.5px] tabular-nums text-slate-500">
             <CalendarIcon className="h-3.5 w-3.5 text-slate-400" />
             {formatRange(booking.start_time, booking.end_time)}
             <span className="text-slate-300">·</span>
@@ -85,14 +85,14 @@ function UpcomingSession({ booking, onCancelled }) {
       </div>
 
       {booking.status === "accepted" && !joinable && (
-        <p className="mt-3 flex items-center gap-1.5 rounded-xl border border-slate-200/70 bg-white px-3.5 py-2 text-xs text-slate-500">
+        <p className="mt-3 flex items-center gap-1.5 rounded-[10px] border border-slate-200 bg-slate-50/70 px-3.5 py-2 text-[12.5px] text-slate-500">
           <VideoIcon className="h-3.5 w-3.5" />
           The Google Meet link appears here before the session.
         </p>
       )}
 
       {booking.status === "pending" && (
-        <p className="mt-3 rounded-xl border border-accent-200/60 bg-accent-50 px-3.5 py-2 text-xs leading-relaxed text-accent-800">
+        <p className="mt-3 rounded-[10px] border border-accent-200 bg-accent-50 px-3.5 py-2 text-[12.5px] leading-relaxed text-accent-800">
           Waiting for the consultant to accept your request.
         </p>
       )}
@@ -122,19 +122,19 @@ function UpcomingSession({ booking, onCancelled }) {
 function PastSession({ booking, onFeedback }) {
   const [open, setOpen] = useState(false);
   return (
-    <li className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
+    <li className="rounded-[20px] border border-slate-200 bg-white p-4 transition duration-200 hover:border-primary-200">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h4 className="text-sm font-semibold text-slate-900">{booking.subject}</h4>
             <BookingStatusBadge status={booking.status} />
           </div>
-          <p className="mt-1 text-xs text-slate-600">
+          <p className="mt-1 text-[13.5px] text-slate-600">
             with <span className="font-semibold">{booking.consultant_name}</span>
           </p>
-          <p className="mt-1 text-xs text-slate-500">{formatRange(booking.start_time, booking.end_time)}</p>
+          <p className="mt-1 text-[12.5px] tabular-nums text-slate-500">{formatRange(booking.start_time, booking.end_time)}</p>
           {booking.status === "cancelled" && booking.cancellation_reason && (
-            <p className="mt-1.5 text-xs text-rose-700">Reason: {booking.cancellation_reason}</p>
+            <p className="mt-1.5 text-[12.5px] text-rose-700">Reason: {booking.cancellation_reason}</p>
           )}
         </div>
         {booking.status === "completed" && (

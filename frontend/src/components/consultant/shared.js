@@ -7,18 +7,18 @@ import {
   Panel,
   SkeletonRow,
 } from "@/components/ui";
-import { AlertIcon, InfoIcon, SparkleIcon } from "@/components/icons";
+import { AlertIcon, InfoIcon, RetryIcon, SparkleIcon } from "@/components/icons";
 import { CLIENT_STATUS_LABELS, CLIENT_TREND_LABELS } from "@/services/consultantDemoData";
 
 export { Badge, Button, EmptyState, ErrorState, Panel, SkeletonRow };
 
-// Avatar section.
+// Avatar section — violet/gold/emerald rotations only (spec §5.3). Each tone
+// carries a solid base tint so contrast holds up behind the gradient, and an
+// ink colour that stays legible on that gradient.
 const AVATAR_TONES = [
-  "from-primary-500 to-indigo-600",
-  "from-accent-500 to-amber-600",
-  "from-emerald-500 to-teal-600",
-  "from-blue-500 to-indigo-600",
-  "from-fuchsia-500 to-primary-600",
+  { gradient: "from-primary-500 to-primary-700", base: "bg-primary-700", ink: "text-white" },
+  { gradient: "from-accent-400 to-accent-600", base: "bg-accent-600", ink: "text-slate-900" },
+  { gradient: "from-emerald-500 to-emerald-700", base: "bg-emerald-700", ink: "text-white" },
 ];
 
 function toneFor(seed = "") {
@@ -27,20 +27,31 @@ function toneFor(seed = "") {
   return AVATAR_TONES[hash % AVATAR_TONES.length];
 }
 
+function initialsFor(value = "") {
+  return value
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("") || "?";
+}
+
 // Initials avatar.
 export function ClientAvatar({ name = "", initials = "", size = "md", className = "" }) {
-  const label = initials || name;
+  const label = initials || initialsFor(name);
+  const tone = toneFor(label);
   const sizes = {
-    sm: "h-8 w-8 text-[11px]",
-    md: "h-10 w-10 text-xs",
+    sm: "h-8 w-8 text-xs",
+    md: "h-[42px] w-[42px] text-xs",
     lg: "h-14 w-14 text-base",
   };
   return (
     <span
       aria-hidden="true"
-      className={`flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br font-bold text-white ${toneFor(
-        label
-      )} ${sizes[size] || sizes.md} ${className}`}
+      className={`flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br font-semibold ${tone.gradient} ${tone.base} ${tone.ink} ${
+        sizes[size] || sizes.md
+      } ${className}`}
     >
       {label}
     </span>
@@ -113,10 +124,10 @@ export function SourceBadge({ source, label }) {
   );
 }
 
-// Small disclaimer strip used under every AI/insight surface.
+// AI disclosure strip used under every AI/insight surface.
 export function GuidanceDisclaimer({ children }) {
   return (
-    <p className="flex items-start gap-2 rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-3 text-[11px] italic leading-relaxed text-slate-500">
+    <p className="flex items-start gap-2 rounded-[16px] border border-slate-100 bg-slate-50/60 px-4 py-3 text-xs italic leading-relaxed text-slate-500">
       <InfoIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" />
       <span>
         {children ||
@@ -126,20 +137,20 @@ export function GuidanceDisclaimer({ children }) {
   );
 }
 
-// Leading icon tile used by the AI insight cards.
+// Leading ✦ tile used by the AI insight cards (gold — warm moment, spec §5.6).
 export function AIInsightIcon({ className = "" }) {
   return (
     <span
-      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600 ring-1 ring-primary-100 ${className}`}
+      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-accent-50 text-accent-700 ring-1 ring-accent-200 ${className}`}
     >
       <SparkleIcon className="h-4 w-4" />
     </span>
   );
 }
 
-// Form controls section.
+// Form controls section (§5.2 shared control recipe).
 const FIELD_CLASS =
-  "h-9 cursor-pointer rounded-full border border-slate-200 bg-slate-50 pl-3 pr-8 text-xs font-medium text-slate-700 transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:cursor-not-allowed disabled:opacity-60";
+  "h-10 cursor-pointer rounded-[10px] border border-slate-200 bg-white pl-3 pr-8 text-sm text-slate-800 shadow-xs transition placeholder:text-slate-500 focus:border-[#8b5cf6] focus:outline-none focus:ring-[3px] focus:ring-primary-600/25 disabled:cursor-not-allowed disabled:opacity-60";
 
 export function ConsultantSelect({ label, value, onChange, options, className = "", disabled = false }) {
   return (
@@ -167,27 +178,29 @@ export function ConsultantSelect({ label, value, onChange, options, className = 
   );
 }
 
-// Compact labelled field wrapper used by the workspace forms.
+// Compact labelled field wrapper used by the workspace forms (§5.2 label recipe).
 export function FieldLabel({ children, hint }) {
   return (
     <span className="block">
-      <span className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
-        {children}
-      </span>
+      <span className="block text-xs font-semibold text-slate-700">{children}</span>
       {hint && <span className="mt-0.5 block text-xs text-slate-500">{hint}</span>}
     </span>
   );
 }
 
-// Fixed-height responsive wrapper — chart.js needs a sized parent.
+// Fixed-height responsive frame — chart.js needs a sized parent (porcelain chrome).
 export function ChartFrame({ children, height = "h-72", className = "" }) {
-  return <div className={`${height} w-full ${className}`}>{children}</div>;
+  return (
+    <div className={`${height} w-full rounded-[20px] border border-slate-100 p-4 ${className}`}>
+      {children}
+    </div>
+  );
 }
 
 // Skeleton used while a chart's data resolves.
 export function ChartSkeleton({ height = "h-72", label = "Loading chart…" }) {
   return (
-    <div className={`${height} w-full animate-pulse rounded-2xl bg-slate-100`} aria-hidden="true">
+    <div className={`${height} w-full skeleton-shimmer rounded-card`} aria-hidden="true">
       <span className="sr-only">{label}</span>
     </div>
   );
@@ -196,14 +209,17 @@ export function ChartSkeleton({ height = "h-72", label = "Loading chart…" }) {
 // Section-level error with retry, matching the platform's error language.
 export function SectionError({ title = "Unable to load this section", onRetry }) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50/70 px-5 py-8 text-center">
-      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+    <div
+      role="alert"
+      className="flex flex-col items-center gap-3 rounded-[20px] border border-rose-200 bg-[#fff7f8] px-6 py-10 text-center"
+    >
+      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-rose-100 text-rose-600">
         <AlertIcon className="h-5 w-5" />
       </span>
-      <p className="text-sm font-medium text-rose-900">{title}</p>
+      <p className="text-sm font-semibold text-rose-900">{title}</p>
       {onRetry && (
-        <Button variant="secondary" size="sm" onClick={onRetry}>
-          Retry
+        <Button variant="secondary" size="sm" icon={RetryIcon} onClick={onRetry}>
+          Try again
         </Button>
       )}
     </div>

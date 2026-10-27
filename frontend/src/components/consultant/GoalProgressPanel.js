@@ -6,9 +6,9 @@ import { TargetIcon } from "@/components/icons";
 
 function ActivityRow({ label, value, hint }) {
   return (
-    <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
+    <div className="rounded-card border border-slate-100 bg-slate-50/60 p-3 transition hover:border-primary-100">
       <p className="text-xs font-medium text-slate-500">{label}</p>
-      <p className="mt-0.5 text-lg font-bold text-slate-900">{value}</p>
+      <p className="mt-0.5 text-lg font-bold text-slate-900 tabular-nums">{value}</p>
       {hint && <p className="text-[11px] text-slate-500">{hint}</p>}
     </div>
   );
@@ -45,7 +45,7 @@ export default function GoalProgressPanel({ client }) {
               {goals.map((goal, index) => (
                 <li
                   key={`${goal}-${index}`}
-                  className="rounded-2xl border border-slate-200/90 bg-white p-4"
+                  className="rounded-card border border-slate-200/90 bg-white p-4 transition hover:border-primary-200 hover:shadow-xs"
                 >
                   <div className="flex items-start gap-3">
                     <span
@@ -86,7 +86,7 @@ export default function GoalProgressPanel({ client }) {
           <div>
             <div className="mb-1.5 flex items-center justify-between text-xs">
               <span className="font-medium text-slate-700">Threads resolved</span>
-              <span className="font-bold text-slate-900">
+              <span className="font-bold text-slate-900 tabular-nums">
                 {threads ? `${Math.round(resolutionShare * 100)}%` : "—"}
               </span>
             </div>

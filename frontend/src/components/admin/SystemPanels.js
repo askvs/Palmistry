@@ -46,15 +46,15 @@ function RolePill({ role }) {
 
 // A live health indicator line: dot + service name + real check result.
 function StatusRow({ label, detail, ok, warn = false }) {
-  const dotClass = ok ? "bg-emerald-500" : warn ? "bg-slate-300" : "bg-rose-500";
+  const dotClass = ok ? "bg-emerald-500" : warn ? "bg-accent-500" : "bg-rose-600";
   const detailClass = ok ? "text-emerald-700" : warn ? "text-slate-500" : "text-rose-700";
   return (
-    <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-2">
-      <span className="flex items-center gap-2.5 text-sm font-medium text-slate-700">
+    <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-2.5">
+      <span className="flex items-center gap-2.5 text-[13px] font-medium text-slate-700">
         <span className={`h-2 w-2 rounded-full ${dotClass}`} aria-hidden="true" />
         {label}
       </span>
-      <span className={`text-xs font-semibold ${detailClass}`}>{detail}</span>
+      <span className={`text-[12.5px] font-semibold tabular-nums ${detailClass}`}>{detail}</span>
     </div>
   );
 }
@@ -79,7 +79,7 @@ export function PermissionsPanel() {
       ) : (
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-medium text-slate-500">Platform roles:</span>
+            <span className="text-[12.5px] font-medium text-slate-500">Platform roles:</span>
             {data.roles.map((role) => (
               <RolePill key={role} role={role} />
             ))}
@@ -87,9 +87,9 @@ export function PermissionsPanel() {
 
           <ul className="divide-y divide-slate-100">
             {data.rules.map((rule) => (
-              <li key={rule.name} className="py-3">
+              <li key={rule.name} className="py-2.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <code className="rounded-md bg-primary-50 px-2 py-0.5 font-mono text-xs font-semibold text-primary-700">
+                  <code className="rounded-md bg-primary-50 px-2 py-0.5 font-mono text-[12px] font-semibold tabular-nums text-primary-700">
                     {rule.name}
                   </code>
                   {rule.allowed.map((role) => (
@@ -98,7 +98,7 @@ export function PermissionsPanel() {
                 </div>
                 <ul className="mt-1.5 space-y-0.5 pl-1">
                   {rule.surfaces.map((surface) => (
-                    <li key={surface} className="text-xs text-slate-500">
+                    <li key={surface} className="text-[12.5px] leading-relaxed text-slate-500">
                       · {surface}
                     </li>
                   ))}
@@ -109,7 +109,7 @@ export function PermissionsPanel() {
 
           <ul className="space-y-1 rounded-xl border border-slate-100 bg-slate-50/60 p-3">
             {data.notes.map((note) => (
-              <li key={note} className="text-xs text-slate-500">
+              <li key={note} className="text-[12.5px] leading-relaxed text-slate-500">
                 {note}
               </li>
             ))}
@@ -150,14 +150,14 @@ export function AuthSettingsPanel() {
         <ul className="divide-y divide-slate-100">
           {rows.map((row) => (
             <li key={row.label} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
-              <span className="text-sm font-medium text-slate-700">{row.label}</span>
-              <span className="text-xs font-semibold text-slate-900">{row.value}</span>
+              <span className="text-[13px] font-medium text-slate-700">{row.label}</span>
+              <span className="text-[12.5px] font-semibold tabular-nums text-slate-900">{row.value}</span>
             </li>
           ))}
         </ul>
         <ul className="space-y-1 rounded-xl border border-slate-100 bg-slate-50/60 p-3">
           {data.notes.map((note) => (
-            <li key={note} className="text-xs text-slate-500">
+            <li key={note} className="text-[12.5px] leading-relaxed text-slate-500">
               {note}
             </li>
           ))}
@@ -228,14 +228,14 @@ export function SystemConfigPanel() {
               { label: "Stored timezone", value: data.timezone },
             ].map((row) => (
               <li key={row.label} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
-                <span className="text-sm font-medium text-slate-700">{row.label}</span>
-                <span className="text-xs font-semibold text-slate-900">{row.value}</span>
+                <span className="text-[13px] font-medium text-slate-700">{row.label}</span>
+                <span className="text-[12.5px] font-semibold tabular-nums text-slate-900">{row.value}</span>
               </li>
             ))}
           </ul>
 
           <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
               Background schedulers
             </p>
             <ul className="space-y-2">
@@ -245,10 +245,10 @@ export function SystemConfigPanel() {
                   className="rounded-xl border border-slate-100 bg-slate-50/60 p-3"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium capitalize text-slate-700">
+                    <span className="text-[13px] font-medium capitalize text-slate-700">
                       {scheduler.name}
                     </span>
-                    <Badge tone={scheduler.running ? "emerald" : "rose"}>
+                    <Badge tone={scheduler.running ? "emerald" : "rose"} dot>
                       {scheduler.running ? "Running" : "Stopped"}
                     </Badge>
                   </div>
@@ -268,7 +268,7 @@ export function SystemConfigPanel() {
 
           <ul className="space-y-1 rounded-xl border border-slate-100 bg-slate-50/60 p-3">
             {data.notes.map((note) => (
-              <li key={note} className="text-xs text-slate-500">
+              <li key={note} className="text-[12.5px] leading-relaxed text-slate-500">
                 {note}
               </li>
             ))}
@@ -334,12 +334,12 @@ export function PerformancePanel() {
         ) : (
           <ul className="divide-y divide-slate-100">
             {data.slowest_routes.map((route) => (
-              <li key={route.path} className="-mx-2 rounded-lg px-2 py-3">
+              <li key={route.path} className="-mx-2 rounded-lg px-2 py-2.5">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="truncate font-mono text-xs font-medium text-slate-700">
+                  <span className="truncate font-mono text-[12px] font-medium text-slate-700">
                     {route.path}
                   </span>
-                  <span className="text-xs font-bold text-slate-900">
+                  <span className="text-[12.5px] font-semibold tabular-nums text-slate-900">
                     avg {route.avg_ms} ms · max {route.max_ms} ms
                   </span>
                 </div>
@@ -350,7 +350,7 @@ export function PerformancePanel() {
                     label={`Average latency for ${route.path}`}
                   />
                 </div>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-[12.5px] tabular-nums text-slate-500">
                   {route.count} request{route.count === 1 ? "" : "s"} · error rate{" "}
                   {(route.error_rate * 100).toFixed(1)}% · {minutes.toFixed(0)} min of uptime
                 </p>
@@ -362,7 +362,7 @@ export function PerformancePanel() {
 
       <ul className="space-y-1 rounded-xl border border-slate-100 bg-slate-50/60 p-3">
         {data.notes.map((note) => (
-          <li key={note} className="text-xs text-slate-500">
+          <li key={note} className="text-[12.5px] leading-relaxed text-slate-500">
             {note}
           </li>
         ))}
@@ -457,7 +457,7 @@ export function SystemReportsPanel() {
               <Button variant="secondary" size="sm" icon={DownloadIcon} onClick={download}>
                 Download JSON
               </Button>
-              <Button variant="ghost" size="sm" icon={DownloadIcon} onClick={downloadCsv}>
+              <Button variant="secondary" size="sm" icon={DownloadIcon} onClick={downloadCsv}>
                 Download CSV
               </Button>
             </>
@@ -473,57 +473,57 @@ export function SystemReportsPanel() {
           description="Run platform diagnostics to snapshot current analytics."
         />
       ) : (
-        <div className="space-y-3 text-sm">
+        <div className="space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-            <span className="font-medium text-slate-700">Generated at</span>
-            <span className="text-xs text-slate-500">
+            <span className="text-[13px] font-medium text-slate-700">Generated at</span>
+            <span className="text-[12.5px] tabular-nums text-slate-500">
               {new Date(report.generated_at).toLocaleString()}
             </span>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-              <p className="text-xs font-medium text-slate-500">Accounts</p>
-              <p className="mt-0.5 text-lg font-bold text-slate-900">
+            <div className="surface-card p-3">
+              <p className="text-[12.5px] font-medium text-slate-500">Accounts</p>
+              <p className="mt-0.5 text-lg font-bold tabular-nums text-slate-900">
                 {report.payload?.platform?.users_total ?? "—"}
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-[12.5px] tabular-nums text-slate-500">
                 {report.payload?.platform?.users_active ?? 0} active
               </p>
             </div>
-            <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-              <p className="text-xs font-medium text-slate-500">Divinations</p>
-              <p className="mt-0.5 text-lg font-bold text-slate-900">
+            <div className="surface-card p-3">
+              <p className="text-[12.5px] font-medium text-slate-500">Divinations</p>
+              <p className="mt-0.5 text-lg font-bold tabular-nums text-slate-900">
                 {report.payload?.platform?.readings_total ?? "—"}
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-[12.5px] tabular-nums text-slate-500">
                 {report.payload?.readings?.reviewed_total ?? 0} reviewed by a reader
               </p>
             </div>
-            <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-              <p className="text-xs font-medium text-slate-500">Consultations</p>
-              <p className="mt-0.5 text-lg font-bold text-slate-900">
+            <div className="surface-card p-3">
+              <p className="text-[12.5px] font-medium text-slate-500">Consultations</p>
+              <p className="mt-0.5 text-lg font-bold tabular-nums text-slate-900">
                 {report.payload?.platform?.consultations_total ?? "—"}
               </p>
-              <p className="text-xs text-slate-500">Guidance threads on platform</p>
+              <p className="text-[12.5px] text-slate-500">Guidance threads on platform</p>
             </div>
-            <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-              <p className="text-xs font-medium text-slate-500">Signups (7d)</p>
-              <p className="mt-0.5 text-lg font-bold text-slate-900">
+            <div className="surface-card p-3">
+              <p className="text-[12.5px] font-medium text-slate-500">Signups (7d)</p>
+              <p className="mt-0.5 text-lg font-bold tabular-nums text-slate-900">
                 {report.payload?.platform?.signups_in_period ?? "—"}
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-[12.5px] tabular-nums text-slate-500">
                 Prev. period: {report.payload?.platform?.signups_previous_period ?? 0}
               </p>
             </div>
           </div>
           {Array.isArray(report.payload?.readings?.by_type) && report.payload.readings.by_type.length > 0 && (
             <div className="rounded-xl border border-slate-100 bg-white p-3">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
                 Readings by type
               </p>
               <ul className="flex flex-wrap gap-2">
                 {report.payload.readings.by_type.map((row) => (
-                  <li key={row.type} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                  <li key={row.type} className="rounded-full bg-slate-100 px-3 py-1 text-[12.5px] font-medium tabular-nums text-slate-700">
                     {row.type}: {row.count}
                   </li>
                 ))}
@@ -532,12 +532,12 @@ export function SystemReportsPanel() {
           )}
           {Array.isArray(report.payload?.readings?.by_status) && report.payload.readings.by_status.length > 0 && (
             <div className="rounded-xl border border-slate-100 bg-white p-3">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
                 Readings by status
               </p>
               <ul className="flex flex-wrap gap-2">
                 {report.payload.readings.by_status.map((row) => (
-                  <li key={row.status} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                  <li key={row.status} className="rounded-full bg-slate-100 px-3 py-1 text-[12.5px] font-medium tabular-nums text-slate-700">
                     {row.status}: {row.count}
                   </li>
                 ))}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Head from "next/head";
 import Image from "next/image";
+import Seo from "@/components/Seo";
 import { useRouter } from "next/router";
 import { useAuth } from "../../hooks/useAuth";
 import { getReading, updateReading, deleteReading } from "../../services/readings";
@@ -192,9 +192,10 @@ export default function ReadingDetailPage() {
 
   return (
     <div className="space-y-8">
-      <Head>
-        <title>{reading ? `${reading.title} | MysticLens` : "Reading Details | MysticLens"}</title>
-      </Head>
+      <Seo
+        title="Reading"
+        description="A saved palm or tarot reading with interpretations, notes, and exports."
+      />
 
       {/* Page Header: breadcrumb + export actions */}
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -261,7 +262,7 @@ export default function ReadingDetailPage() {
         {!loading && reading && (
           <div className="space-y-10">
             {/* Top Overview Hero */}
-            <div className="relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-8 shadow-xs">
+            <div className="surface-panel relative overflow-hidden p-8">
               <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-primary-100/60 blur-3xl" />
 
               <div className="relative">
@@ -273,12 +274,12 @@ export default function ReadingDetailPage() {
                     <Badge tone="emerald">{reading.status}</Badge>
                   </div>
 
-                  <div className="text-xs text-slate-500">
+                  <div className="text-xs tabular-nums text-slate-500">
                     {reading.created_at ? new Date(reading.created_at).toLocaleString() : ""}
                   </div>
                 </div>
 
-                <h1 className="mb-3 font-display text-2xl font-bold text-slate-900 sm:text-3xl">
+                <h1 className="mb-3 font-display text-[32px] font-semibold leading-tight tracking-[-0.02em] text-slate-900">
                   {reading.title}
                 </h1>
                 <p className="max-w-3xl text-sm leading-relaxed text-slate-600">{reading.summary}</p>
@@ -294,11 +295,11 @@ export default function ReadingDetailPage() {
                     title="Elemental Hand Morphology"
                     action={<Badge tone="accent">{result.palm_shape.element} Hand</Badge>}
                   >
-                    <p className="mb-4 text-xs leading-relaxed text-slate-600">
+                    <p className="dropcap mb-4 text-sm leading-relaxed text-slate-600">
                       {result.palm_shape.description}
                     </p>
                     {result.hand?.is_palmar === false && (
-                      <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-800">
+                      <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-800">
                         Back-of-hand (dorsal) view detected — line creases are naturally less
                         visible from this angle, so lower line confidences are expected.
                       </div>
@@ -328,10 +329,10 @@ export default function ReadingDetailPage() {
                         ],
                       ].map(([label, value]) => (
                         <div key={label} className="rounded-xl border border-slate-200 bg-slate-50/70 p-3">
-                          <div className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+                          <div className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
                             {label}
                           </div>
-                          <div className="mt-0.5 font-bold text-slate-900">{value}</div>
+                          <div className="mt-0.5 font-bold tabular-nums text-slate-900">{value}</div>
                         </div>
                       ))}
                     </div>
@@ -341,7 +342,7 @@ export default function ReadingDetailPage() {
                 {/* Primary Lines Breakdown (measured, array-shaped pipeline payload) */}
                 {Array.isArray(result.lines) && result.lines.length > 0 && (
                   <div>
-                    <h2 className="mb-1 font-display text-xl font-bold text-slate-900">
+                    <h2 className="mb-1 font-display text-xl font-semibold tracking-[-0.01em] text-slate-900">
                       Primary Palm Lines ({result.lines.length})
                     </h2>
                     <p className="mb-4 text-xs text-slate-500">
@@ -379,7 +380,7 @@ export default function ReadingDetailPage() {
                 {/* Cards Drawn Grid */}
                 {result.cards && (
                   <div>
-                    <h2 className="mb-4 font-display text-xl font-bold text-slate-900">
+                    <h2 className="mb-4 font-display text-xl font-semibold tracking-[-0.01em] text-slate-900">
                       Cards Drawn &amp; Position Interpretations
                     </h2>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -395,7 +396,7 @@ export default function ReadingDetailPage() {
                         return (
                           <div
                             key={idx}
-                            className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs transition hover:border-primary-300"
+                            className="flex flex-col justify-between surface-card rounded-[16px] p-5 transition duration-200 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-lift"
                           >
                             <div>
                               <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -407,7 +408,7 @@ export default function ReadingDetailPage() {
 
                               <div className="mb-3 flex items-start gap-4">
                                 {card.image_path && (
-                                  <div className="relative h-26 w-16 shrink-0 overflow-hidden rounded-lg border border-slate-200 shadow-sm">
+                                  <div className="relative h-26 w-16 shrink-0 overflow-hidden rounded-[16px] border border-slate-200 shadow-xs">
                                     <Image
                                       src={`/${card.image_path.replace(/^\/+/, "")}`}
                                       alt={card.card_name || card.name || "Tarot card"}
@@ -418,19 +419,23 @@ export default function ReadingDetailPage() {
                                   </div>
                                 )}
                                 <div className="min-w-0 flex-1">
-                                  <h3 className="mb-0.5 font-display text-base font-bold text-slate-900">
+                                  <h3 className="mb-0.5 font-display text-base font-semibold text-slate-900">
                                     {card.card_name || card.name}
                                   </h3>
-                                  <div className="mb-1.5 text-[11px] italic text-slate-500">
+                                  <div className="mb-1.5 text-[12.5px] italic text-slate-500">
                                     {card.arcana} {card.suit && card.suit !== "None" ? `• ${card.suit}` : ""}
                                   </div>
-                                  <div className="text-xs text-slate-500">
+                                  <div className="text-[12.5px] text-slate-500">
                                     <span className="text-slate-500">Role:</span> {posMeaning}
                                   </div>
                                 </div>
                               </div>
 
-                              <p className="mb-4 text-xs leading-relaxed text-slate-600">
+                              <p
+                                className={`mb-4 text-sm leading-relaxed text-slate-600 ${
+                                  idx === 0 ? "dropcap" : ""
+                                }`}
+                              >
                                 {card.position_context ||
                                   card.core_meaning ||
                                   card.interpretation ||
@@ -444,7 +449,7 @@ export default function ReadingDetailPage() {
                                 {card.keywords.map((kw, kIdx) => (
                                   <span
                                     key={kIdx}
-                                    className="rounded bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600"
+                                    className="rounded-md bg-slate-100 px-2 py-0.5 text-[12.5px] text-slate-600"
                                   >
                                     {kw}
                                   </span>
@@ -457,10 +462,10 @@ export default function ReadingDetailPage() {
                               <div className="mt-3 space-y-2 border-t border-slate-100 pt-3">
                                 {card.domain_guidance.map((g, gIdx) => (
                                   <div key={g.domain || gIdx}>
-                                    <div className="text-[9px] font-bold uppercase tracking-wider text-primary-600">
+                                    <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary-600">
                                       {g.label || g.domain}
                                     </div>
-                                    <p className="mt-0.5 text-[11px] leading-relaxed text-slate-600">
+                                    <p className="mt-0.5 text-sm leading-relaxed text-slate-600">
                                       {g.text}
                                     </p>
                                   </div>
@@ -471,13 +476,13 @@ export default function ReadingDetailPage() {
                             {/* Deeper symbolism for the current orientation */}
                             {card.expanded_meanings?.length > 0 && (
                               <div className="mt-3 border-t border-slate-100 pt-3">
-                                <div className="text-[9px] font-bold uppercase tracking-wider text-slate-500">
+                                <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">
                                   {isRev ? "Shadow Insights" : "Light Insights"}
                                 </div>
-                                <ul className="mt-1 space-y-1 text-[11px] leading-relaxed text-slate-600">
+                                <ul className="mt-1.5 space-y-1.5 text-sm leading-relaxed text-slate-600">
                                   {card.expanded_meanings.map((m, mIdx) => (
                                     <li key={mIdx} className="flex items-start gap-1.5">
-                                      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary-300" />
+                                      <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary-300" />
                                       <span>{m}</span>
                                     </li>
                                   ))}
@@ -493,52 +498,64 @@ export default function ReadingDetailPage() {
 
                 {/* Synthesis & Guidance */}
                 {result.narrative && (
-                  <div className="space-y-4 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs">
-                    <h2 className="font-display text-lg font-bold text-primary-700">
-                      Spread Synthesis &amp; Thematic Journey
-                    </h2>
-                    <p className="text-sm leading-relaxed text-slate-600">
-                      {result.narrative.summary || result.narrative.full_text}
-                    </p>
-
-                    {narrativeBody.length > 0 && (
-                      <ul className="space-y-2">
-                        {narrativeBody.map((line, bIdx) => (
-                          <li key={bIdx} className="flex items-start gap-2.5 text-xs leading-relaxed text-slate-600">
-                            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-400" />
-                            <span>{line}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-
-                    {result.narrative.closing && (
-                      <p className="border-t border-primary-100 pt-3 text-xs italic leading-relaxed text-primary-800/80">
-                        {result.narrative.closing}
+                  <>
+                    <div className="divider-rule" aria-hidden="true">
+                      <span className="font-display">✦</span>
+                    </div>
+                    <div className="space-y-4 surface-panel p-6">
+                      <h2 className="font-display text-xl font-semibold tracking-[-0.01em] text-primary-700">
+                        Spread Synthesis &amp; Thematic Journey
+                      </h2>
+                      <p className="text-sm leading-relaxed text-slate-600">
+                        {result.narrative.summary || result.narrative.full_text}
                       </p>
-                    )}
 
-                    {result.guidance && result.guidance.length > 0 && (
-                      <div className="border-t border-slate-100 pt-4">
-                        <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-accent-700">
-                          Actionable Reflection Steps
-                        </div>
-                        <ul className="space-y-1.5 text-xs text-slate-600">
-                          {result.guidance.map((step, sIdx) => (
-                            <li key={sIdx} className="flex items-start gap-2">
-                              <span className="text-accent-500" aria-hidden="true">
-                                •
-                              </span>
-                              <span>{step}</span>
+                      {narrativeBody.length > 0 && (
+                        <ul className="space-y-2">
+                          {narrativeBody.map((line, bIdx) => (
+                            <li
+                              key={bIdx}
+                              className="flex items-start gap-2.5 text-sm leading-relaxed text-slate-600"
+                            >
+                              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-400" />
+                              <span>{line}</span>
                             </li>
                           ))}
                         </ul>
-                      </div>
-                    )}
-                  </div>
+                      )}
+
+                      {result.narrative.closing && (
+                        <p className="border-t border-primary-100 pt-4 font-display text-[20px] italic leading-snug text-slate-900">
+                          {result.narrative.closing}
+                        </p>
+                      )}
+
+                      {result.guidance && result.guidance.length > 0 && (
+                        <div className="border-t border-slate-100 pt-4">
+                          <div className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-accent-700">
+                            Actionable Reflection Steps
+                          </div>
+                          <ul className="space-y-1.5 text-sm text-slate-600">
+                            {result.guidance.map((step, sIdx) => (
+                              <li key={sIdx} className="flex items-start gap-2">
+                                <span className="text-accent-700" aria-hidden="true">
+                                  ✦
+                                </span>
+                                <span>{step}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </>
                 )}
               </div>
             )}
+
+            <div className="divider-rule" aria-hidden="true">
+              <span className="font-display">✦</span>
+            </div>
 
             {/* User reflections and notes. */}
             <Panel
@@ -560,7 +577,7 @@ export default function ReadingDetailPage() {
                   setNotes(e.target.value);
                   if (notesError) setNotesError(null);
                 }}
-                className="w-full cursor-text rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-sm text-slate-800 placeholder-slate-400 transition focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-100"
+                className="w-full cursor-text rounded-[10px] border border-slate-200 bg-white p-3 text-sm text-slate-800 placeholder:text-slate-500 shadow-xs transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
               />
               <InlineError message={notesError} className="mt-3" />
               <div className="mt-3 flex justify-end">
@@ -587,7 +604,7 @@ export default function ReadingDetailPage() {
 
             {/* Bottom Controls */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-6">
-              <Button variant="ghost" size="sm" href="/readings" icon={ArrowLeftIcon}>
+              <Button variant="secondary" size="sm" href="/readings" icon={ArrowLeftIcon}>
                 Back to All Readings
               </Button>
               <Button
@@ -619,8 +636,8 @@ export default function ReadingDetailPage() {
             )}
 
             {/* Safety Disclaimer */}
-            <div className="rounded-xl border border-slate-200/70 bg-white/60 p-4 text-center">
-              <p className="text-[11px] italic text-slate-500">
+            <div className="surface-card p-4 text-center">
+              <p className="text-[12.5px] italic leading-relaxed text-slate-500">
                 Safety Notice: Interpretations and readings are intended solely for self-reflection,
                 mindfulness, and entertainment. They do not constitute formal medical or financial advice.
               </p>

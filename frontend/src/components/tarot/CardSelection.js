@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowRightIcon, CheckCircleIcon, SparkleIcon } from "@/components/icons";
 import { Button } from "@/components/ui";
+import DeckBackOrnaments from "@/components/tarot/DeckBackOrnaments";
 
 // Pure calculation for card reversal orientation (~20% probability), seeded by the card's position in the arc so the same.
 function calculateReversal(card, deckIndex, allowReversals) {
@@ -19,6 +20,7 @@ export default function CardSelection({
   onCompleteSelection,
 }) {
   const [hoveredIndex, setHoveredIndex] = React.useState(null);
+  const cardRefs = React.useRef([]);
 
   const totalRequired = spread?.positions?.length || 3;
   const currentPositionIdx = selections.length;
@@ -61,6 +63,25 @@ export default function CardSelection({
         position_name: spread?.positions?.[i]?.name || `Position ${i + 1}`,
       }));
     commit(next);
+  }
+
+  // Deck keyboard: arrows walk the arc (roving focus), Enter/Space pick
+  // natively, Escape returns the most recently drawn card (spec §6.4).
+  function onDeckKeyDown(event) {
+    const idx = cardRefs.current.findIndex((b) => b === document.activeElement);
+    if (idx === -1) return;
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      cardRefs.current[Math.min(idx + 1, deck.length - 1)]?.focus();
+    }
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      cardRefs.current[Math.max(idx - 1, 0)]?.focus();
+    }
+    if (event.key === "Escape" && selections.length > 0) {
+      event.preventDefault();
+      handleRemoveCard(selections[selections.length - 1].card_id);
+    }
   }
 
   const handleQuickPickRemaining = () => {
@@ -109,7 +130,7 @@ export default function CardSelection({
             <p className="mt-0.5 text-xs text-slate-600">
               &ldquo;{currentPosition?.description}&rdquo;
             </p>
-            <p className="mt-1.5 text-[11px] italic text-slate-500">
+            <p className="mt-1.5 text-[12.5px] italic text-slate-500">
               The card you pick takes this exact position — tap its numbered slot in the arc below
               to send it back to the deck.
             </p>
@@ -156,7 +177,10 @@ export default function CardSelection({
           </div>
 
           {/* Horizontal scrollable cards */}
-          <div className="relative overflow-x-auto rounded-2xl border border-primary-200 bg-primary-50/50 px-4 pb-6 pt-4 shadow-inner">
+          <div
+            className="relative overflow-x-auto rounded-2xl border border-primary-200 bg-primary-50/50 px-4 pb-6 pt-4 shadow-inner"
+            onKeyDown={onDeckKeyDown}
+          >
             <div className="flex items-center justify-start min-w-max py-4 px-2 sm:justify-center">
               {deck.map((card, idx) => {
                 const isPicked = pickedIds.has(card.id);
@@ -170,7 +194,11 @@ export default function CardSelection({
                     <button
                       key={card.id || idx}
                       type="button"
+                      ref={(el) => {
+                        cardRefs.current[idx] = el;
+                      }}
                       onClick={() => handleRemoveCard(card.id)}
+                      aria-pressed="true"
                       title="Send this card back to the deck"
                       className="relative -mr-4 h-28 w-14 flex-shrink-0 cursor-pointer rounded-md border border-slate-200 bg-slate-50 opacity-45 transition-all hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:h-32 sm:w-16"
                     >
@@ -185,6 +213,9 @@ export default function CardSelection({
                   <button
                     key={card.id || idx}
                     type="button"
+                    ref={(el) => {
+                      cardRefs.current[idx] = el;
+                    }}
                     onClick={() => handlePickCard(card, idx)}
                     onMouseEnter={() => setHoveredIndex(idx)}
                     onMouseLeave={() => setHoveredIndex(null)}
@@ -195,11 +226,7 @@ export default function CardSelection({
                         : "z-10 hover:-translate-y-2"
                     }`}
                   >
-                    <div className="flex w-full flex-col items-center justify-between p-1.5 opacity-60">
-                      <span className="text-[9px] text-accent-300">✦</span>
-                      <span className="text-[7px] tracking-widest text-primary-200">TAROT</span>
-                      <span className="text-[9px] text-accent-300">✦</span>
-                    </div>
+                    <DeckBackOrnaments />
                   </button>
                 );
               })}

@@ -1,8 +1,9 @@
 // Consultations: live threads plus recorded client sessions in one list.
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Button, EmptyState, Panel } from "@/components/ui";
+import { Segmented } from "@/components/dashboards/shared";
+import Seo from "@/components/Seo";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { useAuth } from "@/hooks/useAuth";
 import { ArrowRightIcon, CalendarIcon, ChatIcon } from "@/components/icons";
@@ -78,31 +79,21 @@ export default function ConsultantConsultationsPage() {
 
   return (
     <div className="animate-fade-in space-y-8">
-      <Head>
-        <title>Consultations | Palmistry &amp; Tarot</title>
-      </Head>
+      <Seo
+        title="Consultations"
+        description="Live guidance threads and your recorded client sessions — one queue for every seeker you guide."
+      />
 
       <Panel
         title="Consultations"
         subtitle="Live guidance threads and your recorded sessions"
         action={
-          <div className="flex flex-wrap items-center gap-2">
-            {TABS.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                aria-pressed={tab === option.value}
-                onClick={() => setTab(option.value)}
-                className={`cursor-pointer rounded-full px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
-                  tab === option.value
-                    ? "bg-primary-600 text-white shadow-sm shadow-primary-600/25"
-                    : "bg-white text-slate-600 ring-1 ring-slate-200 hover:text-slate-900"
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+          <Segmented
+            label="Consultation status"
+            value={tab}
+            onChange={setTab}
+            options={TABS}
+          />
         }
       >
         <div className="space-y-4">
@@ -139,7 +130,7 @@ export default function ConsultantConsultationsPage() {
                   <button
                     type="button"
                     onClick={() => router.push(row.href)}
-                    className="flex w-full cursor-pointer flex-wrap items-center gap-3 rounded-2xl border border-slate-200/90 bg-white p-4 text-left shadow-xs transition hover:border-primary-200 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-nowrap"
+                    className="surface-card flex w-full cursor-pointer flex-wrap items-center gap-3 p-4 text-left transition duration-200 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-lift focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-nowrap"
                   >
                     <ClientAvatar name={row.clientName} size="md" />
                     <div className="min-w-0 flex-1">
@@ -147,7 +138,7 @@ export default function ConsultantConsultationsPage() {
                         <p className="truncate text-sm font-semibold text-slate-900">{row.title}</p>
                         <span className="text-xs text-slate-500">· {row.clientName}</span>
                       </div>
-                      <p className="mt-0.5 truncate text-xs text-slate-500">
+                      <p className="mt-0.5 truncate text-xs text-slate-500 tabular-nums">
                         {formatDateTime(row.when)} · {row.meta} · {relativeLabel(row.when)}
                       </p>
                     </div>

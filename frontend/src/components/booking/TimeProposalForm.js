@@ -82,7 +82,7 @@ export default function TimeProposalForm({
             type="datetime-local"
             value={when}
             onChange={(event) => setWhen(event.target.value)}
-            className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+            className="mt-1.5 h-10 w-full rounded-[10px] border border-[#e1dcf0] bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
           />
         </label>
         <label className="block">
@@ -92,7 +92,7 @@ export default function TimeProposalForm({
           <select
             value={duration}
             onChange={(event) => setDuration(event.target.value)}
-            className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+            className="mt-1.5 h-10 w-full rounded-[10px] border border-[#e1dcf0] bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
           >
             {DURATIONS.map((value) => (
               <option key={value} value={value}>
@@ -115,7 +115,7 @@ export default function TimeProposalForm({
               onChange={(event) => setSubject(event.target.value)}
               placeholder="What would you like to explore?"
               maxLength={200}
-              className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="mt-1.5 h-10 w-full rounded-[10px] border border-[#e1dcf0] bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             />
           </label>
           <label className="block">
@@ -127,7 +127,7 @@ export default function TimeProposalForm({
               onChange={(event) => setNotes(event.target.value)}
               rows={3}
               maxLength={2000}
-              className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="mt-1.5 w-full rounded-[10px] border border-[#e1dcf0] bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             />
           </label>
           <label className="block">
@@ -141,7 +141,7 @@ export default function TimeProposalForm({
               onChange={(event) => setMeetingLink(event.target.value)}
               placeholder="Paste the meeting link for this session…"
               maxLength={500}
-              className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="mt-1.5 h-10 w-full rounded-[10px] border border-[#e1dcf0] bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             />
           </label>
         </>
@@ -156,7 +156,7 @@ export default function TimeProposalForm({
             rows={2}
             maxLength={2000}
             placeholder="Add a note about the new time…"
-            className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+            className="mt-1.5 w-full rounded-[10px] border border-[#e1dcf0] bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
           />
         </label>
       )}

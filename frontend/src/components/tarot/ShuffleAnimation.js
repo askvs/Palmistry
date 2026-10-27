@@ -73,11 +73,15 @@ export default function ShuffleAnimation({ onComplete, deckName = "Rider-Waite T
               </div>
             </div>
 
-            {/* Middle Cascade Card */}
-            <div className="absolute inset-0 -top-2 tarot-card-back rounded-xl animate-deck-cascade shadow-xl flex items-center justify-center border border-primary-400/40">
+            {/* Middle Cascade Card — duration overridden inline to match the
+                560ms riffle retime; the shared class still owns the keyframes. */}
+            <div
+              className="absolute inset-0 -top-2 tarot-card-back rounded-xl animate-deck-cascade shadow-xl flex items-center justify-center border border-primary-400/40"
+              style={{ animationDuration: "0.56s" }}
+            >
               <div className="text-center p-3">
                 <div className="text-2xl text-accent-300 mb-1">✦</div>
-                <div className="text-[10px] tracking-widest uppercase text-primary-200/80 font-semibold">
+                <div className="text-[12.5px] tracking-widest uppercase text-primary-200/80 font-semibold">
                   Tarot Arcana
                 </div>
               </div>

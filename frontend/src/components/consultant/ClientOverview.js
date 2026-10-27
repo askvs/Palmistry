@@ -31,7 +31,7 @@ export function ClientOverviewHeader({
   starting = false,
 }) {
   return (
-    <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-7">
+    <div className="surface-panel p-6 sm:p-7">
       <Button href="/consultant/clients" variant="ghost" size="sm" icon={ArrowLeftIcon}>
         Back to Clients
       </Button>
@@ -41,7 +41,7 @@ export function ClientOverviewHeader({
           <ClientAvatar name={client.name} size="lg" />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="font-display text-3xl tracking-tight text-slate-900">{client.name}</h1>
+              <h1 className="font-display text-2xl tracking-[-0.02em] text-slate-900 sm:text-3xl">{client.name}</h1>
               <ClientStatusBadge status={client.status} />
               <TrendBadge trend={client.trend} />
               {client.profilePending && (
@@ -114,14 +114,14 @@ export function ClientOverviewCards({ client }) {
       ) : (
         <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {OVERVIEW_METRICS.map((metric) => (
-            <li key={metric.key} className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+            <li key={metric.key} className="hover-lift rounded-card border border-slate-100 bg-slate-50/60 p-4">
               <div className="flex items-start justify-between gap-2">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                   {metric.label}
                 </p>
                 <TrendingUpIcon className="h-4 w-4 shrink-0 text-primary-500" />
               </div>
-              <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
+              <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
                 {client.metrics[metric.key]}%
               </p>
               <div className="mt-2.5">
@@ -160,12 +160,12 @@ export function ClientConsultationHistory({ consultations = [], source }) {
           {consultations.map((session) => (
             <li
               key={session.id}
-              className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs"
+              className="row-hover rounded-card border border-slate-200/90 bg-white p-4 shadow-xs transition hover:border-primary-200"
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-slate-900">{session.purpose}</p>
-                  <p className="mt-0.5 text-xs text-slate-500">
+                  <p className="mt-0.5 text-xs text-slate-500 tabular-nums">
                     {formatDate(session.startedAt)}
                     {session.durationMinutes ? ` · ${session.durationMinutes} min` : ""}
                     {session.followUpDate ? ` · follow-up ${formatDate(session.followUpDate)}` : ""}

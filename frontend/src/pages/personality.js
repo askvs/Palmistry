@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import Head from "next/head";
+import Seo from "@/components/Seo";
 import { useRouter } from "next/router";
 import { useAuth } from "@/hooks/useAuth";
 import { useRoleGuard } from "@/hooks/useRoleGuard";
@@ -43,7 +43,7 @@ const ELEMENT_TONES = { Fire: "accent", Water: "blue", Air: "slate", Earth: "eme
 
 // Unified input class — every field on this page uses this exact string.
 const INPUT_CLASS =
-  "w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:cursor-not-allowed disabled:opacity-60";
+  "w-full rounded-[10px] border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:cursor-not-allowed disabled:opacity-60";
 
 const READING_DATE_FORMAT = {
   month: "short",
@@ -220,11 +220,13 @@ export default function PersonalityPage() {
                   <div key={el} className="space-y-1.5">
                     <div className="flex items-center justify-between text-sm">
                       <span className={`font-semibold ${style.text}`}>{el}</span>
-                      <span className="text-xs font-medium text-slate-500">{pct.toFixed(1)}%</span>
+                      <span className="text-xs font-medium tabular-nums text-slate-500">
+                        {pct.toFixed(1)}%
+                      </span>
                     </div>
                     <div className="h-3 w-full overflow-hidden rounded-full bg-slate-100">
                       <div
-                        className={`h-full ${style.bar} rounded-full transition-all duration-500`}
+                        className={`h-full ${style.bar} rounded-full transition-[width] duration-[240ms]`}
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -240,13 +242,13 @@ export default function PersonalityPage() {
           {profile.strengths && profile.strengths.length > 0 ? (
             <div className="grid gap-3 sm:grid-cols-2">
               {profile.strengths.map((s, i) => (
-                <div key={i} className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+                <div key={i} className="surface-card p-4">
                   <div className="mb-1 flex items-center justify-between gap-2">
                     <span className="font-semibold text-slate-900">{s.trait}</span>
                     <Badge tone="emerald">{Math.round(s.confidence || 0)}%</Badge>
                   </div>
-                  <p className="text-xs leading-relaxed text-slate-500">{s.description}</p>
-                  <span className="mt-1 block text-[11px] text-slate-500">via {s.source}</span>
+                  <p className="text-sm leading-relaxed text-slate-600">{s.description}</p>
+                  <span className="mt-1 block text-[12.5px] text-slate-500">via {s.source}</span>
                 </div>
               ))}
             </div>
@@ -264,15 +266,15 @@ export default function PersonalityPage() {
           {profile.weaknesses && profile.weaknesses.length > 0 ? (
             <div className="space-y-3">
               {profile.weaknesses.map((w, i) => (
-                <div key={i} className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+                <div key={i} className="surface-card p-4">
                   <div className="mb-1 flex items-center justify-between gap-2">
                     <span className="font-semibold text-slate-900">{w.area}</span>
                     <Badge tone={w.severity === "growth" || w.severity === "insight" ? "accent" : "slate"}>
                       {w.severity}
                     </Badge>
                   </div>
-                  <p className="text-xs leading-relaxed text-slate-500">{w.description}</p>
-                  <span className="mt-1 block text-[11px] text-slate-500">via {w.source}</span>
+                  <p className="text-sm leading-relaxed text-slate-600">{w.description}</p>
+                  <span className="mt-1 block text-[12.5px] text-slate-500">via {w.source}</span>
                 </div>
               ))}
             </div>
@@ -290,7 +292,7 @@ export default function PersonalityPage() {
           {profile.behavioral_insights && profile.behavioral_insights.length > 0 ? (
             <div className="space-y-3">
               {profile.behavioral_insights.map((insight, i) => (
-                <div key={i} className="rounded-2xl border border-slate-200 bg-white p-4">
+                <div key={i} className="surface-card p-4">
                   <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                     <Badge tone="primary">{insight.category}</Badge>
                     <span className="text-xs font-medium text-slate-500">
@@ -316,7 +318,7 @@ export default function PersonalityPage() {
           {profile.recommendations && profile.recommendations.length > 0 ? (
             <div className="space-y-3">
               {profile.recommendations.map((rec, i) => (
-                <div key={i} className="rounded-2xl border border-slate-200 bg-white p-4">
+                <div key={i} className="surface-card p-4">
                   <div className="mb-2 flex flex-wrap items-center gap-2">
                     <Badge tone={rec.priority === "high" ? "rose" : rec.priority === "medium" ? "accent" : "slate"}>
                       {rec.priority} priority
@@ -324,7 +326,7 @@ export default function PersonalityPage() {
                     <Badge tone="slate">{rec.type}</Badge>
                   </div>
                   <p className="text-sm leading-relaxed text-slate-700">{rec.recommendation}</p>
-                  <span className="mt-1 block text-[11px] text-slate-500">
+                  <span className="mt-1 block text-[12.5px] text-slate-500">
                     category: {rec.category} — via {rec.source}
                   </span>
                 </div>
@@ -351,9 +353,10 @@ export default function PersonalityPage() {
 
   return (
     <div className="animate-fade-in space-y-6">
-      <Head>
-        <title>Personality Intelligence | MysticLens</title>
-      </Head>
+      <Seo
+        title="Personality profile"
+        description="Your elemental balance, strengths, growth areas, and behavioral insights — derived from your palm and tarot readings."
+      />
 
       <PageHeader
         icon={BrainIcon}

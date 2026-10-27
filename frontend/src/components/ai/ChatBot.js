@@ -55,23 +55,23 @@ export default function ChatBot({ readingId, readingType, result, position = "fi
         onClick={() => setOpen((prev) => !prev)}
         aria-label="Open AI chat"
         aria-expanded={open}
-        className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-primary-600 to-fuchsia-500 text-white shadow-lg shadow-primary-500/30 transition hover:scale-105 hover:shadow-xl hover:shadow-primary-500/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+        className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-primary-600 text-white shadow-lg shadow-primary-500/25 transition duration-200 hover:bg-primary-700 hover:shadow-xl active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
       >
         <ChatIcon className="h-6 w-6" />
       </button>
 
       {/* Chat panel */}
       {open && (
-        <div className="absolute bottom-16 right-0 w-80 max-w-[90vw] animate-fade-in overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-2xl">
+        <div className="absolute bottom-16 right-0 w-80 max-w-[90vw] animate-fade-in overflow-hidden surface-panel shadow-float">
           {/* Header */}
-          <div className="flex items-center justify-between bg-gradient-to-r from-primary-600 to-fuchsia-500 px-4 py-3 text-white">
+          <div className="flex items-center justify-between bg-primary-600 px-4 py-3 text-white">
             <div className="flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15">
                 <SparkleIcon className="h-4 w-4" />
               </span>
               <span className="font-display text-sm font-semibold tracking-tight">AI Chat</span>
               {messages.length > 0 && (
-                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-medium">
+                <span className="rounded-full bg-white/20 px-2 py-0.5 text-sm font-medium">
                   {messages.length}
                 </span>
               )}
@@ -90,7 +90,7 @@ export default function ChatBot({ readingId, readingType, result, position = "fi
           <div className="max-h-80 space-y-3 overflow-y-auto bg-slate-50/60 p-4">
             {messages.length === 0 && (
               <div className="flex justify-start">
-                <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-slate-200/80 bg-white px-3.5 py-2 text-xs leading-relaxed text-slate-700">
+                <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-slate-100 px-3.5 py-2 text-sm leading-relaxed text-slate-700">
                   I&apos;ve loaded this {readingType === "palm" ? "palm" : "tarot"} analysis for you.
                   Ask me anything about it — I&apos;ll answer based on the actual reading data.
                 </div>
@@ -102,10 +102,10 @@ export default function ChatBot({ readingId, readingType, result, position = "fi
                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-2xl px-3.5 py-2 text-xs leading-relaxed ${
+                  className={`max-w-[85%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed ${
                     msg.role === "user"
                       ? "rounded-br-md bg-primary-600 text-white"
-                      : "rounded-bl-md border border-slate-200/80 bg-white text-slate-700"
+                      : "rounded-bl-md bg-slate-100 text-slate-700"
                   }`}
                 >
                   {msg.content}
@@ -124,7 +124,7 @@ export default function ChatBot({ readingId, readingType, result, position = "fi
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about this reading…"
               disabled={loading}
-              className="h-9 flex-1 rounded-full border border-slate-200 bg-slate-50 px-3.5 text-xs text-slate-800 placeholder-slate-400 transition focus:border-primary-300 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary-600 disabled:opacity-50"
+              className="h-10 flex-1 rounded-[10px] border border-slate-200 bg-white px-3.5 text-sm text-slate-800 placeholder:text-slate-500 transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none disabled:opacity-50"
             />
             <Button
               type="submit"

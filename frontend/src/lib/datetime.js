@@ -165,6 +165,41 @@ export function canJoinMeet(booking, now = Date.now(), graceMinutes = 30) {
   return new Date(booking.start_time).getTime() - now <= graceMinutes * MINUTE;
 }
 
+// "Starts in 2 h 15 min" / "Happening now" / "Session ended" for a booking.
+export function countdownLabel(booking, now = Date.now()) {
+  const start = new Date(booking?.start_time).getTime();
+  const end = new Date(booking?.end_time).getTime();
+  if (Number.isNaN(start) || Number.isNaN(end)) return "";
+  if (now > end) return "Session ended";
+  if (now >= start) return "Happening now";
+  const minutes = Math.ceil((start - now) / 60000);
+  const days = Math.floor(minutes / (24 * 60));
+  if (days >= 1) return `Starts in ${days} day${days === 1 ? "" : "s"}`;
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  if (hours >= 1) return rest ? `Starts in ${hours} h ${rest} min` : `Starts in ${hours} h`;
+  return `Starts in ${minutes} min`;
+}
+
+// UTC stamp (YYYYMMDDTHHMMSSZ) used by calendar links.
+function toUtcStamp(value) {
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+}
+
+// "Add to Google Calendar" template URL for one session.
+export function googleCalendarUrl({ title, start, end, details, location } = {}) {
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: title || "Live consultation",
+    dates: `${toUtcStamp(start)}/${toUtcStamp(end)}`,
+  });
+  if (details) params.set("details", details);
+  if (location) params.set("location", location);
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
 // Current time as ISO string.
 export function nowIso() {
   return new Date().toISOString();

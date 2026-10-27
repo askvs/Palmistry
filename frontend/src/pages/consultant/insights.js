@@ -1,6 +1,6 @@
 // Guidance insights: effectiveness, breakdowns, and consultation feed.
-import Head from "next/head";
 import { ChartIcon, TargetIcon } from "@/components/icons";
+import Seo from "@/components/Seo";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { useAuth } from "@/hooks/useAuth";
 import { Button, PageHeader } from "@/components/ui";
@@ -22,9 +22,10 @@ export default function ConsultantInsightsPage() {
 
   return (
     <div className="animate-fade-in space-y-8">
-      <Head>
-        <title>Guidance Insights | Palmistry &amp; Tarot</title>
-      </Head>
+      <Seo
+        title="Insights"
+        description="How effective your guidance is, where your consultations concentrate, and the patterns across your sessions."
+      />
 
       <PageHeader
         icon={TargetIcon}

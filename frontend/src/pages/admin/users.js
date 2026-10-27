@@ -3,11 +3,14 @@ import { PageHeader } from "@/components/ui";
 import UserGovernancePanel from "@/components/admin/UserGovernancePanel";
 import AuditLogPanel from "@/components/admin/AuditLogPanel";
 import { PermissionsPanel } from "@/components/admin/SystemPanels";
+import Seo from "@/components/Seo";
 import { UsersIcon } from "@/components/icons";
 
 export default function AdminUsersPage() {
   return (
     <div className="space-y-6">
+      <Seo title="Users" description="Accounts, roles and access across the platform." />
+
       <PageHeader
         icon={UsersIcon}
         eyebrow="Administration"

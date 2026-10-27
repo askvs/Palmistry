@@ -125,8 +125,8 @@ function PersonalityInsightsCard({ palmReadingId, tarotReadingId, readingsLoadin
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-emerald-700">
+        <div className="surface-card p-4">
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-emerald-700">
             Strengths
           </p>
           {strengths.length > 0 ? (
@@ -143,8 +143,8 @@ function PersonalityInsightsCard({ palmReadingId, tarotReadingId, readingsLoadin
           )}
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-amber-700">
+        <div className="surface-card p-4">
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-accent-700">
             Growth Areas
           </p>
           {growthAreas.length > 0 ? (

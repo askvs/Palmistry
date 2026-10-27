@@ -1,11 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { checkHandFrame } from "@/services/palm";
+import { CloseIcon, SparklesIcon } from "@/components/icons";
 
 export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const canvasRef = useRef(null);
   const isCapturingRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
 
   const [cameraError, setCameraError] = useState(null);
   const [isStarting, setIsStarting] = useState(true);
@@ -69,6 +74,20 @@ export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
         streamRef.current.getTracks().forEach((t) => t.stop());
         streamRef.current = null;
       }
+    };
+  }, [isOpen]);
+
+  // Escape closes the scanner and the page behind it stays put while open.
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const onKey = (event) => {
+      if (event.key === "Escape") onCloseRef.current?.();
+    };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
     };
   }, [isOpen]);
 
@@ -177,7 +196,7 @@ export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
                 setGuidanceStatus(`Palm detected (${check.handedness} Hand) — hold steady`);
                 setIsGoodQuality(true);
               } else {
-                setGuidanceStatus(`✨ Open palm in focus (${check.handedness} Hand) — holding steady…`);
+                setGuidanceStatus(`Open palm in focus (${check.handedness} Hand) — holding steady…`);
                 setIsGoodQuality(true);
                 progressAccumulator = Math.min(100, progressAccumulator + 35);
               }
@@ -205,8 +224,13 @@ export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-6 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-backdrop-in">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Palm camera scanner"
+        className="relative w-full max-w-xl overflow-hidden surface-panel p-6 shadow-float animate-dialog-in"
+      >
         {/* Header with Auto-Capture Toggle */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <div>
@@ -215,7 +239,7 @@ export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
                 Palm Camera Scanner
               </h3>
               {autoCaptureEnabled && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-200">
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-sm font-semibold text-emerald-700 border border-emerald-200">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   Auto-Detect ON
                 </span>
@@ -230,9 +254,9 @@ export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
             <button
               type="button"
               onClick={() => setAutoCaptureEnabled(!autoCaptureEnabled)}
-              className={`rounded-full px-3 py-1 text-[11px] font-medium border transition ${
+              className={`rounded-full px-3 py-1 text-[12.5px] font-medium border transition ${
                 autoCaptureEnabled
-                  ? "bg-violet-50 text-violet-700 border-violet-200"
+                  ? "bg-primary-50 text-primary-700 border-primary-100"
                   : "bg-slate-100 text-slate-600 border-slate-200"
               }`}
             >
@@ -241,9 +265,10 @@ export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition"
+              aria-label="Close camera"
+              className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
             >
-              ✕
+              <CloseIcon className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -253,7 +278,7 @@ export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
           {cameraError ? (
             <div className="p-6 text-center text-rose-300">
               <p className="font-medium text-sm text-rose-200">Camera Unavailable</p>
-              <p className="mt-1 text-xs text-slate-400 max-w-sm mx-auto">{cameraError}</p>
+              <p className="mt-1 text-sm text-slate-300 max-w-sm mx-auto">{cameraError}</p>
             </div>
           ) : (
             <>
@@ -267,7 +292,7 @@ export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
 
               {/* Shutter Flash Animation */}
               {showShutterFlash && (
-                <div className="absolute inset-0 z-30 bg-white animate-fadeOut" />
+                <div className="absolute inset-0 z-30 bg-white animate-shutter-flash" />
               )}
 
               {/* Dynamic Hand Alignment Silhouette Guide */}
@@ -277,7 +302,7 @@ export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
                   className={`h-4/5 w-auto transition-colors duration-300 ${
                     isGoodQuality
                       ? "text-emerald-400 stroke-emerald-400 fill-emerald-400/15"
-                      : "text-violet-400/50 stroke-current fill-violet-500/10"
+                      : "text-primary-400/60 stroke-current fill-primary-500/10"
                   }`}
                   strokeWidth={isGoodQuality ? "3" : "2"}
                   strokeDasharray={isGoodQuality ? "none" : "5 5"}
@@ -322,20 +347,23 @@ export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
 
                 {/* Real-time Guidance Pill */}
                 <div
-                  className={`absolute bottom-3 rounded-full px-4 py-1.5 text-xs font-medium backdrop-blur-md transition-all shadow-md ${
+                  className={`absolute bottom-3 flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-medium backdrop-blur-md transition-all shadow-md ${
                     isGoodQuality
                       ? "bg-emerald-950/85 text-emerald-200 border border-emerald-500/40"
                       : "bg-slate-950/80 text-white/90 border border-white/15"
                   }`}
                 >
-                  {autoCaptureEnabled && isGoodQuality
-                    ? `Auto-capturing in steady frame… (${autoProgress}%)`
-                    : guidanceStatus}
+                  {isGoodQuality && <SparklesIcon className="h-3.5 w-3.5 shrink-0" />}
+                  <span>
+                    {autoCaptureEnabled && isGoodQuality
+                      ? `Auto-capturing in steady frame… (${autoProgress}%)`
+                      : guidanceStatus}
+                  </span>
                 </div>
               </div>
 
               {isStarting && (
-                <div className="absolute inset-0 flex items-center justify-center bg-slate-950 text-slate-400 text-xs">
+                <div className="absolute inset-0 flex items-center justify-center bg-slate-950 text-sm text-slate-300">
                   Starting camera…
                 </div>
               )}
@@ -355,7 +383,7 @@ export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
 
           <div className="flex items-center gap-3">
             {autoCaptureEnabled && (
-              <span className="text-[11px] text-slate-500 hidden sm:inline">
+              <span className="text-[12.5px] text-slate-500 hidden sm:inline">
                 Hold hand steady inside frame
               </span>
             )}
@@ -363,7 +391,7 @@ export default function CameraCaptureModal({ isOpen, onClose, onCapture }) {
               type="button"
               onClick={executeCapture}
               disabled={!!cameraError || isStarting}
-              className="inline-flex items-center gap-2 rounded-full bg-violet-600 px-6 py-2.5 text-xs font-semibold text-white shadow-md shadow-violet-600/25 hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="inline-flex items-center gap-2 rounded-full bg-primary-600 px-6 py-2.5 text-xs font-semibold text-white shadow-md shadow-primary-600/25 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               <span className="h-2.5 w-2.5 rounded-full bg-white animate-pulse" />
               Capture Now

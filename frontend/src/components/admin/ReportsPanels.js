@@ -41,16 +41,18 @@ const CATEGORY_TONES = {
 // One service line in the health panel: dot + name + real check result.
 function ServiceRow({ label, detail, state }) {
   const dotClass =
-    state === "ok" ? "bg-emerald-500" : state === "warn" ? "bg-slate-300" : "bg-rose-500";
+    state === "ok" ? "bg-emerald-500" : state === "warn" ? "bg-accent-500" : "bg-rose-600";
   const detailClass =
     state === "ok" ? "text-emerald-700" : state === "warn" ? "text-slate-500" : "text-rose-700";
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-2">
-      <span className="flex items-center gap-2.5 text-sm font-medium text-slate-700">
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-2.5">
+      <span className="flex items-center gap-2.5 text-[13px] font-medium text-slate-700">
         <span className={`h-2 w-2 shrink-0 rounded-full ${dotClass}`} aria-hidden="true" />
         {label}
       </span>
-      <span className={`text-right text-xs font-semibold ${detailClass}`}>{detail}</span>
+      <span className={`text-right text-[12.5px] font-semibold tabular-nums ${detailClass}`}>
+        {detail}
+      </span>
     </div>
   );
 }
@@ -131,9 +133,9 @@ export function SystemOverviewPanel({ days }) {
               const count = row.successful + row.failed;
               return (
                 <div key={row.type}>
-                  <div className="mb-1.5 flex items-center justify-between text-xs">
+                  <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
                     <span className="font-medium capitalize text-slate-700">{row.type}</span>
-                    <span className="font-bold text-slate-900">
+                    <span className="font-bold tabular-nums text-slate-900">
                       {row.successful} ok · {row.failed} failed
                     </span>
                   </div>
@@ -197,7 +199,7 @@ export function SystemHealthPanel() {
 
         <ul className="space-y-1 rounded-xl border border-slate-100 bg-slate-50/60 p-3">
           {data.notes.map((note) => (
-            <li key={note} className="text-xs text-slate-500">
+            <li key={note} className="text-[12.5px] leading-relaxed text-slate-500">
               {note}
             </li>
           ))}
@@ -260,7 +262,7 @@ export function PerformanceReportPanel({ days }) {
                 hint="Share of requests that returned 5xx"
               />
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-[12.5px] tabular-nums text-slate-500">
               Samples from {new Date(api.first_sample_at).toLocaleString()} to{" "}
               {new Date(api.last_sample_at).toLocaleString()} · health probes and API docs are
               excluded.
@@ -309,9 +311,9 @@ export function PerformanceReportPanel({ days }) {
               <div className="space-y-3.5">
                 {analysis.by_type.map((row) => (
                   <div key={row.type}>
-                    <div className="mb-1.5 flex items-center justify-between text-xs">
+                    <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
                       <span className="font-medium capitalize text-slate-700">{row.type}</span>
-                      <span className="font-bold text-slate-900">
+                      <span className="font-bold tabular-nums text-slate-900">
                         avg {row.avg_ms} ms · {row.samples} reading
                         {row.samples === 1 ? "" : "s"}
                       </span>
@@ -331,7 +333,7 @@ export function PerformanceReportPanel({ days }) {
 
       <ul className="space-y-1 rounded-xl border border-slate-100 bg-slate-50/60 p-3">
         {data.notes.map((note) => (
-          <li key={note} className="text-xs text-slate-500">
+          <li key={note} className="text-[12.5px] leading-relaxed text-slate-500">
             {note}
           </li>
         ))}
@@ -342,9 +344,9 @@ export function PerformanceReportPanel({ days }) {
 
 function MiniCount({ label, value, tone = "text-slate-900" }) {
   return (
-    <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-      <p className="text-xs font-medium text-slate-500">{label}</p>
-      <p className={`mt-0.5 text-lg font-bold ${tone}`}>{value.toLocaleString()}</p>
+    <div className="surface-card p-3">
+      <p className="text-[12.5px] font-medium text-slate-500">{label}</p>
+      <p className={`mt-0.5 text-lg font-bold tabular-nums ${tone}`}>{value.toLocaleString()}</p>
     </div>
   );
 }
@@ -384,19 +386,19 @@ export function ErrorReportPanel({ days }) {
         ) : (
           <ul className="divide-y divide-slate-100">
             {items.map((item) => (
-              <li key={item.id} className="py-3">
+              <li key={item.id} className="py-2.5">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge tone={CATEGORY_TONES[item.category] || "slate"}>
                     {CATEGORY_LABELS[item.category] || item.category}
                   </Badge>
-                  <code className="rounded-md bg-slate-100 px-2 py-0.5 font-mono text-xs text-slate-600">
+                  <code className="rounded-md bg-slate-100 px-2 py-0.5 font-mono text-[12px] text-slate-600">
                     {item.method} {item.path}
                   </code>
-                  <span className="text-xs font-semibold text-slate-700">
+                  <span className="text-[12.5px] font-semibold tabular-nums text-slate-700">
                     HTTP {item.status_code}
                   </span>
                   {item.occurrences > 1 && (
-                    <span className="text-xs font-medium text-slate-500">
+                    <span className="text-[12.5px] font-medium tabular-nums text-slate-500">
                       ×{item.occurrences}
                     </span>
                   )}
@@ -406,10 +408,10 @@ export function ErrorReportPanel({ days }) {
                     <Badge tone="slate">Open</Badge>
                   )}
                 </div>
-                <p className="mt-1.5 break-words text-sm text-slate-700">
+                <p className="mt-1.5 break-words text-[13px] leading-relaxed text-slate-700">
                   {item.description || "No description recorded"}
                 </p>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-[12.5px] tabular-nums text-slate-500">
                   Last seen {new Date(item.last_seen_at).toLocaleString()} · first seen{" "}
                   {new Date(item.first_seen_at).toLocaleString()}
                 </p>
@@ -420,7 +422,7 @@ export function ErrorReportPanel({ days }) {
 
         <ul className="space-y-1 rounded-xl border border-slate-100 bg-slate-50/60 p-3">
           {data.notes.map((note) => (
-            <li key={note} className="text-xs text-slate-500">
+            <li key={note} className="text-[12.5px] leading-relaxed text-slate-500">
               {note}
             </li>
           ))}

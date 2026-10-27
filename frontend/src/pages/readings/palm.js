@@ -10,8 +10,9 @@ import {
   RetryIcon,
   ScanIcon,
   SparkleIcon,
-  UploadIcon,
+  SparklesIcon,
 } from "@/components/icons";
+import Seo from "@/components/Seo";
 import CameraCaptureModal from "@/components/palm/CameraCaptureModal";
 import PalmVisualizer from "@/components/palm/PalmVisualizer";
 import {
@@ -34,25 +35,25 @@ const MAX_SIZE_MB = 10;
 
 const ELEMENT_THEMES = {
   Earth: {
-    badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    badge: "bg-emerald-50 text-emerald-700 ring-emerald-200",
     gradient: "from-emerald-50/80 via-teal-50/30 to-white",
     border: "border-emerald-200/80",
     accent: "text-emerald-700",
   },
   Air: {
-    badge: "bg-sky-50 text-sky-700 border-sky-200",
+    badge: "bg-sky-50 text-sky-700 ring-sky-200",
     gradient: "from-sky-50/80 via-indigo-50/30 to-white",
     border: "border-sky-200/80",
     accent: "text-sky-700",
   },
   Fire: {
-    badge: "bg-amber-50 text-amber-700 border-amber-200",
+    badge: "bg-amber-50 text-amber-700 ring-amber-200",
     gradient: "from-amber-50/80 via-rose-50/30 to-white",
     border: "border-amber-200/80",
     accent: "text-amber-700",
   },
   Water: {
-    badge: "bg-cyan-50 text-cyan-700 border-cyan-200",
+    badge: "bg-cyan-50 text-cyan-700 ring-cyan-200",
     gradient: "from-cyan-50/80 via-blue-50/30 to-white",
     border: "border-cyan-200/80",
     accent: "text-cyan-700",
@@ -123,6 +124,18 @@ export default function PalmReadingPage() {
     setStage("empty");
   }
 
+  // Keyboard access for the dropzone (spec §5.2): Enter/Space open the file
+  // picker, Escape clears the current selection. Only fires for the zone
+  // itself, so nested buttons keep their own key handling.
+  function onZoneKeyDown(event) {
+    if (event.target !== event.currentTarget) return;
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      inputRef.current?.click(); // keep the existing <input type="file"> in the DOM
+    }
+    if (event.key === "Escape") resetForm();
+  }
+
   async function handleAnalyze(e) {
     if (e) e.preventDefault();
     if (!file) return;
@@ -175,6 +188,10 @@ export default function PalmReadingPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
+      <Seo
+        title="Palm reading"
+        description="Upload a palm photo and get a guided line-by-line reading in under a minute."
+      />
       {/* Top Breadcrumb & Reset Action */}
       <div className="flex items-center justify-between">
         <Link
@@ -198,7 +215,7 @@ export default function PalmReadingPage() {
 
       {/* Header Banner matching MysticLens UI */}
       <div className="text-center">
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-500 text-white shadow-lg shadow-violet-500/25">
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-[14px] bg-primary-50 text-primary-600 ring-1 ring-primary-100">
           <HandIcon className="h-7 w-7" />
         </span>
         <h1 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -212,10 +229,14 @@ export default function PalmReadingPage() {
 
       {/* Upload stages: empty, preview, and error. */}
       {(stage === "empty" || stage === "preview" || stage === "error") && (
-        <section className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-8">
+        <section className="surface-panel p-6 sm:p-8">
           {/* Upload Dropzone */}
           <div
+            role="button"
+            tabIndex={0}
+            aria-label="Upload a palm photo — press Enter to browse files, Escape to clear"
             onClick={() => inputRef.current?.click()}
+            onKeyDown={onZoneKeyDown}
             onDragOver={(e) => {
               e.preventDefault();
               setDragging(true);
@@ -226,15 +247,15 @@ export default function PalmReadingPage() {
               setDragging(false);
               pickFile(e.dataTransfer.files?.[0]);
             }}
-            className={`group relative flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 text-center transition ${
+            className={`group relative flex cursor-pointer flex-col items-center justify-center rounded-[16px] border border-dashed p-8 text-center transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
               dragging
-                ? "border-violet-400 bg-violet-50/60"
-                : "border-slate-300 bg-slate-50/60 hover:border-violet-300 hover:bg-slate-50"
+                ? "border-solid border-[#a78bfa] bg-[#f5f3ff]"
+                : "border-slate-300 bg-[#f8f7fd] hover:border-primary-300"
             }`}
           >
             {previewUrl ? (
-              <div className="flex flex-col items-center">
-                <div className="relative h-56 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-md">
+              <div className="flex w-full max-w-md items-center gap-3 rounded-[16px] border border-slate-200/90 bg-white p-3 text-left shadow-xs">
+                <div className="h-11 w-11 shrink-0 overflow-hidden rounded-[10px] border border-slate-200 bg-slate-50">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={previewUrl}
@@ -242,22 +263,49 @@ export default function PalmReadingPage() {
                     className="h-full w-full object-cover"
                   />
                 </div>
-                <p className="mt-3 text-sm font-medium text-slate-800">{file?.name}</p>
-                <p className="text-xs text-slate-500">
-                  {(file.size / (1024 * 1024)).toFixed(2)} MB · Click or drop another image to replace
-                </p>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-slate-900">{file?.name}</p>
+                  <p className="text-[12.5px] text-slate-500">
+                    {(file.size / (1024 * 1024)).toFixed(2)} MB
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      inputRef.current?.click();
+                    }}
+                    className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-xs transition hover:border-slate-300 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  >
+                    Replace
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      resetForm();
+                    }}
+                    className="rounded-full px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
             ) : (
               <>
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-violet-600 shadow-xs ring-1 ring-slate-200 group-hover:scale-105 transition">
-                  <UploadIcon className="h-6 w-6" />
+                <span className="flex h-11 w-11 items-center justify-center rounded-[10px] bg-primary-50 text-primary-600 ring-1 ring-primary-100 transition group-hover:scale-105">
+                  <ScanIcon className="h-5 w-5" />
                 </span>
-                <p className="mt-4 text-sm font-medium text-slate-800">
-                  Drag and drop your palm photo here, or{" "}
-                  <span className="text-violet-600 underline hover:text-violet-700">browse</span>
+                <p className="mt-4 text-sm font-semibold text-slate-900">
+                  {dragging ? "Release to upload" : "Drop your palm photo here"}
                 </p>
-                <p className="mt-1 text-xs text-slate-500">
-                  JPG, PNG, or WEBP · up to {MAX_SIZE_MB} MB
+                <p className="mt-1 text-[12.5px] text-slate-500">
+                  or{" "}
+                  <span className="font-medium text-primary-700 underline decoration-primary-200 underline-offset-2">
+                    browse files
+                  </span>{" "}
+                  · JPG/PNG · ≤10 MB
                 </p>
 
                 {/* Instant Camera Capture CTA */}
@@ -268,47 +316,47 @@ export default function PalmReadingPage() {
                       e.stopPropagation();
                       setIsCameraOpen(true);
                     }}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-white px-4 py-1.5 text-xs font-semibold text-violet-700 shadow-xs hover:bg-violet-50 hover:border-violet-300 transition"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs font-semibold text-primary-700 shadow-xs transition hover:border-primary-300 hover:bg-primary-50"
                   >
-                    <CameraIcon className="h-4 w-4 text-violet-600" />
+                    <CameraIcon className="h-4 w-4 text-primary-600" />
                     Use Camera to Take Photo
                   </button>
                 </div>
 
                 {/* Clear Hand Framing Guide Grid */}
-                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2 text-left text-xs text-slate-600 max-w-xl mx-auto w-full">
-                  <div className="flex items-start gap-2.5 rounded-xl bg-white/90 p-3 border border-slate-200/80 shadow-2xs">
+                <div className="mt-6 grid w-full max-w-xl grid-cols-1 gap-2 text-left sm:grid-cols-2">
+                  <div className="surface-card flex items-start gap-2.5 p-3">
                     <CheckIcon className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                     <div>
-                      <span className="font-semibold text-slate-800">Show Full Hand & Wrist</span>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
+                      <span className="text-sm font-semibold text-slate-800">Show Full Hand & Wrist</span>
+                      <p className="mt-0.5 text-[12.5px] leading-relaxed text-slate-500">
                         Capture the entire hand from wrist to fingertips. Do not crop into just the creases.
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-2.5 rounded-xl bg-white/90 p-3 border border-slate-200/80 shadow-2xs">
+                  <div className="surface-card flex items-start gap-2.5 p-3">
                     <CheckIcon className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                     <div>
-                      <span className="font-semibold text-slate-800">Flat Open Palm</span>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
+                      <span className="text-sm font-semibold text-slate-800">Flat Open Palm</span>
+                      <p className="mt-0.5 text-[12.5px] leading-relaxed text-slate-500">
                         Keep fingers naturally spread and palm facing directly toward the camera.
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-2.5 rounded-xl bg-white/90 p-3 border border-slate-200/80 shadow-2xs">
+                  <div className="surface-card flex items-start gap-2.5 p-3">
                     <CheckIcon className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                     <div>
-                      <span className="font-semibold text-slate-800">Auto Left / Right Detection</span>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
+                      <span className="text-sm font-semibold text-slate-800">Auto Left / Right Detection</span>
+                      <p className="mt-0.5 text-[12.5px] leading-relaxed text-slate-500">
                         AI automatically verifies orientation and detects handedness topology.
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-2.5 rounded-xl bg-white/90 p-3 border border-slate-200/80 shadow-2xs">
+                  <div className="surface-card flex items-start gap-2.5 p-3">
                     <CheckIcon className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                     <div>
-                      <span className="font-semibold text-slate-800">Adequate Lighting</span>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
+                      <span className="text-sm font-semibold text-slate-800">Adequate Lighting</span>
+                      <p className="mt-0.5 text-[12.5px] leading-relaxed text-slate-500">
                         Ensure good contrast so the subtle skin folds and mounts are clearly visible.
                       </p>
                     </div>
@@ -340,7 +388,7 @@ export default function PalmReadingPage() {
               type="button"
               onClick={handleAnalyze}
               disabled={!file}
-              className="inline-flex items-center gap-2 rounded-full bg-violet-600 px-6 py-2.5 text-sm font-medium text-white shadow-md shadow-violet-600/25 transition hover:bg-violet-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-full bg-primary-600 px-6 py-2.5 text-sm font-medium text-white shadow-sm shadow-primary-600/25 transition hover:bg-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <ScanIcon className="h-4 w-4" />
               Analyze Palm Features
@@ -361,16 +409,17 @@ export default function PalmReadingPage() {
                   <p className="font-semibold text-rose-900">
                     {isCloseUpError ? "Hand Framing Adjustment Required" : "Analysis Halted"}
                   </p>
-                  <p className="text-xs text-rose-700 leading-relaxed">{error}</p>
+                  <p className="text-sm leading-relaxed text-rose-700">{error}</p>
 
                   {isCloseUpError && (
-                    <div className="rounded-xl border border-rose-200/80 bg-white/90 p-3 text-xs text-slate-700 shadow-2xs">
-                      <p className="font-semibold text-violet-800">Why did this happen?</p>
-                      <p className="mt-1 text-[11px] text-slate-600 leading-relaxed">
+                    <div className="rounded-[16px] border border-rose-200/80 bg-white/90 p-3 shadow-xs">
+                      <p className="text-sm font-semibold text-violet-800">Why did this happen?</p>
+                      <p className="mt-1 text-sm leading-relaxed text-slate-600">
                         MysticLens uses anatomical landmarks across the wrist and knuckles to locate lines and calculate elemental ratios. When an image is cropped down to only the center creases, the computer vision model cannot identify the hand anchor points.
                       </p>
-                      <p className="mt-1.5 text-[11px] font-medium text-emerald-700">
-                        ✓ Solution: Step back so the bottom of your palm/wrist and all 5 fingertips are in frame.
+                      <p className="mt-1.5 flex items-start gap-1.5 text-sm font-medium text-emerald-700">
+                        <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                        <span>Solution: Step back so the bottom of your palm/wrist and all 5 fingertips are in frame.</span>
                       </p>
                     </div>
                   )}
@@ -383,11 +432,46 @@ export default function PalmReadingPage() {
 
       {/* Loading stage with animated progress. */}
       {stage === "loading" && (
-        <section className="rounded-3xl border border-slate-200/90 bg-white p-10 text-center shadow-xs">
-          <div className="relative mx-auto flex h-20 w-20 items-center justify-center">
-            <div className="absolute inset-0 animate-ping rounded-full bg-violet-500/20" />
-            <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-violet-50 text-violet-600 ring-2 ring-violet-500 shadow-sm">
-              <ScanIcon className="h-8 w-8 animate-pulse" />
+        <section className="surface-panel relative overflow-hidden p-10 text-center">
+          {/* Scan-sweep recipe (Appendix A.8) — local until globals.css ships it */}
+          <style>{`
+            @keyframes scan-sweep {
+              0% { transform: translateY(6%); opacity: 0; }
+              12% { opacity: 1; }
+              88% { opacity: 1; }
+              100% { transform: translateY(94%); opacity: 0; }
+            }
+            .animate-scan-sweep { animation: scan-sweep 2.4s var(--ease-standard) infinite; }
+          `}</style>
+
+          {/* Drifting ✦ stardust (≤4% opacity) */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 text-primary-600/[0.04]">
+            <span className="absolute left-[10%] top-[20%] text-3xl">✦</span>
+            <span className="absolute right-[14%] top-[16%] text-xl">✦</span>
+            <span className="absolute left-[20%] bottom-[18%] text-2xl">✦</span>
+            <span className="absolute right-[22%] bottom-[26%] text-sm">✦</span>
+            <span className="absolute left-[46%] top-[10%] text-base">✦</span>
+          </div>
+
+          {/* Palm silhouette tile with violet scan line */}
+          <div className="relative mx-auto h-28 w-24 overflow-hidden rounded-[16px] border border-slate-200 bg-primary-50/60 ring-1 ring-primary-100/70">
+            <svg
+              viewBox="0 0 200 240"
+              className="h-full w-full text-primary-500/70"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                className="fill-primary-500/10"
+                d="M 70 230 C 70 190, 60 170, 50 150 C 40 135, 30 115, 38 105 C 45 95, 58 105, 65 125 C 62 100, 62 70, 72 65 C 80 62, 85 75, 85 105 C 86 80, 92 40, 103 40 C 112 40, 115 70, 115 105 C 117 85, 126 55, 136 58 C 144 60, 142 85, 140 115 C 145 100, 158 90, 166 98 C 172 108, 160 145, 150 170 C 140 195, 130 210, 130 230 Z"
+              />
+            </svg>
+            <div aria-hidden="true" className="pointer-events-none absolute inset-0 animate-scan-sweep">
+              <div className="mx-auto h-[2.5px] w-[86%] rounded-full bg-gradient-to-r from-transparent via-primary-500 to-transparent shadow-[0_0_12px_rgba(139,92,246,0.8)]" />
             </div>
           </div>
           <h2 className="mt-6 font-display text-2xl font-bold text-slate-900">
@@ -398,45 +482,45 @@ export default function PalmReadingPage() {
           </p>
 
           {/* Step list */}
-          <div className="mx-auto mt-8 max-w-md space-y-2.5 text-left text-xs">
+          <div className="mx-auto mt-8 max-w-md space-y-2.5 text-left text-sm">
             <div
-              className={`flex items-center gap-2.5 rounded-xl border p-3 transition ${
+              className={`flex items-center gap-2.5 rounded-[10px] border p-3 transition duration-[240ms] ${
                 loadingStep >= 0
-                  ? "border-violet-200 bg-violet-50/70 text-violet-900 font-medium"
+                  ? "border-primary-200 bg-primary-50/70 text-primary-900 font-medium"
                   : "border-slate-200 bg-slate-50 text-slate-500"
               }`}
             >
-              <CheckIcon className={`h-4 w-4 ${loadingStep >= 0 ? "text-violet-600" : "text-slate-300"}`} />
+              <CheckIcon className={`h-4 w-4 ${loadingStep >= 0 ? "text-primary-600" : "text-slate-300"}`} />
               Phase 1: Validating file signature & EXIF orientation
             </div>
             <div
-              className={`flex items-center gap-2.5 rounded-xl border p-3 transition ${
+              className={`flex items-center gap-2.5 rounded-[10px] border p-3 transition duration-[240ms] ${
                 loadingStep >= 1
-                  ? "border-violet-200 bg-violet-50/70 text-violet-900 font-medium"
+                  ? "border-primary-200 bg-primary-50/70 text-primary-900 font-medium"
                   : "border-slate-200 bg-slate-50 text-slate-500"
               }`}
             >
-              <CheckIcon className={`h-4 w-4 ${loadingStep >= 1 ? "text-violet-600" : "text-slate-300"}`} />
+              <CheckIcon className={`h-4 w-4 ${loadingStep >= 1 ? "text-primary-600" : "text-slate-300"}`} />
               Phase 2: Extracting 21 3D MediaPipe hand landmarks
             </div>
             <div
-              className={`flex items-center gap-2.5 rounded-xl border p-3 transition ${
+              className={`flex items-center gap-2.5 rounded-[10px] border p-3 transition duration-[240ms] ${
                 loadingStep >= 2
-                  ? "border-violet-200 bg-violet-50/70 text-violet-900 font-medium"
+                  ? "border-primary-200 bg-primary-50/70 text-primary-900 font-medium"
                   : "border-slate-200 bg-slate-50 text-slate-500"
               }`}
             >
-              <CheckIcon className={`h-4 w-4 ${loadingStep >= 2 ? "text-violet-600" : "text-slate-300"}`} />
+              <CheckIcon className={`h-4 w-4 ${loadingStep >= 2 ? "text-primary-600" : "text-slate-300"}`} />
               Phase 3: Classifying elemental hand shape & finger ratios
             </div>
             <div
-              className={`flex items-center gap-2.5 rounded-xl border p-3 transition ${
+              className={`flex items-center gap-2.5 rounded-[10px] border p-3 transition duration-[240ms] ${
                 loadingStep >= 3
-                  ? "border-violet-200 bg-violet-50/70 text-violet-900 font-medium"
+                  ? "border-primary-200 bg-primary-50/70 text-primary-900 font-medium"
                   : "border-slate-200 bg-slate-50 text-slate-500"
               }`}
             >
-              <CheckIcon className={`h-4 w-4 ${loadingStep >= 3 ? "text-violet-600" : "text-slate-300"}`} />
+              <CheckIcon className={`h-4 w-4 ${loadingStep >= 3 ? "text-primary-600" : "text-slate-300"}`} />
               Phase 4: Tracing Life, Head, Heart, Fate & Sun lines
             </div>
           </div>
@@ -445,7 +529,7 @@ export default function PalmReadingPage() {
 
       {/* Success stage with visualizer and result cards. */}
       {stage === "success" && result && (
-        <div className="space-y-8 animate-fadeIn">
+        <div className="space-y-8 animate-tab-in">
           {/* Main Visualizer + Archetype Split Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Left Column: Interactive Palm Visualizer (5 cols) */}
@@ -454,7 +538,7 @@ export default function PalmReadingPage() {
                 <h3 className="font-display text-sm font-bold uppercase tracking-wider text-slate-700">
                   Biometric Scan Overlay
                 </h3>
-                <span className="text-[11px] text-slate-500">
+                <span className="text-[12.5px] text-slate-500">
                   Hover lines or mounts
                 </span>
               </div>
@@ -470,12 +554,12 @@ export default function PalmReadingPage() {
             <div className="lg:col-span-7 space-y-6">
               {/* Elemental Palm Shape Hero Card */}
               <section
-                className={`overflow-hidden rounded-3xl border bg-gradient-to-br p-6 shadow-xs sm:p-7 ${activeTheme.border} ${activeTheme.gradient}`}
+                className={`overflow-hidden rounded-[20px] border bg-gradient-to-br p-6 shadow-xs sm:p-7 ${activeTheme.border} ${activeTheme.gradient}`}
               >
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
                     <span
-                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${activeTheme.badge}`}
+                      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset ${activeTheme.badge}`}
                     >
                       <SparkleIcon className="h-3.5 w-3.5" />
                       {result.palm_shape?.element} Hand Archetype
@@ -489,12 +573,12 @@ export default function PalmReadingPage() {
                   </div>
 
                   {/* Confidence Badge */}
-                  <div className="rounded-2xl border border-slate-200/90 bg-white p-4 text-center shadow-xs">
-                    <div className="text-2xl font-bold text-violet-600">
+                  <div className="surface-card p-4 text-center">
+                    <div className="font-display text-2xl font-bold tabular-nums text-primary-600">
                       {Math.round((result.metadata?.overall_confidence || 0) * 100)}%
                     </div>
                     <div className="text-xs font-medium text-slate-500">Analysis Confidence</div>
-                    <div className="mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold border">
+                    <div className="mt-1.5 inline-block rounded-full bg-slate-50 px-2.5 py-0.5 text-sm font-semibold text-slate-600 ring-1 ring-slate-200">
                       {(result.metadata?.overall_confidence || 0) >= 0.75
                         ? "High Confidence Scan"
                         : (result.metadata?.overall_confidence || 0) >= 0.55
@@ -509,7 +593,7 @@ export default function PalmReadingPage() {
                   {result.palm_shape?.traits?.map((trait, idx) => (
                     <span
                       key={idx}
-                      className="rounded-lg border border-slate-200 bg-white/90 px-3 py-1 text-xs font-medium text-slate-700 shadow-xs"
+                      className="rounded-[10px] border border-slate-200 bg-white/90 px-3 py-1 text-[12.5px] font-medium text-slate-700 shadow-xs"
                     >
                       #{trait}
                     </span>
@@ -518,30 +602,30 @@ export default function PalmReadingPage() {
 
                 {/* Palm & Finger Metrics */}
                 <div className="mt-6 grid grid-cols-2 gap-3 border-t border-slate-200/80 pt-4 sm:grid-cols-4">
-                  <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-3 shadow-xs">
-                    <span className="text-[10px] text-slate-500 uppercase font-semibold">Identified Hand</span>
-                    <p className="font-semibold text-slate-900">
+                  <div className="surface-card p-3">
+                    <span className="text-sm font-semibold uppercase text-slate-500">Identified Hand</span>
+                    <p className="font-semibold tabular-nums text-slate-900">
                       {result.hand?.detected_handedness} Hand
                     </p>
-                    <span className="text-[10px] font-medium text-emerald-600">
+                    <span className="text-[12.5px] font-medium text-emerald-700">
                       Auto-detected ({Math.round((result.hand?.handedness_confidence || 0.95) * 100)}%)
                     </span>
                   </div>
-                  <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-3 shadow-xs">
-                    <span className="text-[10px] text-slate-500 uppercase font-semibold">Aspect Ratio</span>
-                    <p className="font-semibold text-slate-900">
+                  <div className="surface-card p-3">
+                    <span className="text-sm font-semibold uppercase text-slate-500">Aspect Ratio</span>
+                    <p className="font-semibold tabular-nums text-slate-900">
                       {result.palm_shape?.aspect_ratio}
                     </p>
                   </div>
-                  <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-3 shadow-xs">
-                    <span className="text-[10px] text-slate-500 uppercase font-semibold">2D:4D Ratio</span>
-                    <p className="font-semibold text-slate-900">
+                  <div className="surface-card p-3">
+                    <span className="text-sm font-semibold uppercase text-slate-500">2D:4D Ratio</span>
+                    <p className="font-semibold tabular-nums text-slate-900">
                       {result.finger_structure?.digit_ratio_2d_4d}
                     </p>
                   </div>
-                  <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-3 shadow-xs">
-                    <span className="text-[10px] text-slate-500 uppercase font-semibold">Thumb Angle</span>
-                    <p className="font-semibold text-slate-900">
+                  <div className="surface-card p-3">
+                    <span className="text-sm font-semibold uppercase text-slate-500">Thumb Angle</span>
+                    <p className="font-semibold tabular-nums text-slate-900">
                       {result.finger_structure?.thumb_angle_degrees}°
                     </p>
                   </div>
@@ -549,7 +633,7 @@ export default function PalmReadingPage() {
               </section>
 
               {/* Detected Palm Lines Section */}
-              <section className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-7">
+              <section className="surface-panel p-6 sm:p-7">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
                     <h3 className="font-display text-xl font-bold text-slate-900">Detected Palm Creases</h3>
@@ -563,7 +647,7 @@ export default function PalmReadingPage() {
                 </div>
 
                 {result.hand?.is_palmar === false && (
-                  <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-800">
+                  <div className="mb-4 rounded-[10px] border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-800">
                     Back-of-hand (dorsal) view detected — line creases are naturally less visible
                     from this angle, so lower line confidences are expected. A flat palmar photo
                     gives the sharpest scan.
@@ -580,7 +664,7 @@ export default function PalmReadingPage() {
           </div>
 
           {/* MEASURED BIOMETRICS CHART (always visible — computer vision, not AI) */}
-          <section className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-7">
+          <section className="surface-panel p-6 sm:p-7">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h3 className="font-display text-xl font-bold text-slate-900">Measured Biometrics</h3>
@@ -595,7 +679,7 @@ export default function PalmReadingPage() {
 
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
               <div>
-                <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                <div className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
                   Line detection confidence
                 </div>
                 <div className="space-y-3">
@@ -603,16 +687,16 @@ export default function PalmReadingPage() {
                     const pct = Math.round((line.confidence || 0) * 100);
                     return (
                       <div key={line.line_id} className="flex items-center gap-3">
-                        <span className="text-xs font-semibold text-slate-700 w-20 shrink-0">
+                        <span className="w-20 shrink-0 text-sm font-semibold text-slate-700">
                           {line.name?.replace(" Line", "")}
                         </span>
-                        <div className="flex-1 h-3 rounded-full bg-slate-100 overflow-hidden">
+                        <div className="h-3 flex-1 overflow-hidden rounded-full bg-slate-100">
                           <div
-                            className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-violet-500 transition-all duration-700"
+                            className="h-full rounded-full bg-gradient-to-r from-primary-400 to-primary-600 transition-all duration-700"
                             style={{ width: `${pct}%` }}
                           />
                         </div>
-                        <span className="text-[10px] font-medium text-slate-500 w-8">{pct}%</span>
+                        <span className="w-10 text-sm font-medium tabular-nums text-slate-600">{pct}%</span>
                       </div>
                     );
                   })}
@@ -620,7 +704,7 @@ export default function PalmReadingPage() {
               </div>
 
               <div>
-                <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                <div className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
                   Mount prominence score
                 </div>
                 <div className="space-y-3">
@@ -628,16 +712,16 @@ export default function PalmReadingPage() {
                     const pct = Math.round((mount.score || 0) * 100);
                     return (
                       <div key={mount.mount_id} className="flex items-center gap-3">
-                        <span className="text-xs font-semibold text-slate-700 w-20 shrink-0 truncate">
+                        <span className="w-20 shrink-0 truncate text-sm font-semibold text-slate-700">
                           {mount.name?.replace("Mount of ", "")}
                         </span>
-                        <div className="flex-1 h-3 rounded-full bg-slate-100 overflow-hidden">
+                        <div className="h-3 flex-1 overflow-hidden rounded-full bg-slate-100">
                           <div
-                            className="h-full rounded-full bg-gradient-to-r from-amber-400 to-rose-500 transition-all duration-700"
+                            className="h-full rounded-full bg-gradient-to-r from-primary-400 to-primary-600 transition-all duration-700"
                             style={{ width: `${pct}%` }}
                           />
                         </div>
-                        <span className="text-[10px] font-medium text-slate-500 w-8">{pct}%</span>
+                        <span className="w-10 text-sm font-medium tabular-nums text-slate-600">{pct}%</span>
                       </div>
                     );
                   })}
@@ -647,7 +731,7 @@ export default function PalmReadingPage() {
           </section>
 
           {/* FINGER STRUCTURE & MOUNT PROFILES DEEP DIVE (measured CV data) */}
-          <section className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-7">
+          <section className="surface-panel p-6 sm:p-7">
             <div className="mb-5">
               <h3 className="font-display text-xl font-bold text-slate-900">
                 Biometric Deep Dive
@@ -659,7 +743,7 @@ export default function PalmReadingPage() {
 
             {result.finger_structure && (
               <div className="mb-8">
-                <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                <div className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
                   Finger structure &amp; dexterity signals
                 </div>
                 <PalmFingerStructure fingerStructure={result.finger_structure} />
@@ -668,7 +752,7 @@ export default function PalmReadingPage() {
 
             {Array.isArray(result.mounts) && result.mounts.length > 0 && (
               <div>
-                <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                <div className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
                   Planetary mount profiles
                 </div>
                 <PalmMountProfiles mounts={result.mounts} />
@@ -677,16 +761,16 @@ export default function PalmReadingPage() {
           </section>
 
           {/* AI INTERPRETATION SECTION (Non-blocking) */}
-          <div className="space-y-6 rounded-3xl border border-amber-400/30 bg-amber-50 p-6 shadow-xl">
+          <div className="space-y-6 surface-panel p-6">
             <div className="flex flex-col sm:flex-row items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
-                <span className="text-2xl font-bold text-amber-600">🤖</span>
-              </div>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-50 text-primary-600 ring-1 ring-primary-100">
+                <SparklesIcon className="h-5 w-5" />
+              </span>
               <div className="flex-1">
-                <h2 className="text-xl font-bold text-amber-700 sm:text-2xl">
+                <h2 className="font-display text-xl font-bold text-amber-700 sm:text-2xl">
                   AI Insights for This Reading
                 </h2>
-                <p className="text-sm text-amber-600 sm:text-base">
+                <p className="text-sm text-amber-700 sm:text-base">
                   Personalized AI-powered interpretation of your palm reading — generated only
                   when you ask for it.
                 </p>
@@ -712,18 +796,18 @@ export default function PalmReadingPage() {
 
             {/* Display AI interpretation when ready */}
             {result.ai_interpretation && !aiLoading && (
-              <div className="rounded-2xl border border-amber-300/20 bg-white p-6 shadow-lg animate-fadeIn">
+              <div className="surface-card p-6 animate-tab-in">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-bold text-amber-700">
+                    <h3 className="font-display text-lg font-bold text-amber-700">
                       AI Interpretation {result.ai_interpretation.provider === "groq" && !result.ai_interpretation.rule_based ? "(Groq)" : ""}
                     </h3>
                     {result.ai_interpretation.rule_based ? (
-                      <span className="rounded-full border border-amber-300 bg-amber-100 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
+                      <span className="rounded-full border border-amber-300 bg-amber-100 px-2.5 py-1 text-sm font-semibold text-amber-700">
                         Rule-based fallback
                       </span>
                     ) : (
-                      <span className="text-xs text-amber-500">
+                      <span className="text-[12.5px] text-amber-700">
                         {result.ai_interpretation.engine || "AI Engine"}
                       </span>
                     )}
@@ -737,7 +821,7 @@ export default function PalmReadingPage() {
 
                   {result.ai_interpretation.body && (
                     <div className="mb-4 rounded-xl border border-amber-100 bg-amber-50 p-4">
-                      <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-amber-700">
+                      <div className="mb-2 text-sm font-semibold uppercase tracking-wider text-amber-700">
                         Detailed Interpretation
                       </div>
                       <p className="text-sm leading-relaxed text-amber-700">{result.ai_interpretation.body}</p>
@@ -746,7 +830,7 @@ export default function PalmReadingPage() {
 
                   {result.ai_interpretation.guidance && result.ai_interpretation.guidance.length > 0 && (
                     <div className="mb-4 rounded-xl border border-amber-100 bg-amber-50 p-4">
-                      <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-amber-700">
+                      <div className="mb-2 text-sm font-semibold uppercase tracking-wider text-amber-700">
                         AI Guidance
                       </div>
                       <ul className="space-y-2 text-sm text-amber-700">
@@ -762,7 +846,7 @@ export default function PalmReadingPage() {
 
                   {result.ai_interpretation.domain_insights && Object.keys(result.ai_interpretation.domain_insights).length > 0 && (
                     <div className="mb-4 rounded-xl border border-amber-100 bg-amber-50 p-4">
-                      <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-amber-700">
+                      <div className="mb-2 text-sm font-semibold uppercase tracking-wider text-amber-700">
                         Domain Insights
                       </div>
                       <div className="space-y-2">
@@ -790,7 +874,7 @@ export default function PalmReadingPage() {
                   )}
 
                   {result.ai_interpretation.disclaimer && (
-                    <p className="mt-3 border-t border-amber-100 pt-2 text-[10px] italic text-amber-600/80">
+                    <p className="mt-3 border-t border-amber-100 pt-2 text-[12.5px] italic text-slate-500">
                       {result.ai_interpretation.disclaimer}
                     </p>
                   )}
@@ -799,14 +883,14 @@ export default function PalmReadingPage() {
             )}
 
             {!result.ai_interpretation && !aiLoading && !aiError && (
-              <div className="rounded-2xl border border-dashed border-amber-300 bg-white/70 px-6 py-8 text-center">
-                <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
+              <div className="rounded-[16px] border border-dashed border-amber-300/70 bg-white px-6 py-8 text-center">
+                <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-amber-100 text-amber-600">
                   <SparkleIcon className="h-5 w-5" />
                 </span>
-                <h3 className="mt-3 text-base font-bold text-amber-700">
+                <h3 className="mt-3 font-display text-base font-bold text-amber-700">
                   Generate your AI insight
                 </h3>
-                <p className="mx-auto mt-1.5 max-w-md text-sm leading-relaxed text-amber-600">
+                <p className="mx-auto mt-1.5 max-w-md text-sm leading-relaxed text-amber-700">
                   No interpretation exists for this reading yet. Run the AI model to weave your
                   palm analysis into a personalized narrative with guidance — entirely on your
                   terms.
@@ -814,7 +898,7 @@ export default function PalmReadingPage() {
                 <Button variant="accent" className="mt-4" icon={SparkleIcon} onClick={handleGenerateAi}>
                   Generate AI Insight
                 </Button>
-                <p className="mt-3 text-[11px] text-amber-500/80">
+                <p className="mt-3 text-[12.5px] text-slate-500">
                   Takes a few seconds · saved to this reading once generated
                 </p>
               </div>

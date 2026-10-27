@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import Head from "next/head";
+import Seo from "@/components/Seo";
 import { useRouter } from "next/router";
 import { useAuth } from "../../hooks/useAuth";
 import { listReadings, deleteReading } from "../../services/readings";
@@ -166,13 +166,10 @@ export default function ReadingsIndexPage() {
 
   return (
     <div className="space-y-8">
-      <Head>
-        <title>Readings Archive &amp; Reports | MysticLens</title>
-        <meta
-          name="description"
-          content="Explore and manage your past Palmistry and Tarot readings with complete biometric reports and exports."
-        />
-      </Head>
+      <Seo
+        title="Reading archives"
+        description="Every palm and tarot reading you've saved — revisit, export, or continue the reflection."
+      />
 
       <PageHeader
         icon={ListIcon}
@@ -194,7 +191,7 @@ export default function ReadingsIndexPage() {
 
       {/* Filter Controls & Search */}
       <div className="flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center">
-        <div className="inline-flex self-start rounded-full border border-slate-200 bg-white p-1 shadow-xs">
+        <div className="inline-flex self-start rounded-full border border-slate-200 bg-slate-100 p-[3px]">
           {FILTERS.map((f) => {
             const active = filterType === f.value;
             return (
@@ -206,10 +203,10 @@ export default function ReadingsIndexPage() {
                   if (f.value !== filterType) setLoading(true);
                   setFilterType(f.value);
                 }}
-                className={`cursor-pointer rounded-full px-4 py-1.5 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
+                className={`cursor-pointer rounded-full px-4 py-1.5 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
                   active
-                    ? "bg-primary-600 text-white shadow-sm shadow-primary-600/25"
-                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+                    ? "bg-white text-slate-900 shadow-[0_1px_3px_rgba(30,24,54,0.12)]"
+                    : "text-slate-500 hover:text-slate-800"
                 }`}
               >
                 {f.label}
@@ -220,14 +217,14 @@ export default function ReadingsIndexPage() {
         </div>
 
         <div className="relative w-full sm:max-w-xs">
-          <SearchIcon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <SearchIcon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
           <input
             type="text"
             aria-label="Search readings"
             placeholder="Search readings by title or theme..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-full border border-slate-200 bg-white py-2 pl-10 pr-4 text-sm text-slate-800 placeholder-slate-400 shadow-xs transition focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-100"
+            className="w-full rounded-[10px] border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
           />
         </div>
       </div>
@@ -293,22 +290,35 @@ export default function ReadingsIndexPage() {
               return (
                 <div
                   key={reading.id}
-                  className="group flex flex-col justify-between rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs transition-all duration-200 hover:border-primary-200 hover:shadow-md"
+                  className="group flex flex-col justify-between surface-card p-6 transition duration-200 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-lift"
                 >
                   <div>
-                    {/* Top Row: Type Badge + Date */}
-                    <div className="mb-3 flex items-center justify-between gap-2">
-                      <Badge tone={isPalm ? "accent" : "primary"}>
-                        {isPalm ? "Palm" : "Tarot"}
-                      </Badge>
-                      <span className="text-xs text-slate-500">{dateStr}</span>
+                    {/* Top Row: Type Tile + Badge + Date */}
+                    <div className="mb-4 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2.5">
+                        <span
+                          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                            isPalm ? "bg-primary-600 text-white" : "bg-accent-400 text-slate-900"
+                          }`}
+                        >
+                          {isPalm ? (
+                            <HandIcon className="h-[18px] w-[18px]" />
+                          ) : (
+                            <CardsIcon className="h-[18px] w-[18px]" />
+                          )}
+                        </span>
+                        <Badge tone={isPalm ? "accent" : "primary"}>
+                          {isPalm ? "Palm" : "Tarot"}
+                        </Badge>
+                      </div>
+                      <span className="text-xs tabular-nums text-slate-500">{dateStr}</span>
                     </div>
 
                     {/* Title & Summary */}
-                    <h3 className="mb-2 line-clamp-1 font-display text-lg font-bold text-slate-900 transition group-hover:text-primary-700">
+                    <h3 className="mb-2 line-clamp-1 font-display text-lg font-semibold tracking-[-0.01em] text-slate-900 transition group-hover:text-primary-700">
                       {reading.title || (isPalm ? "Palm Biometrics" : "Tarot Reading")}
                     </h3>
-                    <p className="mb-4 line-clamp-3 text-xs leading-relaxed text-slate-500">
+                    <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-slate-500">
                       {reading.summary || "Complete symbolic interpretation and reflective insights."}
                     </p>
                   </div>
@@ -367,12 +377,17 @@ export default function ReadingsIndexPage() {
       )}
 
       {/* Ethical Notice */}
-      <div className="rounded-2xl border border-slate-200/80 bg-white/60 p-5 text-center">
-        <p className="mx-auto max-w-3xl text-xs italic leading-relaxed text-slate-500">
-          Safety &amp; Ethics Notice: All palmistry biometric analyses, tarot spreads, and personal
-          intelligence reports are intended strictly for introspective guidance, personal reflection,
-          and entertainment. They do not substitute for professional medical, psychiatric, or
-          financial counsel.
+      <div className="surface-card p-5 text-center">
+        <p className="mx-auto max-w-3xl text-[13px] leading-relaxed text-slate-600">
+          <span className="mr-1.5 text-accent-700" aria-hidden="true">
+            ✦
+          </span>
+          <span className="italic">
+            Safety &amp; Ethics Notice: All palmistry biometric analyses, tarot spreads, and personal
+            intelligence reports are intended strictly for introspective guidance, personal
+            reflection, and entertainment. They do not substitute for professional medical,
+            psychiatric, or financial counsel.
+          </span>
         </p>
       </div>
 

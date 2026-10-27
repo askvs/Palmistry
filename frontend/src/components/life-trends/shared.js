@@ -9,54 +9,58 @@ export const DIRECTION_META = {
 };
 
 const METER_TONES = {
-  primary: "bg-primary-500",
-  indigo: "bg-indigo-500",
+  primary: "bg-primary-600",
+  indigo: "bg-primary-400",
   accent: "bg-accent-500",
 };
 
 export function Meter({ value, tone = "primary" }) {
   return (
-    <div className="h-2 w-full overflow-hidden rounded-full bg-primary-100">
+    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
       <div
-        className={`h-full rounded-full ${METER_TONES[tone] || METER_TONES.primary} transition-all duration-500`}
+        className={`h-full rounded-full ${METER_TONES[tone] || METER_TONES.primary} transition-[width] duration-[240ms]`}
         style={{ width: `${Math.round(Math.max(0, Math.min(1, value)) * 100)}%` }}
       />
     </div>
   );
 }
 
-const INSIGHT_TONES = {
-  emerald: {
-    wrap: "border-emerald-100 bg-emerald-50/70",
-    title: "text-emerald-800",
-  },
-  accent: {
-    wrap: "border-accent-100 bg-accent-50/70",
-    title: "text-accent-800",
-  },
+const INSIGHT_TITLE_TONES = {
+  emerald: "text-emerald-800",
+  accent: "text-accent-800",
 };
 
 export function InsightList({ items, tone }) {
   if (!items?.length) {
     return <p className="text-sm italic text-slate-500">Not enough evidence yet.</p>;
   }
-  const t = INSIGHT_TONES[tone] || INSIGHT_TONES.emerald;
+  const titleTone = INSIGHT_TITLE_TONES[tone] || INSIGHT_TITLE_TONES.emerald;
   return (
-    <ul className="space-y-2">
+    <ul className="space-y-3">
       {items.map((item) => (
-        <li key={item.title} className={`rounded-xl border p-3 ${t.wrap}`}>
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className={`text-sm font-semibold ${t.title}`}>{item.title}</p>
-            {typeof item.confidence === "number" && (
-              <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                {Math.round(item.confidence * 100)}% confident
-              </span>
+        <li
+          key={item.title}
+          className="flex items-start gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.85),var(--shadow-rest)]"
+        >
+          <span className="mt-0.5 text-sm leading-none text-accent-700" aria-hidden="true">
+            ✦
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <p className={`text-sm font-semibold ${titleTone}`}>{item.title}</p>
+              {typeof item.confidence === "number" && (
+                <span className="text-[12.5px] font-medium text-slate-500">
+                  {Math.round(item.confidence * 100)}% confident
+                </span>
+              )}
+            </div>
+            <p className="mt-1 text-sm leading-relaxed text-slate-700">{item.explanation}</p>
+            {item.signals?.length > 0 && (
+              <p className="mt-1.5 text-[12.5px] text-slate-500">
+                Signals: {item.signals.join(" · ")}
+              </p>
             )}
           </div>
-          <p className="mt-0.5 text-sm text-slate-700">{item.explanation}</p>
-          {item.signals?.length > 0 && (
-            <p className="mt-1 text-xs text-slate-500">Signals: {item.signals.join(" · ")}</p>
-          )}
         </li>
       ))}
     </ul>

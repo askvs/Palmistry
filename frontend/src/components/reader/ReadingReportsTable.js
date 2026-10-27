@@ -131,7 +131,7 @@ export default function ReadingReportsTable() {
               onChange={(event) => setSearchInput(event.target.value)}
               placeholder="Search reading title…"
               aria-label="Search readings by title"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 py-1.5 pl-9 pr-3 text-xs text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+              className="w-full rounded-control border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-800 transition placeholder:text-slate-500 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             />
           </div>
           <Segmented

@@ -1,8 +1,8 @@
 // My Clients: searchable roster assembled from live queue and demo profiles.
-import Head from "next/head";
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { PageHeader } from "@/components/ui";
+import Seo from "@/components/Seo";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { useAuth } from "@/hooks/useAuth";
 import { UsersIcon } from "@/components/icons";
@@ -32,9 +32,10 @@ export default function ConsultantClientsPage() {
 
   return (
     <div className="animate-fade-in space-y-8">
-      <Head>
-        <title>My Clients | Palmistry &amp; Tarot</title>
-      </Head>
+      <Seo
+        title="My Clients"
+        description="View client profiles, reading history and consultation insights in your consultant workspace."
+      />
 
       <PageHeader
         icon={UsersIcon}

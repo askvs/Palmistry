@@ -8,6 +8,7 @@ import {
   SystemHealthPanel,
   SystemOverviewPanel,
 } from "@/components/admin/ReportsPanels";
+import Seo from "@/components/Seo";
 import { FileTextIcon } from "@/components/icons";
 
 export default function AdminReportsPage() {
@@ -15,6 +16,11 @@ export default function AdminReportsPage() {
 
   return (
     <div className="space-y-6">
+      <Seo
+        title="Reports"
+        description="Platform totals, service health, recent errors and measured performance from real backend data."
+      />
+
       <PageHeader
         icon={FileTextIcon}
         eyebrow="Administration"

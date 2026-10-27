@@ -110,11 +110,16 @@ export default function StartConsultationDialog({
     }
   }, []);
 
-  // Focus the dialog on open so keyboard users land inside it.
+  // Focus the dialog on open, lock background scroll, restore focus on close.
   useEffect(() => {
     if (!open) return undefined;
+    const previous = document.activeElement;
     dialogRef.current?.focus();
-    return undefined;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+      previous?.focus?.();
+    };
   }, [open]);
 
   useEffect(() => {
@@ -167,7 +172,7 @@ export default function StartConsultationDialog({
   return (
     <div className="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto p-4 sm:items-center">
       <div
-        className="absolute inset-0 animate-fade-in bg-slate-900/40 backdrop-blur-sm"
+        className="absolute inset-0 animate-backdrop-in bg-slate-950/40 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -177,7 +182,7 @@ export default function StartConsultationDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="start-consultation-title"
-        className="relative my-auto w-full max-w-2xl animate-rise-in rounded-3xl border border-slate-200 bg-white shadow-xl focus:outline-none"
+        className="surface-panel shadow-float relative my-auto w-full max-w-2xl animate-dialog-in focus:outline-none"
       >
         <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
           <div>
@@ -203,7 +208,7 @@ export default function StartConsultationDialog({
           {STEPS.map((label, index) => (
             <li key={label}>
               <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${
+                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
                   index === step
                     ? "bg-primary-50 text-primary-700 ring-1 ring-primary-100"
                     : index < step
@@ -218,7 +223,8 @@ export default function StartConsultationDialog({
           ))}
         </ol>
 
-        <div className="max-h-[60vh] space-y-5 overflow-y-auto px-6 py-5">
+        <div className="max-h-[60vh] overflow-y-auto px-6 py-5">
+          <div key={step} className="animate-tab-in space-y-5">
           {step === 0 && (
             <div className="space-y-5">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -249,7 +255,7 @@ export default function StartConsultationDialog({
               </div>
 
               {selectedClient && (
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/60 p-4">
+                <div className="flex items-center gap-3 rounded-card border border-slate-100 bg-slate-50/60 p-4">
                   <ClientAvatar name={selectedClient.name} size="md" />
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-slate-900">
@@ -266,7 +272,7 @@ export default function StartConsultationDialog({
               )}
 
               {selectedClient?.profilePending && (
-                <p className="rounded-2xl border border-accent-200 bg-accent-50 px-4 py-3 text-xs leading-relaxed text-accent-900">
+                <p className="rounded-card border border-accent-200 bg-accent-50 px-4 py-3 text-xs leading-relaxed text-accent-900">
                   This seeker has an open thread but their profile and readings are not exposed to
                   consultants by the API yet. You can still conduct the session and record your own
                   notes.
@@ -284,7 +290,7 @@ export default function StartConsultationDialog({
               </p>
 
               {contextRows.length === 0 ? (
-                <p className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 px-4 py-8 text-center text-sm text-slate-500">
+                <p className="rounded-card border border-dashed border-slate-300 bg-slate-50/60 px-4 py-8 text-center text-sm text-slate-500">
                   No readings are available for this client yet.
                 </p>
               ) : (
@@ -294,10 +300,10 @@ export default function StartConsultationDialog({
                     return (
                       <li key={row.id}>
                         <label
-                          className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-3.5 transition ${
+                          className={`flex cursor-pointer items-start gap-3 rounded-card border p-3.5 transition ${
                             checked
                               ? "border-primary-200 bg-primary-50/60"
-                              : "border-slate-200 bg-white hover:bg-slate-50"
+                              : "border-slate-100 bg-white hover:bg-slate-50"
                           }`}
                         >
                           <input
@@ -312,7 +318,7 @@ export default function StartConsultationDialog({
                               <span className="text-sm font-semibold text-slate-900">
                                 {row.label}
                               </span>
-                              <span className="text-[11px] text-slate-500">
+                              <span className="text-xs text-slate-500 tabular-nums">
                                 {formatDate(row.date)}
                               </span>
                             </span>
@@ -331,7 +337,7 @@ export default function StartConsultationDialog({
 
           {step === 2 && (
             <div className="space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-primary-100 bg-primary-50/50 p-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-primary-100 bg-primary-50/50 p-4">
                 <div className="flex items-start gap-3">
                   <AIInsightIcon />
                   <div>
@@ -368,7 +374,7 @@ export default function StartConsultationDialog({
               )}
 
               {!insightsLoading && insights && insights.length === 0 && (
-                <p className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 px-4 py-8 text-center text-sm text-slate-500">
+                <p className="rounded-card border border-dashed border-slate-300 bg-slate-50/60 px-4 py-8 text-center text-sm text-slate-500">
                   No insights could be generated from the selected context. Try selecting more
                   readings, or continue and write your own guidance.
                 </p>
@@ -380,13 +386,13 @@ export default function StartConsultationDialog({
                     {insights.map((insight) => (
                       <li
                         key={insight.id}
-                        className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs"
+                        className="rounded-card border border-slate-100 bg-white p-4 shadow-xs"
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <span className="text-xs font-bold uppercase tracking-wide text-primary-700">
                             {insight.category}
                           </span>
-                          <span className="text-[11px] text-slate-500">
+                          <span className="text-xs text-slate-500 tabular-nums">
                             Relevance {insight.relevance}% · {formatDate(insight.createdAt)}
                           </span>
                         </div>
@@ -394,7 +400,7 @@ export default function StartConsultationDialog({
                           {insight.insight}
                         </p>
                         {insight.recommendation && (
-                          <p className="mt-2 rounded-xl bg-slate-50 px-3 py-2 text-xs leading-relaxed text-slate-600">
+                          <p className="mt-2 rounded-control bg-slate-50 px-3 py-2 text-xs leading-relaxed text-slate-600">
                             <span className="font-semibold text-slate-700">Suggested focus: </span>
                             {insight.recommendation}
                           </p>
@@ -403,7 +409,7 @@ export default function StartConsultationDialog({
                     ))}
                   </ul>
 
-                  <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4">
+                  <label className="flex cursor-pointer items-start gap-3 rounded-card border border-emerald-200 bg-emerald-50/70 p-4">
                     <input
                       type="checkbox"
                       checked={reviewed}
@@ -433,7 +439,7 @@ export default function StartConsultationDialog({
                   onChange={(event) => setNotes(event.target.value)}
                   rows={6}
                   placeholder="Write private consultation notes…"
-                  className="w-full rounded-2xl border border-slate-200 px-3.5 py-2.5 text-sm leading-relaxed text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  className="w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm leading-relaxed text-slate-800 shadow-xs transition placeholder:text-slate-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                 />
               </label>
 
@@ -448,7 +454,7 @@ export default function StartConsultationDialog({
                   onChange={(event) => setGuidance(event.target.value)}
                   rows={4}
                   placeholder="Write the guidance you will share with this client…"
-                  className="w-full rounded-2xl border border-slate-200 px-3.5 py-2.5 text-sm leading-relaxed text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  className="w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm leading-relaxed text-slate-800 shadow-xs transition placeholder:text-slate-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                 />
               </label>
 
@@ -460,11 +466,11 @@ export default function StartConsultationDialog({
                   type="date"
                   value={followUpDate}
                   onChange={(event) => setFollowUpDate(event.target.value)}
-                  className="h-9 w-full cursor-pointer rounded-full border border-slate-200 bg-slate-50 px-3 text-xs font-medium text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                  className="h-10 w-full cursor-pointer rounded-control border border-slate-200 bg-white px-3 text-sm text-slate-800 shadow-xs transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                 />
               </label>
 
-              <p className="rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-3 text-[11px] leading-relaxed text-slate-500">
+              <p className="rounded-card border border-slate-100 bg-slate-50/60 px-4 py-3 text-xs leading-relaxed text-slate-500">
                 Guidance is written by you. Nothing in this session is sent to the client
                 automatically, and no AI text is presented as a prediction or a professional
                 (medical, financial or legal) opinion.
@@ -473,12 +479,13 @@ export default function StartConsultationDialog({
               {saveError && <SectionError title={saveError} />}
 
               {saved && (
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+                <div className="rounded-card border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
                   Consultation saved. You can generate the report from the workspace.
                 </div>
               )}
             </div>
           )}
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-6 py-4">
@@ -507,7 +514,7 @@ export default function StartConsultationDialog({
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] text-slate-500">
+            <span className="text-xs text-slate-500">
               {step === 2 && !reviewed && insights?.length
                 ? "Review the insights to continue"
                 : step === 3 && !canSave

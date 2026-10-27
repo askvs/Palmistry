@@ -104,20 +104,20 @@ export default function SessionOversightPanel() {
           ) : (
             <ul className="divide-y divide-slate-100">
               {sessions.upcoming_sessions.map((session) => (
-                <li key={session.id} className="-mx-2 rounded-lg px-2 py-3">
+                <li key={session.id} className="-mx-2 rounded-lg px-2 py-2.5">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="truncate text-sm font-semibold text-slate-800">
+                    <p className="truncate text-[13px] font-semibold text-slate-800">
                       {session.subject}
                     </p>
-                    <Badge tone={STATUS_TONES[session.status] || "slate"}>
+                    <Badge tone={STATUS_TONES[session.status] || "slate"} dot>
                       {STATUS_LABELS[session.status] || session.status}
                     </Badge>
                   </div>
-                  <p className="mt-0.5 text-xs text-slate-500">
+                  <p className="mt-0.5 text-[12.5px] tabular-nums text-slate-500">
                     {session.consultant_name || "Consultant"} ·{" "}
                     {new Date(session.start_time).toLocaleString()} · {session.duration_minutes} min
                   </p>
-                  <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                  <p className="mt-0.5 flex flex-wrap items-center gap-2 text-[12.5px] text-slate-500">
                     {session.meet_link_booked ? (
                       <span className="inline-flex items-center gap-1">
                         <VideoIcon className="h-3 w-3" />
@@ -151,23 +151,23 @@ export default function SessionOversightPanel() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-                  <p className="text-xs font-medium text-slate-500">Consultant profiles</p>
-                  <p className="mt-0.5 text-lg font-bold text-slate-900">
+                  <p className="text-[12.5px] font-medium text-slate-500">Consultant profiles</p>
+                  <p className="mt-0.5 text-lg font-bold tabular-nums text-slate-900">
                     {sessions.consultants_total}
                   </p>
                 </div>
                 <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-                  <p className="text-xs font-medium text-slate-500">Accepting bookings</p>
-                  <p className="mt-0.5 text-lg font-bold text-slate-900">
+                  <p className="text-[12.5px] font-medium text-slate-500">Accepting bookings</p>
+                  <p className="mt-0.5 text-lg font-bold tabular-nums text-slate-900">
                     {sessions.consultants_accepting}
                   </p>
                 </div>
               </div>
 
               <div>
-                <div className="mb-1.5 flex items-center justify-between text-xs">
+                <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
                   <span className="font-medium text-slate-700">Average rating</span>
-                  <span className="font-bold text-slate-900">
+                  <span className="font-bold tabular-nums text-slate-900">
                     {sessions.avg_rating != null ? `${sessions.avg_rating} / 5` : "No reviews yet"}
                   </span>
                 </div>
@@ -176,7 +176,7 @@ export default function SessionOversightPanel() {
                   tone="accent"
                   label="Average session rating out of five"
                 />
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-[12.5px] tabular-nums text-slate-500">
                   {sessions.review_count} review{sessions.review_count === 1 ? "" : "s"} submitted
                 </p>
               </div>
@@ -184,11 +184,11 @@ export default function SessionOversightPanel() {
               <div className="space-y-2">
                 {sessions.by_status.map((row) => (
                   <div key={row.status}>
-                    <div className="mb-1 flex items-center justify-between text-xs">
+                    <div className="mb-1 flex items-center justify-between text-[12.5px]">
                       <span className="font-medium text-slate-700">
                         {STATUS_LABELS[row.status] || row.status}
                       </span>
-                      <span className="font-bold text-slate-900">
+                      <span className="font-bold tabular-nums text-slate-900">
                         {row.count}
                         {total ? ` · ${Math.round((row.count / total) * 100)}%` : ""}
                       </span>
@@ -209,7 +209,7 @@ export default function SessionOversightPanel() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-slate-500">
+        <p className="text-[12.5px] leading-relaxed text-slate-500">
           Session oversight is read-only: administrators govern accounts, analytics and
           configuration. Booking and hosting belong to readers and consultants.
         </p>

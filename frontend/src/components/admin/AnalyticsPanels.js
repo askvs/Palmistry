@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Badge, EmptyState, Panel, SkeletonRow } from "@/components/ui";
-import { MeterBar, PerDayBars, StatCard, CONSULTATION_STATUS_LABELS } from "@/components/dashboards/shared";
+import { MeterBar, PerDayBars, Segmented, StatCard, CONSULTATION_STATUS_LABELS } from "@/components/dashboards/shared";
 import { roleMeta } from "@/lib/roles";
 import {
   ActivityIcon,
@@ -26,25 +26,13 @@ const PERIOD_OPTIONS = [
 export function AnalyticsWindowPicker({ days, onChange, label = "Analytics window" }) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
-      <span className="text-xs font-medium text-slate-500">{label}</span>
-      <div role="group" aria-label={label} className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100/80 p-0.5">
-        {PERIOD_OPTIONS.map((option) => {
-          const active = String(days) === option.value;
-          return (
-            <button
-              key={option.value}
-              type="button"
-              aria-pressed={active}
-              onClick={() => onChange(Number(option.value))}
-              className={`cursor-pointer rounded-full px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
-                active ? "bg-white text-slate-900 shadow-xs" : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              {option.label}
-            </button>
-          );
-        })}
-      </div>
+      <span className="text-[12.5px] font-medium text-slate-500">{label}</span>
+      <Segmented
+        label={label}
+        value={String(days)}
+        onChange={(value) => onChange(Number(value))}
+        options={PERIOD_OPTIONS}
+      />
     </div>
   );
 }
@@ -119,9 +107,9 @@ export function UsersByRolePanel({ platform, loading }) {
             const meta = roleMeta(row.role);
             return (
               <div key={row.role}>
-                <div className="mb-1.5 flex items-center justify-between text-xs">
+                <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
                   <span className="font-medium text-slate-700">{meta.label}</span>
-                  <span className="font-bold text-slate-900">
+                  <span className="font-bold tabular-nums text-slate-900">
                     {row.count} · {total ? Math.round((row.count / total) * 100) : 0}%
                   </span>
                 </div>
@@ -161,15 +149,15 @@ export function DivinationStatsPanel({ readings, loading }) {
   return (
     <Panel title="Divination Statistics" subtitle="Reading type distribution and human review throughput">
       <div className="space-y-3.5">
-        <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-2 text-sm">
+        <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-[13px]">
           <span className="font-medium text-slate-700">Total platform readings</span>
-          <span className="font-bold text-slate-900">{readings.total}</span>
+          <span className="font-bold tabular-nums text-slate-900">{readings.total}</span>
         </div>
         {readings.by_type.map((row) => (
           <div key={row.type}>
-            <div className="mb-1.5 flex items-center justify-between text-xs">
+            <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
               <span className="font-medium capitalize text-slate-700">{row.type} readings</span>
-              <span className="font-bold text-slate-900">
+              <span className="font-bold tabular-nums text-slate-900">
                 {row.count} · {readings.total ? Math.round((row.count / readings.total) * 100) : 0}%
               </span>
             </div>
@@ -180,13 +168,13 @@ export function DivinationStatsPanel({ readings, loading }) {
             />
           </div>
         ))}
-        <div className="flex items-center justify-between rounded-xl bg-slate-50/60 p-2 text-sm">
+        <div className="flex items-center justify-between rounded-xl bg-slate-50/60 px-3 py-2 text-[12.5px]">
           <span className="text-slate-600">Reviewed by human reader</span>
-          <span className="font-semibold text-emerald-700">{readings.reviewed_total}</span>
+          <span className="font-semibold tabular-nums text-emerald-700">{readings.reviewed_total}</span>
         </div>
-        <div className="flex items-center justify-between rounded-xl bg-slate-50/60 p-2 text-sm">
+        <div className="flex items-center justify-between rounded-xl bg-slate-50/60 px-3 py-2 text-[12.5px]">
           <span className="text-slate-600">Completed</span>
-          <span className="font-semibold text-slate-700">
+          <span className="font-semibold tabular-nums text-slate-700">
             {completed} of {readings.total}
           </span>
         </div>
@@ -215,9 +203,9 @@ export function EngagementPanel({ platform, readings, loading }) {
       ) : (
         <div className="space-y-3.5">
           <div>
-            <div className="mb-1.5 flex items-center justify-between text-xs">
+            <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
               <span className="font-medium text-slate-700">Activated accounts</span>
-              <span className="font-bold text-slate-900">
+              <span className="font-bold tabular-nums text-slate-900">
                 {engagement.users_with_readings} of {platform.users_total}
               </span>
             </div>
@@ -226,12 +214,12 @@ export function EngagementPanel({ platform, readings, loading }) {
               tone="primary"
               label="Share of accounts with at least one reading"
             />
-            <p className="mt-1 text-xs text-slate-500">Accounts with at least one reading</p>
+            <p className="mt-1 text-[12.5px] text-slate-500">Accounts with at least one reading</p>
           </div>
           <div>
-            <div className="mb-1.5 flex items-center justify-between text-xs">
+            <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
               <span className="font-medium text-slate-700">Returning accounts</span>
-              <span className="font-bold text-slate-900">
+              <span className="font-bold tabular-nums text-slate-900">
                 {engagement.users_with_multiple_readings} of {platform.users_total}
               </span>
             </div>
@@ -244,12 +232,12 @@ export function EngagementPanel({ platform, readings, loading }) {
               tone="blue"
               label="Share of accounts with two or more readings"
             />
-            <p className="mt-1 text-xs text-slate-500">Accounts with two or more readings</p>
+            <p className="mt-1 text-[12.5px] text-slate-500">Accounts with two or more readings</p>
           </div>
           <div>
-            <div className="mb-1.5 flex items-center justify-between text-xs">
+            <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
               <span className="font-medium text-slate-700">Reading completion</span>
-              <span className="font-bold text-slate-900">
+              <span className="font-bold tabular-nums text-slate-900">
                 {completed} of {readings.total}
               </span>
             </div>
@@ -258,7 +246,7 @@ export function EngagementPanel({ platform, readings, loading }) {
               tone="emerald"
               label="Completed readings share of all readings"
             />
-            <p className="mt-1 text-xs text-slate-500">Completed vs pending divinations</p>
+            <p className="mt-1 text-[12.5px] text-slate-500">Completed vs pending divinations</p>
           </div>
         </div>
       )}
@@ -289,7 +277,7 @@ export function GrowthPanel({ platform, readings, days, loading }) {
               {
                 key: "signups",
                 label: "New accounts",
-                barClass: "bg-gradient-to-t from-primary-600 to-primary-300",
+                barClass: "bg-primary-600 hover:bg-primary-700",
                 swatchClass: "bg-primary-600",
                 data: platform.signups_per_day,
               },
@@ -315,7 +303,7 @@ export function GrowthPanel({ platform, readings, days, loading }) {
               {
                 key: "readings",
                 label: "Readings",
-                barClass: "bg-gradient-to-t from-accent-500 to-accent-300",
+                barClass: "bg-accent-500 hover:bg-accent-600",
                 swatchClass: "bg-accent-500",
                 data: readings.per_day,
               },
@@ -345,11 +333,11 @@ export function ConsultationOversightPanel({ consultations, loading }) {
           {items.slice(0, 8).map((consultation) => (
             <li
               key={consultation.id}
-              className="-mx-2 flex items-center justify-between gap-3 rounded-lg px-2 py-3 transition hover:bg-slate-50/60"
+              className="-mx-2 flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition hover:bg-slate-50/60"
             >
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-slate-800">{consultation.topic}</p>
-                <p className="mt-0.5 truncate text-xs text-slate-500">
+                <p className="truncate text-[13px] font-semibold text-slate-800">{consultation.topic}</p>
+                <p className="mt-0.5 truncate text-[12.5px] tabular-nums text-slate-500">
                   {new Date(consultation.created_at).toLocaleString()}
                   {consultation.guidance ? " · counsel dispatched" : " · awaiting counsel"}
                 </p>
@@ -384,24 +372,12 @@ export function ReadingOversightPanel({ readings, loading }) {
       title="Platform Reading Oversight"
       subtitle="Every divination across the platform, with its owner — open one to inspect it"
       action={
-        <div role="group" aria-label="Oversight reading filter" className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100/80 p-0.5">
-          {OVERSIGHT_FILTERS.map((option) => {
-            const active = filter === option.value;
-            return (
-              <button
-                key={option.value}
-                type="button"
-                aria-pressed={active}
-                onClick={() => setFilter(option.value)}
-                className={`cursor-pointer rounded-full px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
-                  active ? "bg-white text-slate-900 shadow-xs" : "text-slate-500 hover:text-slate-800"
-                }`}
-              >
-                {option.label}
-              </button>
-            );
-          })}
-        </div>
+        <Segmented
+          label="Oversight reading filter"
+          value={filter}
+          onChange={setFilter}
+          options={OVERSIGHT_FILTERS}
+        />
       }
     >
       {loading ? (
@@ -421,16 +397,16 @@ export function ReadingOversightPanel({ readings, loading }) {
             <li key={reading.id}>
               <Link
                 href={`/readings/${reading.id}`}
-                className="-mx-2 flex flex-col justify-between gap-2 rounded-xl px-3 py-3 transition group hover:bg-slate-50/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-row sm:items-center"
+                className="-mx-2 flex flex-col justify-between gap-2 rounded-xl px-3 py-2.5 transition group hover:bg-slate-50/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-row sm:items-center"
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="truncate text-sm font-semibold text-slate-800 transition group-hover:text-primary-700">
+                    <p className="truncate text-[13px] font-semibold text-slate-800 transition group-hover:text-primary-700">
                       {reading.title}
                     </p>
                     <Badge tone={reading.type === "palm" ? "primary" : "accent"}>{reading.type}</Badge>
                   </div>
-                  <p className="mt-0.5 truncate text-xs text-slate-500">
+                  <p className="mt-0.5 truncate text-[12.5px] tabular-nums text-slate-500">
                     {reading.owner_email || reading.user_id} ·{" "}
                     {new Date(reading.created_at).toLocaleString()}
                     {reading.reviewed_by ? " · reviewed" : ""}
@@ -475,7 +451,7 @@ export function SystemStatusPanel({ health, error }) {
             ok={health.ai_provider === "configured"}
             warn={health.ai_provider !== "configured"}
           />
-          <p className="pt-1 text-xs text-slate-500">
+          <p className="pt-1 text-[12.5px] tabular-nums text-slate-500">
             Environment: {health.environment} · Version: {health.version}
           </p>
         </div>
@@ -485,15 +461,15 @@ export function SystemStatusPanel({ health, error }) {
 }
 
 function StatusRow({ label, detail, ok, warn = false }) {
-  const dotClass = ok ? "bg-emerald-500" : warn ? "bg-slate-300" : "bg-rose-500";
+  const dotClass = ok ? "bg-emerald-500" : warn ? "bg-accent-500" : "bg-rose-600";
   const detailClass = ok ? "text-emerald-700" : warn ? "text-slate-500" : "text-rose-700";
   return (
-    <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-2">
-      <span className="flex items-center gap-2.5 text-sm font-medium text-slate-700">
+    <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-2.5">
+      <span className="flex items-center gap-2.5 text-[13px] font-medium text-slate-700">
         <span className={`h-2 w-2 rounded-full ${dotClass}`} aria-hidden="true" />
         {label}
       </span>
-      <span className={`text-xs font-semibold ${detailClass}`}>{detail}</span>
+      <span className={`text-[12.5px] font-semibold tabular-nums ${detailClass}`}>{detail}</span>
     </div>
   );
 }

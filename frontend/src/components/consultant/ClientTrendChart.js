@@ -4,9 +4,11 @@ import { Line } from "react-chartjs-2";
 import { CHART_COLORS, lineChartOptions } from "@/lib/chartjs";
 import { Panel } from "@/components/ui";
 import {
+  ChartFrame,
   ChartSkeleton,
   ClientAvatar,
   ConsultantSelect,
+  EmptyState,
   SectionError,
   SourceBadge,
 } from "@/components/consultant/shared";
@@ -68,22 +70,12 @@ export default function ClientTrendChart({
           label: `${clientLabel} · ${categoryLabel}`,
           data: rows.map((point) => point.value),
           borderColor: CHART_COLORS[0],
-          backgroundColor: (context) => {
-            const { ctx, chartArea } = context.chart;
-            if (!chartArea) return "rgba(99, 102, 241, 0.12)";
-            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-            gradient.addColorStop(0, "rgba(99, 102, 241, 0.28)");
-            gradient.addColorStop(1, "rgba(99, 102, 241, 0.02)");
-            return gradient;
-          },
+          backgroundColor: "rgba(124,58,237,0.12)",
           fill: true,
-          tension: 0.32,
+          tension: 0.35,
           borderWidth: 2,
-          pointRadius: 3,
-          pointHoverRadius: 5,
-          pointBackgroundColor: "#ffffff",
-          pointBorderColor: CHART_COLORS[0],
-          pointBorderWidth: 1.5,
+          pointRadius: 0,
+          pointHoverRadius: 4,
           spanGaps: true,
         },
       ],
@@ -103,9 +95,9 @@ export default function ClientTrendChart({
     >
       <div className="space-y-5">
         {/* Filters */}
-        <div className="flex flex-wrap items-end gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/60 p-3.5">
+        <div className="flex flex-wrap items-end gap-3 rounded-[16px] border border-slate-100 bg-slate-50/60 p-3.5">
           <label className="min-w-[9rem] flex-1">
-            <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            <span className="mb-1 block text-xs font-semibold text-slate-700">
               Client
             </span>
             <ConsultantSelect
@@ -118,7 +110,7 @@ export default function ClientTrendChart({
           </label>
 
           <label className="min-w-[9rem] flex-1">
-            <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            <span className="mb-1 block text-xs font-semibold text-slate-700">
               Category
             </span>
             <ConsultantSelect
@@ -131,7 +123,7 @@ export default function ClientTrendChart({
           </label>
 
           <label className="min-w-[8.5rem] flex-1">
-            <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            <span className="mb-1 block text-xs font-semibold text-slate-700">
               Time
             </span>
             <ConsultantSelect
@@ -153,15 +145,11 @@ export default function ClientTrendChart({
         ) : loading && points.length === 0 ? (
           <ChartSkeleton />
         ) : points.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 px-6 py-12 text-center">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-slate-400 shadow-xs ring-1 ring-slate-200">
-              <ChartIcon className="h-6 w-6" />
-            </span>
-            <h3 className="mt-4 text-sm font-semibold text-slate-900">No trend points yet</h3>
-            <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-slate-500">
-              Trends appear once this client has at least two readings in the selected period.
-            </p>
-          </div>
+          <EmptyState
+            icon={ChartIcon}
+            title="No trend points yet"
+            description="Trends appear once this client has at least two readings in the selected period."
+          />
         ) : (
           <>
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -177,7 +165,7 @@ export default function ClientTrendChart({
                   <p className="text-xs font-medium text-slate-500">
                     Latest signal · {WINDOW_LABELS[activeWindow]}
                   </p>
-                  <p className="text-lg font-bold tracking-tight text-slate-900">
+                  <p className="text-lg font-bold tracking-tight text-slate-900 tabular-nums">
                     {latest == null ? "—" : `${Math.round(latest * 100)}%`}
                     {delta != null && (
                       <span
@@ -198,11 +186,11 @@ export default function ClientTrendChart({
               </p>
             </div>
 
-            <div className="h-72 w-full">
+            <ChartFrame height="h-72">
               <Line data={chartData} options={options} />
-            </div>
+            </ChartFrame>
 
-            <p className="text-[11px] leading-relaxed text-slate-500">
+            <p className="text-xs leading-relaxed text-slate-500">
               Scores are relative signal strengths (0–100%), not absolute outcomes. They describe
               the direction and consistency of the themes behind {clientLabel.toLowerCase()}&rsquo;s
               readings for the selected period.

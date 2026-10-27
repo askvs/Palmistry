@@ -43,10 +43,10 @@ function MetricRow({ label, value, hint }) {
     <div>
       <div className="mb-1 flex items-center justify-between gap-2 text-xs">
         <span className="font-medium text-slate-600">{label}</span>
-        <span className="font-bold text-slate-900">{value}%</span>
+        <span className="font-bold text-slate-900 tabular-nums">{value}%</span>
       </div>
       <MeterBar value={value / 100} tone="primary" label={label} />
-      {hint && <p className="mt-1 text-[11px] text-slate-500">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
     </div>
   );
 }
@@ -105,7 +105,7 @@ function ClientInfoRail({ client }) {
           {client.goals?.length > 0 && (
             <div>
               <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Goals</dt>
-              <dd className="mt-1 space-y-1 text-xs text-slate-600">
+              <dd className="mt-1 space-y-1 text-sm leading-relaxed text-slate-600">
                 {client.goals.map((goal) => (
                   <p key={goal}>· {goal}</p>
                 ))}
@@ -116,11 +116,15 @@ function ClientInfoRail({ client }) {
           <div className="grid grid-cols-2 gap-3 border-t border-slate-100 pt-3">
             <div>
               <dt className="text-xs text-slate-500">Previous sessions</dt>
-              <dd className="text-sm font-semibold text-slate-900">{client.consultationCount}</dd>
+              <dd className="text-sm font-semibold text-slate-900 tabular-nums">
+                {client.consultationCount}
+              </dd>
             </div>
             <div>
               <dt className="text-xs text-slate-500">Readings</dt>
-              <dd className="text-sm font-semibold text-slate-900">{client.readingCount}</dd>
+              <dd className="text-sm font-semibold text-slate-900 tabular-nums">
+                {client.readingCount}
+              </dd>
             </div>
             <div>
               <dt className="text-xs text-slate-500">Last consultation</dt>
@@ -216,11 +220,11 @@ function ConsultationSummary({
           ) : (
             <ul className="mt-2 space-y-2">
               {insights.slice(0, 3).map((insight) => (
-                <li key={insight.id} className="rounded-xl bg-slate-50/80 px-3 py-2">
-                  <p className="text-[11px] font-bold uppercase tracking-wide text-primary-700">
+                <li key={insight.id} className="rounded-control bg-slate-50/80 px-3 py-2">
+                  <p className="text-xs font-bold uppercase tracking-wide text-primary-700">
                     {insight.category}
                   </p>
-                  <p className="mt-0.5 text-xs leading-relaxed text-slate-700">{insight.insight}</p>
+                  <p className="mt-0.5 text-sm leading-relaxed text-slate-700">{insight.insight}</p>
                 </li>
               ))}
             </ul>
@@ -234,10 +238,10 @@ function ConsultationSummary({
           {client?.recommendations?.length ? (
             <ul className="mt-2 space-y-2">
               {client.recommendations.slice(0, 3).map((recommendation) => (
-                <li key={recommendation.id} className="text-xs leading-relaxed text-slate-700">
+                <li key={recommendation.id} className="text-sm leading-relaxed text-slate-700">
                   <span className="font-semibold text-slate-800">{recommendation.title}</span>
-                  <span className="ml-1 text-slate-500">({recommendation.priority})</span>
-                  <p className="mt-0.5 text-slate-600">{recommendation.text}</p>
+                  <span className="ml-1 text-xs text-slate-500">({recommendation.priority})</span>
+                  <p className="mt-0.5 text-sm text-slate-600">{recommendation.text}</p>
                 </li>
               ))}
             </ul>
@@ -254,7 +258,7 @@ function ConsultationSummary({
             type="date"
             value={followUpDate || ""}
             onChange={(event) => onFollowUpChange?.(event.target.value)}
-            className="h-9 w-full cursor-pointer rounded-full border border-slate-200 bg-slate-50 px-3 text-xs font-medium text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+            className="h-10 w-full cursor-pointer rounded-control border border-slate-200 bg-white px-3 text-sm text-slate-700 transition focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
           />
         </label>
 
@@ -351,12 +355,12 @@ export default function ConsultationWorkspace({
           ) : (
             <ul className="space-y-2.5">
               {pastSessions.map((row) => (
-                <li key={row.id} className="rounded-xl bg-slate-50/80 px-3 py-2.5">
+                <li key={row.id} className="rounded-control bg-slate-50/80 px-3 py-2.5">
                   <div className="flex items-start justify-between gap-2">
-                    <p className="text-xs font-semibold text-slate-800">{row.purpose}</p>
+                    <p className="text-sm font-semibold text-slate-800">{row.purpose}</p>
                     <StatusBadge status={row.status} />
                   </div>
-                  <p className="mt-0.5 text-[11px] text-slate-500">
+                  <p className="mt-0.5 text-xs text-slate-500 tabular-nums">
                     {formatDate(row.startedAt)}
                     {row.durationMinutes ? ` · ${row.durationMinutes} min` : ""}
                   </p>
@@ -369,14 +373,14 @@ export default function ConsultationWorkspace({
 
       <div className="min-w-0 space-y-5">
         {/* Session banner */}
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-200/90 bg-white p-5 shadow-xs">
+        <div className="surface-card flex flex-wrap items-center justify-between gap-3 p-5">
           <div className="flex items-center gap-3">
             <ClientAvatar name={session.clientName || client?.name || "Seeker"} size="md" />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-slate-900">
                 {session.clientName || client?.name || "Seeker"}
               </p>
-              <p className="truncate text-xs text-slate-500">
+              <p className="truncate text-xs text-slate-500 tabular-nums">
                 {session.purpose} · started {formatDate(session.startedAt)}
               </p>
             </div>
@@ -401,7 +405,7 @@ export default function ConsultationWorkspace({
         <div
           role="tablist"
           aria-label="Consultation workspace sections"
-          className="flex flex-wrap gap-1.5 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-1.5"
+          className="flex flex-wrap gap-1 rounded-panel border border-slate-200 bg-slate-100/80 p-1"
         >
           {TABS.map((item) => {
             const active = tab === item.value;
@@ -412,9 +416,9 @@ export default function ConsultationWorkspace({
                 role="tab"
                 aria-selected={active}
                 onClick={() => setTab(item.value)}
-                className={`inline-flex cursor-pointer items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
+                className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
                   active
-                    ? "bg-white text-slate-900 shadow-xs ring-1 ring-slate-200"
+                    ? "bg-white text-slate-900 shadow-xs"
                     : "text-slate-500 hover:text-slate-800"
                 }`}
               >
@@ -425,11 +429,12 @@ export default function ConsultationWorkspace({
           })}
         </div>
 
+        <div key={tab} role="tabpanel" aria-label={TABS.find((item) => item.value === tab)?.label} className="animate-tab-in">
         {tab === "overview" && (
           <div className="space-y-5">
             {session.liveMessage && (
               <Panel title="Seeker's question" subtitle="What opened this thread">
-                <p className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm leading-relaxed text-slate-700">
+                <p className="rounded-card border border-slate-100 bg-slate-50 p-4 text-sm leading-relaxed text-slate-700">
                   &ldquo;{session.liveMessage}&rdquo;
                 </p>
               </Panel>
@@ -504,18 +509,18 @@ export default function ConsultationWorkspace({
               />
             ) : (
               <div className="space-y-5">
-                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-primary-100 bg-primary-50/50 p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-primary-100 bg-primary-50/50 p-4">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-widest text-primary-700">
                       Archetype
                     </p>
-                    <p className="mt-1 text-lg font-bold tracking-tight text-slate-900">
+                    <p className="mt-1 font-display text-lg font-semibold tracking-[-0.02em] text-slate-900">
                       {client.personality.archetype}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-slate-500">Alignment</p>
-                    <p className="text-lg font-bold text-slate-900">
+                    <p className="font-display text-lg font-semibold text-slate-900 tabular-nums">
                       {client.personality.alignment}%
                     </p>
                   </div>
@@ -530,7 +535,7 @@ export default function ConsultationWorkspace({
                     <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
                       Strengths
                     </p>
-                    <ul className="mt-1.5 space-y-1 text-xs text-slate-600">
+                    <ul className="mt-1.5 space-y-1 text-sm text-slate-600">
                       {client.personality.strengths.map((item) => (
                         <li key={item}>· {item}</li>
                       ))}
@@ -540,7 +545,7 @@ export default function ConsultationWorkspace({
                     <p className="text-xs font-semibold uppercase tracking-wide text-accent-700">
                       Growth areas
                     </p>
-                    <ul className="mt-1.5 space-y-1 text-xs text-slate-600">
+                    <ul className="mt-1.5 space-y-1 text-sm text-slate-600">
                       {client.personality.growthAreas.map((item) => (
                         <li key={item}>· {item}</li>
                       ))}
@@ -581,10 +586,10 @@ export default function ConsultationWorkspace({
                 rows={5}
                 placeholder="Write the guidance you will share with this client…"
                 aria-label="Guidance to the client"
-                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm leading-relaxed text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                className="w-full rounded-control border border-slate-200 px-3.5 py-2.5 text-sm leading-relaxed text-slate-800 transition placeholder:text-slate-500 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
               />
               {!session.liveConsultationId && (
-                <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
+                <p className="mt-2 text-xs leading-relaxed text-slate-500">
                   This session is not linked to a live guidance thread, so the text is saved with
                   the consultation only.
                 </p>
@@ -592,6 +597,7 @@ export default function ConsultationWorkspace({
             </Panel>
           </div>
         )}
+        </div>
       </div>
 
       <ConsultationSummary

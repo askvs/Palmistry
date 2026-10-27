@@ -12,6 +12,7 @@ import {
   UsersByRolePanel,
 } from "@/components/admin/AnalyticsPanels";
 import SessionOversightPanel from "@/components/admin/SessionOversightPanel";
+import Seo from "@/components/Seo";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import {
   adminListConsultations,
@@ -38,6 +39,11 @@ export default function AdminAnalyticsPage() {
 
   return (
     <div className="space-y-6">
+      <Seo
+        title="Analytics"
+        description="Usage, engagement and reading statistics across the platform, with the read-only view of the live-consultation channel."
+      />
+
       <PageHeader
         icon={ChartIcon}
         eyebrow="Administration"

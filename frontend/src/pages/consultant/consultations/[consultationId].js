@@ -1,8 +1,8 @@
 // Consultation workspace: client info, tabbed workspace, and summary.
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 import { Button, Spinner, useToast } from "@/components/ui";
+import Seo from "@/components/Seo";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { useAuth } from "@/hooks/useAuth";
 import { useRoleGuard } from "@/hooks/useRoleGuard";
@@ -123,16 +123,17 @@ export default function ConsultantConsultationDetailPage() {
 
   return (
     <div className="animate-fade-in space-y-6">
-      <Head>
-        <title>Consultation Workspace | Palmistry &amp; Tarot</title>
-      </Head>
+      <Seo
+        title="Consultation"
+        description="The client's readings, guidance and notes — everything for this session in one workspace."
+      />
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="font-display text-2xl tracking-tight text-slate-900">
+          <h1 className="font-display text-3xl font-semibold tracking-[-0.02em] text-slate-900">
             Consultation Workspace
-          </h2>
-          <p className="mt-1 text-sm text-slate-600">
+          </h1>
+          <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-slate-600">
             Review the client&rsquo;s readings, generate insights, write your guidance and produce a
             report — without leaving the session.
           </p>
@@ -185,9 +186,11 @@ export default function ConsultantConsultationDetailPage() {
             ].map((step, index) => (
               <li
                 key={step}
-                className="rounded-2xl border border-slate-100 bg-slate-50/70 p-3 text-xs text-slate-600"
+                className="rounded-card border border-slate-100 bg-slate-50/70 p-3.5 text-sm leading-relaxed text-slate-600"
               >
-                <span className="block text-[11px] font-bold text-primary-600">Step {index + 1}</span>
+                <span className="mb-0.5 block text-xs font-bold uppercase tracking-wide text-primary-700">
+                  Step {index + 1}
+                </span>
                 {step}
               </li>
             ))}

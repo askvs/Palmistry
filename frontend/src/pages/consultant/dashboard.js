@@ -1,8 +1,8 @@
 // Spiritual consultant dashboard: client trends, guidance effectiveness, follow-ups.
-import Head from "next/head";
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { Button, ErrorState, PageHeader } from "@/components/ui";
+import Seo from "@/components/Seo";
 import { StatCard } from "@/components/dashboards/shared";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { useAuth } from "@/hooks/useAuth";
@@ -30,6 +30,7 @@ import RecentClients from "@/components/consultant/RecentClients";
 import StartConsultationDialog from "@/components/consultant/StartConsultationDialog";
 import {
   ClientAvatar,
+  EmptyState,
   Panel,
   SourceBadge,
   SkeletonRow,
@@ -54,15 +55,17 @@ function GuidanceQueuePanel({ queue = null, loading, onOpen }) {
           <SkeletonRow lines={3} />
         </div>
       ) : items.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 px-6 py-10 text-center text-sm text-slate-500">
-          No guidance threads are open right now. New seeker questions will appear here.
-        </p>
+        <EmptyState
+          icon={ChatIcon}
+          title="No guidance threads are open right now"
+          description="New seeker questions will appear here."
+        />
       ) : (
-        <ul className="space-y-3">
+        <ul className="divide-y divide-slate-100 overflow-hidden rounded-[16px] border border-slate-100">
           {items.slice(0, 5).map((thread) => (
             <li
               key={thread.id}
-              className="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs"
+              className="flex flex-wrap items-center gap-3 p-4 transition-colors hover:bg-slate-50/70"
             >
               <ClientAvatar name={thread.topic} size="md" />
               <div className="min-w-0 flex-1">
@@ -143,9 +146,10 @@ export default function ConsultantDashboardPage() {
 
   return (
     <div className="animate-fade-in space-y-8">
-      <Head>
-        <title>Consultant Dashboard | Palmistry &amp; Tarot</title>
-      </Head>
+      <Seo
+        title="Consultant dashboard"
+        description="Your sessions, clients and guidance impact at a glance."
+      />
 
       <PageHeader
         icon={CompassIcon}

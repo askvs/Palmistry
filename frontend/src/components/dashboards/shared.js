@@ -44,11 +44,11 @@ export function PerDayBars({ series, days = 7, ariaLabel = "Daily activity chart
                   key={s.key}
                   className="group flex h-full w-full max-w-[24px] items-end justify-center"
                 >
-                  <span className="mb-1 text-[10px] font-bold text-slate-600 opacity-0 transition group-hover:opacity-100">
+                  <span className="mb-1 text-[11px] font-bold tabular-nums text-slate-600 opacity-0 transition group-hover:opacity-100">
                     {value}
                   </span>
                   <div
-                    className={`w-full rounded-t-lg transition-all ${s.barClass}`}
+                    className={`w-full rounded-t-md transition-all ${s.barClass}`}
                     style={{ height }}
                     title={`${s.label}: ${value} on ${day}`}
                   />
@@ -58,7 +58,7 @@ export function PerDayBars({ series, days = 7, ariaLabel = "Daily activity chart
           </div>
         ))}
       </div>
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 px-1 text-xs text-slate-500">
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 px-1 text-[12.5px] text-slate-500">
         <div className="flex items-center gap-3">
           {counts.map((s) => (
             <span key={s.key} className="inline-flex items-center gap-1.5">
@@ -93,9 +93,9 @@ export function StatCard({ label, value, hint, icon, trend, tone = "primary" }) 
   const Icon = typeof icon === "function" ? icon : null;
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+    <div className="surface-card p-6 transition duration-200 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-lift">
       <div className="flex items-start justify-between gap-2">
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500">{label}</h2>
+        <h2 className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">{label}</h2>
         {icon && (
           <span
             className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${iconClasses}`}
@@ -105,18 +105,25 @@ export function StatCard({ label, value, hint, icon, trend, tone = "primary" }) 
         )}
       </div>
 
-      <div className="mt-3 flex items-baseline gap-2">
-        <p className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">{value}</p>
+      <div className="mt-3 flex flex-wrap items-baseline gap-2">
+        <p className="text-[26px] font-bold leading-[1.2] tracking-[-0.01em] tabular-nums text-slate-900 sm:text-[30px]">
+          {value}
+        </p>
         {trend && (
           <span
-            className={`text-xs font-semibold ${trend.positive ? "text-emerald-600" : "text-slate-500"}`}
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+              trend.positive
+                ? "bg-emerald-50 text-emerald-700"
+                : "bg-rose-50 text-rose-700"
+            }`}
           >
+            <span aria-hidden="true">{trend.positive ? "▲" : "▼"}</span>
             {trend.text}
           </span>
         )}
       </div>
 
-      {hint && <p className="mt-1.5 text-xs text-slate-500">{hint}</p>}
+      {hint && <p className="mt-1.5 text-[12.5px] leading-relaxed text-slate-500">{hint}</p>}
     </div>
   );
 }
@@ -167,7 +174,10 @@ export function MeterBar({ value, tone = "primary", label, className = "" }) {
       aria-label={label}
       className={`h-2 w-full overflow-hidden rounded-full bg-slate-100 ${className}`}
     >
-      <div className={`h-full rounded-full transition-all ${METER_TONES[tone] || METER_TONES.primary}`} style={{ width: `${pct}%` }} />
+      <div
+        className={`h-full rounded-full transition-[width] duration-[240ms] ${METER_TONES[tone] || METER_TONES.primary}`}
+        style={{ width: `${pct}%` }}
+      />
     </div>
   );
 }
@@ -214,7 +224,7 @@ export function Segmented({ options, value, onChange, label, className = "" }) {
     <div
       role="group"
       aria-label={label}
-      className={`inline-flex items-center rounded-full border border-slate-200 bg-slate-100/80 p-0.5 ${className}`}
+      className={`inline-flex items-center rounded-full border border-slate-200 bg-slate-100 p-[3px] ${className}`}
     >
       {options.map((option) => {
         const active = option.value === value;
@@ -224,8 +234,10 @@ export function Segmented({ options, value, onChange, label, className = "" }) {
             type="button"
             aria-pressed={active}
             onClick={() => onChange(option.value)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
-              active ? "bg-white text-slate-900 shadow-xs" : "text-slate-500 hover:text-slate-800"
+            className={`cursor-pointer rounded-full px-3 py-1 text-xs font-medium transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
+              active
+                ? "bg-white text-slate-900 shadow-[0_1px_3px_rgba(30,24,54,0.12)]"
+                : "text-slate-500 hover:text-slate-800"
             }`}
           >
             {option.label}

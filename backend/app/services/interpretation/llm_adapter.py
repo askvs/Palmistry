@@ -5,6 +5,7 @@ import hashlib
 import json
 import logging
 import re
+import time
 from typing import Any, Dict, List, Optional
 
 from app.config import settings
@@ -13,6 +14,25 @@ logger = logging.getLogger(__name__)
 
 _ENGINE_NAME = "LLMAdapter"
 _ENGINE_VERSION = "1.0.0"
+
+# Rate-limited requests are retried with a bounded backoff before falling back.
+_RATE_LIMIT_RETRIES = 2
+_RATE_LIMIT_BACKOFF_SECONDS = (2.0, 5.0)
+
+
+def _is_rate_limit_error(exc: Exception) -> bool:
+    """Detect provider rate limiting (HTTP 429) without importing SDK-specific errors."""
+    if getattr(exc, "status_code", None) == 429:
+        return True
+    text = str(exc).lower()
+    return "429" in text and ("rate limit" in text or "too many requests" in text)
+
+
+def _describe_failure(exc: Exception) -> str:
+    """Human-readable, non-sensitive reason for falling back to the rule engine."""
+    if _is_rate_limit_error(exc):
+        return "the provider rate limit was reached"
+    return f"the provider request failed ({type(exc).__name__})"
 
 
 class LLMError(Exception):
@@ -52,6 +72,7 @@ class LLMAdapter:
         self._client = None
         self._provider = "rule_based"
         self._model = "rulebook-1.0.0"
+        self._fallback_reason = ""
         self._api_key = (settings.OPENAI_API_KEY or "").strip()
         self._groq_api_key = (settings.GROQ_API_KEY or "").strip()
         self._groq_model = settings.GROQ_MODEL or "llama3-8b-8192"
@@ -107,8 +128,9 @@ class LLMAdapter:
         temperature: float = 0.7,
         json_mode: bool = False,
     ) -> LLMResponse:
-        """Generate a completion, falling back to the rule engine when offline."""
+        """Generate a completion, retrying rate limits and falling back to the rule engine."""
         if self._client is not None:
+            self._fallback_reason = ""
             try:
                 # If json_mode requested, ensure "json" is explicitly present in messages
                 if json_mode:
@@ -132,22 +154,47 @@ class LLMAdapter:
                 if json_mode and self._provider in ("openai", "groq"):
                     kwargs["response_format"] = {"type": "json_object"}
 
-                resp = self._client.chat.completions.create(**kwargs)
-                content = resp.choices[0].message.content or ""
-                tokens = getattr(resp.usage, "total_tokens", 0) if resp.usage else 0
-                return LLMResponse(
-                    content=content,
-                    model=self._model,
-                    provider=self._provider,
-                    rule_based=False,
-                    tokens=tokens,
-                )
-            except Exception as exc:
+                attempts = _RATE_LIMIT_RETRIES + 1
+                for attempt in range(attempts):
+                    try:
+                        resp = self._client.chat.completions.create(**kwargs)
+                        content = resp.choices[0].message.content or ""
+                        tokens = getattr(resp.usage, "total_tokens", 0) if resp.usage else 0
+                        return LLMResponse(
+                            content=content,
+                            model=self._model,
+                            provider=self._provider,
+                            rule_based=False,
+                            tokens=tokens,
+                        )
+                    except Exception as exc:
+                        if _is_rate_limit_error(exc) and attempt + 1 < attempts:
+                            delay = _RATE_LIMIT_BACKOFF_SECONDS[
+                                min(attempt, len(_RATE_LIMIT_BACKOFF_SECONDS) - 1)
+                            ]
+                            logger.warning(
+                                "%s completion rate-limited; retrying in %.1fs (attempt %d/%d)",
+                                self._provider.capitalize(),
+                                delay,
+                                attempt + 1,
+                                attempts,
+                            )
+                            time.sleep(delay)
+                            continue
+                        logger.warning(
+                            "%s completion failed, falling back to rule engine: %s",
+                            self._provider.capitalize(),
+                            exc,
+                        )
+                        self._fallback_reason = _describe_failure(exc)
+                        break
+            except Exception as exc:  # pragma: no cover - defensive
                 logger.warning(
-                    "%s completion failed, falling back to rule engine: %s",
+                    "%s completion setup failed, falling back to rule engine: %s",
                     self._provider.capitalize(),
                     exc,
                 )
+                self._fallback_reason = _describe_failure(exc)
 
         # Deterministic fallback
         content = self._rule_complete(prompt, system, json_mode=json_mode)
@@ -162,6 +209,12 @@ class LLMAdapter:
     def _rule_complete(self, prompt: str, system: str, *, json_mode: bool = False) -> str:
         """Produce a deterministic, structured fallback payload."""
         digest = hashlib.sha256((system + "\n" + prompt).encode("utf-8")).hexdigest()[:12]
+        if self._client is None:
+            reason = "no external language model credentials are configured"
+            remedy = "Set GROQ_API_KEY or OPENAI_API_KEY to enable online interpretation generation."
+        else:
+            reason = self._fallback_reason or "the external language model request did not succeed"
+            remedy = "Please try again in a moment."
         if json_mode:
             return json.dumps(
                 {
@@ -173,7 +226,10 @@ class LLMAdapter:
                         "Reflect on the symbols drawn and consider how they mirror your current life chapter.",
                         "Approach the reading as interpretive guidance for self-reflection, not as guaranteed fact.",
                     ],
-                    "narrative": "This interpretation was generated by the deterministic rule engine because no external language model credentials are configured.",
+                    "narrative": (
+                        "This interpretation was generated by the deterministic rule engine "
+                        f"because {reason}. {remedy}"
+                    ),
                     "disclaimer": (
                         "All insights are offered strictly for interpretive guidance, entertainment, "
                         "and self-reflection. They are not medical diagnoses, legal facts, or guaranteed "
@@ -184,9 +240,7 @@ class LLMAdapter:
             )
         return (
             f"[rule-based fallback] request_digest={digest}\n"
-            "This response was generated by the deterministic rule engine because no external "
-            "language model credentials are configured. Set GROQ_API_KEY or OPENAI_API_KEY "
-            "to enable online interpretation generation."
+            f"This response was generated by the deterministic rule engine because {reason}. {remedy}"
         )
 
 

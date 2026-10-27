@@ -13,7 +13,7 @@ import { formatDateTime } from "@/lib/format";
 
 export function AIInsightCard({ insight, action }) {
   return (
-    <article className="flex flex-col rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs transition hover:border-primary-200 hover:shadow-md">
+    <article className="surface-card hover-lift flex flex-col p-4">
       <div className="flex items-start gap-3">
         <AIInsightIcon />
         <div className="min-w-0 flex-1">
@@ -21,7 +21,7 @@ export function AIInsightCard({ insight, action }) {
             <h4 className="text-sm font-semibold text-slate-900">{insight.category}</h4>
             <SourceBadge source="demo" />
           </div>
-          <p className="mt-0.5 text-[11px] text-slate-500">
+          <p className="mt-0.5 text-[11px] text-slate-500 tabular-nums">
             {formatDateTime(insight.createdAt)}
             {insight.reviewed ? " · reviewed by you" : ""}
           </p>
@@ -40,7 +40,7 @@ export function AIInsightCard({ insight, action }) {
       <div className="mt-3.5 space-y-1.5">
         <div className="flex items-center justify-between text-[11px]">
           <span className="font-medium text-slate-500">Relevance</span>
-          <span className="font-bold text-slate-900">{insight.relevance}%</span>
+          <span className="font-bold text-slate-900 tabular-nums">{insight.relevance}%</span>
         </div>
         <MeterBar
           value={(insight.relevance || 0) / 100}

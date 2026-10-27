@@ -26,7 +26,7 @@ const SORT_OPTIONS = [
 
 function ClientCard({ client, onStartConsultation }) {
   return (
-    <li className="flex flex-col rounded-3xl border border-slate-200/90 bg-white p-5 shadow-xs transition hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-md">
+    <li className="surface-card hover-lift flex flex-col p-5">
       <div className="flex items-start gap-3.5">
         <ClientAvatar name={client.name} size="md" />
         <div className="min-w-0 flex-1">
@@ -34,7 +34,7 @@ function ClientCard({ client, onStartConsultation }) {
             <h3 className="truncate text-sm font-semibold text-slate-900">{client.name}</h3>
             <ClientStatusBadge status={client.status} />
           </div>
-          <p className="mt-0.5 truncate text-xs text-slate-500">
+          <p className="mt-0.5 truncate text-xs text-slate-500 tabular-nums">
             Age {client.ageGroup || "—"} · {client.consultationCount} session
             {client.consultationCount === 1 ? "" : "s"} · {client.readingCount} reading
             {client.readingCount === 1 ? "" : "s"}
@@ -59,7 +59,7 @@ function ClientCard({ client, onStartConsultation }) {
       <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4 text-xs">
         <div>
           <dt className="text-slate-500">Last consultation</dt>
-          <dd className="mt-0.5 font-semibold text-slate-800">
+          <dd className="mt-0.5 font-semibold text-slate-800 tabular-nums">
             {client.lastConsultationAt ? relativeLabel(client.lastConsultationAt) : "—"}
           </dd>
         </div>
@@ -140,7 +140,7 @@ export default function ClientDirectory({
               value={search}
               onChange={(event) => onSearchChange?.(event.target.value)}
               placeholder="Search by name, interest or reading type…"
-              className="h-9 w-full rounded-full border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+              className="h-9 w-full rounded-full border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-800 transition placeholder:text-slate-500 focus:border-primary-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
             />
           </div>
 

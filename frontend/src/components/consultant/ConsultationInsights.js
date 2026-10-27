@@ -61,7 +61,7 @@ export default function ConsultationInsights({
           return (
             <li
               key={item.id}
-              className="flex items-start gap-3.5 rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs transition hover:border-primary-200 hover:shadow-md"
+              className="surface-card hover-lift flex items-start gap-3.5 p-4"
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-600 ring-1 ring-accent-100">
                 <Icon className="h-4 w-4" />
@@ -74,7 +74,7 @@ export default function ConsultationInsights({
                   </span>
                 </div>
                 <p className="mt-1 text-xs leading-relaxed text-slate-600">{item.explanation}</p>
-                <p className="mt-1.5 text-[11px] text-slate-500">
+                <p className="mt-1.5 text-[11px] text-slate-500 tabular-nums">
                   {item.date ? formatDateTime(item.date) : "Live figure · updated now"}
                 </p>
               </div>
@@ -96,27 +96,27 @@ export default function ConsultationInsights({
 
         {trends && (
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-3.5">
+            <div className="rounded-card border border-slate-100 bg-slate-50/70 p-3.5">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
                 Registered seekers
               </p>
-              <p className="mt-1 text-lg font-bold tracking-tight text-slate-900">
+              <p className="mt-1 text-lg font-bold tracking-tight text-slate-900 tabular-nums">
                 {trends.total_users}
               </p>
             </div>
-            <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-3.5">
+            <div className="rounded-card border border-slate-100 bg-slate-50/70 p-3.5">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
                 Active seekers
               </p>
-              <p className="mt-1 text-lg font-bold tracking-tight text-slate-900">
+              <p className="mt-1 text-lg font-bold tracking-tight text-slate-900 tabular-nums">
                 {trends.active_users}
               </p>
             </div>
-            <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-3.5">
+            <div className="rounded-card border border-slate-100 bg-slate-50/70 p-3.5">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
                 Last reading
               </p>
-              <p className="mt-1 text-lg font-bold tracking-tight text-slate-900">
+              <p className="mt-1 text-lg font-bold tracking-tight text-slate-900 tabular-nums">
                 {relativeLabel(trends.readings_per_day?.[trends.readings_per_day.length - 1]?.day)}
               </p>
             </div>

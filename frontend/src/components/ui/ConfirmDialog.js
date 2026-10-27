@@ -27,6 +27,7 @@ export default function ConfirmDialog({
     if (!open) return undefined;
     const previous = document.activeElement;
     const node = dialogRef.current;
+    if (!node) return undefined;
     const focusables = () =>
       node.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
     (node.querySelector("[data-autofocus]") || focusables()[0])?.focus();
@@ -64,13 +65,13 @@ export default function ConfirmDialog({
       aria-labelledby="confirm-dialog-title"
     >
       <div
-        className="absolute inset-0 bg-slate-950/40 backdrop-blur-[4px] animate-fade-in"
+        className="absolute inset-0 bg-slate-950/40 backdrop-blur-[4px] animate-backdrop-in"
         onClick={onCancel}
         aria-hidden="true"
       />
       <div
         ref={dialogRef}
-        className="surface-panel shadow-float relative w-full max-w-md animate-rise-in p-6"
+        className="surface-panel shadow-float relative w-full max-w-md animate-dialog-in p-6"
       >
         <button
           type="button"

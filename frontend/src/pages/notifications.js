@@ -1,8 +1,11 @@
 // Notification Center Page
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/Toast";
-import { Link } from "next/link";
+import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
+import { PageHeader, Spinner } from "@/components/ui";
+import Seo from "@/components/Seo";
+import { BellIcon } from "@/components/icons";
 import {
   fetchNotifications,
   getNotificationPreferences,
@@ -29,12 +32,6 @@ const PREF_TOGGLES = [
   ["Spiritual Growth", "spiritual_growth", "Personal-growth insights and prompts."],
   ["Platform Announcements", "platform_announcements", "Important news from the MysticLens team."],
 ];
-
-const BellIcon = () => (
-  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-  </svg>
-);
 
 const NotificationCenter = () => {
   const { user } = useAuth();
@@ -137,14 +134,19 @@ const NotificationCenter = () => {
   });
 
   if (loading) {
-    return <div className="text-center py-8">Loading...</div>;
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <Spinner />
+      </div>
+    );
   }
 
   if (!user) {
     return (
-      <div className="text-center py-8">
-        <p>Please log in to view notifications</p>
-        <Link href="/login" className="text-primary-600">
+      <div className="flex flex-col items-center justify-center px-6 py-12 text-center">
+        <BellIcon className="h-10 w-10 text-slate-300" />
+        <p className="mt-4 text-sm font-medium text-slate-600">Please log in to view notifications</p>
+        <Link href="/login" className="mt-2 text-sm font-semibold text-primary-700 hover:underline">
           Log In
         </Link>
       </div>
@@ -152,18 +154,28 @@ const NotificationCenter = () => {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Notifications</h1>
+    <div className="mx-auto max-w-4xl space-y-8">
+      <Seo
+        title="Notifications"
+        description="Session updates, report-ready alerts and system notices — all in one place."
+      />
+
+      <PageHeader icon={BellIcon} tileTone="primary" title="Notifications" />
 
       <div className="space-y-4">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div
+            role="group"
+            aria-label="Notification scope"
+            className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100/80 p-0.5"
+          >
             <button
               onClick={() => setFilter(NotificationType.ALL)}
-              className={`px-3 py-1.5 rounded-full border text-sm font-medium transition-colors ${
+              aria-pressed={filter === NotificationType.ALL}
+              className={`cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
                 filter === NotificationType.ALL
-                  ? "bg-primary-600 text-white border-transparent"
-                  : "bg-gray-100 text-gray-700 border-primary-600 hover:bg-primary-50"
+                  ? "bg-white text-slate-900 shadow-xs"
+                  : "text-slate-500 hover:text-slate-800"
               }`}
               aria-label="All notifications"
             >
@@ -171,10 +183,11 @@ const NotificationCenter = () => {
             </button>
             <button
               onClick={() => setFilter(NotificationType.UNREAD)}
-              className={`px-3 py-1.5 rounded-full border text-sm font-medium transition-colors ${
+              aria-pressed={filter === NotificationType.UNREAD}
+              className={`cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
                 filter === NotificationType.UNREAD
-                  ? "bg-primary-600 text-white border-transparent"
-                  : "bg-gray-100 text-gray-700 border-primary-600 hover:bg-primary-50"
+                  ? "bg-white text-slate-900 shadow-xs"
+                  : "text-slate-500 hover:text-slate-800"
               }`}
               aria-label="Unread notifications"
             >
@@ -184,7 +197,7 @@ const NotificationCenter = () => {
           <button
             onClick={handleMarkAllRead}
             disabled={unreadCount === 0}
-            className="cursor-pointer rounded-full px-3 py-1.5 text-sm font-medium text-primary-600 transition hover:bg-primary-50 disabled:cursor-not-allowed disabled:text-slate-300 disabled:hover:bg-transparent"
+            className="cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium text-primary-600 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
           >
             Mark all read
           </button>
@@ -192,42 +205,46 @@ const NotificationCenter = () => {
 
         <div className="space-y-4">
           {filteredNotifications.length === 0 ? (
-            <div className="text-center py-8">
-              <BellIcon className="mx-auto h-12 w-12 text-gray-300" />
-              <p className="mt-4 text-gray-500">
+            <div className="py-12 text-center">
+              <BellIcon className="mx-auto h-10 w-10 text-slate-300" />
+              <p className="mt-4 text-sm font-medium text-slate-600">
                 {filter === NotificationType.UNREAD
                   ? "No unread notifications"
                   : "No notifications yet"}
               </p>
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-slate-500">
                 {filter === NotificationType.UNREAD
                   ? "You're all caught up!"
                   : "Check back soon for updates"}
               </p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="divide-y divide-slate-100">
               {filteredNotifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`flex items-start p-4 border rounded-lg ${
-                    !notification.is_read ? "bg-blue-50 border-primary-200" : "bg-white border-gray-200"
-                  }`}
+                  className="flex items-start gap-3 py-4"
                 >
+                  <span
+                    className={`mt-[7px] h-2 w-2 shrink-0 rounded-full ${
+                      notification.is_read ? "bg-slate-200" : "bg-primary-500"
+                    }`}
+                    aria-hidden="true"
+                  />
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3">
-                      <BellIcon className="h-5 w-5 text-primary-600 flex-shrink-0" />
-                      <span className="text-lg font-medium">{notification.title}</span>
-                      {!notification.is_read && (
-                        <span className="text-xs bg-primary-600 text-white px-2 py-0.5 rounded-full">
-                          New
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-sm text-gray-600 mt-1">
+                    <span
+                      className={`text-[15px] ${
+                        notification.is_read
+                          ? "font-medium text-slate-700"
+                          : "font-semibold text-slate-900"
+                      }`}
+                    >
+                      {notification.title}
+                    </span>
+                    <div className="text-sm text-slate-600 mt-1 leading-relaxed">
                       {notification.message}
                     </div>
-                    <div className="mt-2 text-sm text-gray-500">
+                    <div className="mt-1.5 text-xs text-slate-500 tabular-nums">
                       {new Date(notification.created_at).toLocaleString()}
                     </div>
                   </div>
@@ -235,7 +252,7 @@ const NotificationCenter = () => {
                   {!notification.is_read && (
                     <button
                       onClick={() => handleMarkRead(notification.id)}
-                      className="ml-4 text-sm text-primary-600 hover:text-primary-800 font-medium"
+                      className="ml-3 shrink-0 cursor-pointer rounded-full px-3 py-1.5 text-[13px] font-medium text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                     >
                       Mark as read
                     </button>
@@ -246,13 +263,13 @@ const NotificationCenter = () => {
           )}
         </div>
 
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <h2 className="text-xl font-semibold mb-4">Preferences</h2>
+        <div className="mt-8 pt-6 border-t border-slate-100">
+          <h2 className="text-[15px] font-semibold tracking-tight text-slate-900 mb-4">Preferences</h2>
           <div className="space-y-3">
-            <div className="flex items-center justify-between gap-4 rounded-2xl border border-emerald-100 bg-emerald-50/60 px-3.5 py-2.5">
+            <div className="flex items-center justify-between gap-4 rounded-2xl border border-emerald-200/60 bg-emerald-50/60 px-3.5 py-2.5">
               <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-700">In-App Notifications</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-[13.5px] font-medium text-slate-700">In-App Notifications</p>
+                <p className="text-xs text-slate-500">
                   Always on — notifications appear here and in the header bell for every role.
                 </p>
               </div>
@@ -265,17 +282,17 @@ const NotificationCenter = () => {
             {PREF_TOGGLES.map(([label, key, description]) => (
               <label
                 key={key}
-                className="flex items-center justify-between gap-4 border-b border-gray-100 pb-3 last:border-b-0"
+                className="flex items-center justify-between gap-4 border-b border-slate-100 pb-3 last:border-b-0"
               >
                 <span className="min-w-0">
-                  <span className="block text-sm font-medium text-gray-700">{label}</span>
-                  <span className="block text-xs text-gray-500">{description}</span>
+                  <span className="block text-[13.5px] font-medium text-slate-700">{label}</span>
+                  <span className="block text-xs text-slate-500">{description}</span>
                 </span>
                 <input
                   type="checkbox"
                   checked={Boolean(preferences[key])}
                   onChange={(e) => togglePreference(key, e.target.checked)}
-                  className="h-4 w-4 shrink-0 cursor-pointer rounded border-slate-300 text-primary-600 focus:ring-primary-400"
+                  className="h-4 w-4 shrink-0 cursor-pointer rounded border-slate-300 accent-primary-600 focus:ring-primary-400"
                 />
               </label>
             ))}

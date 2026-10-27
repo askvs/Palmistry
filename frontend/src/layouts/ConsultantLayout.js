@@ -273,7 +273,7 @@ function ShellHeader({ onOpenMenu }) {
             {menuOpen && (
               <div
                 role="menu"
-                className="absolute right-0 z-30 mt-2 w-52 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-900/10"
+                className="absolute right-0 z-30 mt-2 w-52 origin-top-right animate-menu-in overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-900/10"
               >
                 <Link
                   href="/profile"
@@ -369,12 +369,12 @@ export default function ConsultantLayout({ children }) {
       {drawerOpen && (
         <div className="fixed inset-0 z-40 lg:hidden" role="dialog" aria-modal="true">
           <div
-            className="absolute inset-0 animate-fade-in bg-slate-900/40 backdrop-blur-sm"
+            className="absolute inset-0 animate-backdrop-in bg-slate-900/40 backdrop-blur-sm"
             onClick={() => setDrawerOpen(false)}
             aria-hidden="true"
           />
           <div
-            className={`relative h-full ${SIDEBAR_WIDTH} max-w-[85vw] animate-rise-in bg-white shadow-xl`}
+            className={`relative h-full ${SIDEBAR_WIDTH} max-w-[85vw] animate-drawer-in bg-white shadow-xl`}
           >
             <button
               type="button"

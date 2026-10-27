@@ -12,6 +12,7 @@ import {
   useToast,
 } from "@/components/ui";
 import { Segmented, StatCard } from "@/components/dashboards/shared";
+import Seo from "@/components/Seo";
 import {
   CalendarIcon,
   ChatIcon,
@@ -113,6 +114,11 @@ export default function ConsultantStudioPage() {
 
   return (
     <div className="animate-fade-in space-y-8">
+      <Seo
+        title="Studio"
+        description="Availability, requests and session notes — your working canvas."
+      />
+
       <PageHeader
         icon={CompassIcon}
         tileTone="emerald"
@@ -395,7 +401,7 @@ function ProfileEditor({ profile, onSaved, onCancel }) {
             onChange={(event) => set("headline", event.target.value)}
             maxLength={160}
             required
-            className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+            className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
           />
         </div>
 
@@ -409,7 +415,7 @@ function ProfileEditor({ profile, onSaved, onCancel }) {
             onChange={(event) => set("bio", event.target.value)}
             rows={4}
             maxLength={4000}
-            className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+            className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
           />
         </div>
 
@@ -423,7 +429,7 @@ function ProfileEditor({ profile, onSaved, onCancel }) {
               value={form.specializations}
               onChange={(event) => set("specializations", event.target.value)}
               placeholder="tarot, love, career"
-              className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             />
           </div>
           <div>
@@ -435,7 +441,7 @@ function ProfileEditor({ profile, onSaved, onCancel }) {
               value={form.modalities}
               onChange={(event) => set("modalities", event.target.value)}
               placeholder="tarot, palmistry"
-              className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             />
           </div>
           <div>
@@ -447,7 +453,7 @@ function ProfileEditor({ profile, onSaved, onCancel }) {
               value={form.languages}
               onChange={(event) => set("languages", event.target.value)}
               placeholder="English, Hindi"
-              className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             />
           </div>
         </div>
@@ -464,7 +470,7 @@ function ProfileEditor({ profile, onSaved, onCancel }) {
               step="0.01"
               value={form.session_rate}
               onChange={(event) => set("session_rate", event.target.value)}
-              className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             />
           </div>
           <div>
@@ -475,7 +481,7 @@ function ProfileEditor({ profile, onSaved, onCancel }) {
               id="p-currency"
               value={form.currency}
               onChange={(event) => set("currency", event.target.value)}
-              className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             >
               {["USD", "EUR", "GBP", "INR", "AUD", "CAD"].map((code) => (
                 <option key={code} value={code}>
@@ -496,7 +502,7 @@ function ProfileEditor({ profile, onSaved, onCancel }) {
               step="15"
               value={form.session_duration_minutes}
               onChange={(event) => set("session_duration_minutes", event.target.value)}
-              className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             />
           </div>
           <div>
@@ -511,7 +517,7 @@ function ProfileEditor({ profile, onSaved, onCancel }) {
               step="5"
               value={form.buffer_minutes}
               onChange={(event) => set("buffer_minutes", event.target.value)}
-              className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             />
           </div>
         </div>
@@ -528,7 +534,7 @@ function ProfileEditor({ profile, onSaved, onCancel }) {
               max="80"
               value={form.years_experience}
               onChange={(event) => set("years_experience", event.target.value)}
-              className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             />
           </div>
           <div>
@@ -540,7 +546,7 @@ function ProfileEditor({ profile, onSaved, onCancel }) {
               value={form.timezone}
               onChange={(event) => set("timezone", event.target.value)}
               maxLength={64}
-              className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             />
           </div>
           <div className="flex items-end">
@@ -656,11 +662,11 @@ function AvailabilityTab() {
             {rules.map((rule) => (
               <li key={rule.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-900 tabular-nums">
                     {rule.weekday_name} · {String(rule.start_time).slice(0, 5)}–
                     {String(rule.end_time).slice(0, 5)}
                   </p>
-                  <p className="mt-0.5 text-xs text-slate-500">
+                  <p className="mt-0.5 text-xs text-slate-500 tabular-nums">
                     {rule.slot_duration_minutes} min slots · {rule.buffer_minutes} min buffer ·{" "}
                     {rule.timezone}
                     {rule.effective_until ? ` · until ${rule.effective_until}` : ""}
@@ -745,7 +751,7 @@ function RuleForm({ onCreated }) {
   return (
     <form
       onSubmit={submit}
-      className="mb-6 rounded-2xl border border-slate-200 bg-slate-50/60 p-4"
+      className="mb-6 rounded-card border border-slate-100 bg-slate-50/60 p-4"
     >
       <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
         <div>
@@ -756,7 +762,7 @@ function RuleForm({ onCreated }) {
             id="r-day"
             value={form.weekday}
             onChange={(event) => set("weekday", Number(event.target.value))}
-            className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+            className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
           >
             {WEEKDAYS.map((name, index) => (
               <option key={name} value={index}>
@@ -774,7 +780,7 @@ function RuleForm({ onCreated }) {
             type="time"
             value={form.start_time}
             onChange={(event) => set("start_time", event.target.value)}
-            className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+            className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
           />
         </div>
         <div>
@@ -786,7 +792,7 @@ function RuleForm({ onCreated }) {
             type="time"
             value={form.end_time}
             onChange={(event) => set("end_time", event.target.value)}
-            className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+            className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
           />
         </div>
         <div>
@@ -801,7 +807,7 @@ function RuleForm({ onCreated }) {
             step="15"
             value={form.slot_duration_minutes}
             onChange={(event) => set("slot_duration_minutes", Number(event.target.value))}
-            className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+            className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
           />
         </div>
         <div>
@@ -816,7 +822,7 @@ function RuleForm({ onCreated }) {
             step="5"
             value={form.buffer_minutes}
             onChange={(event) => set("buffer_minutes", Number(event.target.value))}
-            className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+            className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
           />
         </div>
         <div>
@@ -827,7 +833,7 @@ function RuleForm({ onCreated }) {
             id="r-tz"
             value={form.timezone}
             onChange={(event) => set("timezone", event.target.value)}
-            className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+            className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
           />
         </div>
         <div>
@@ -839,7 +845,7 @@ function RuleForm({ onCreated }) {
             type="date"
             value={form.effective_from}
             onChange={(event) => set("effective_from", event.target.value)}
-            className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+            className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
           />
         </div>
         <div>
@@ -851,7 +857,7 @@ function RuleForm({ onCreated }) {
             type="date"
             value={form.effective_until}
             onChange={(event) => set("effective_until", event.target.value)}
-            className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+            className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
           />
         </div>
       </div>
@@ -955,9 +961,9 @@ function SlotsPanel() {
                 {daySlots.map((slot) => (
                   <div
                     key={slot.id}
-                    className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2"
+                    className="flex items-center gap-2 rounded-full border border-slate-200 bg-white py-1.5 pl-3.5 pr-1.5"
                   >
-                    <span className="text-sm font-semibold text-slate-800">
+                    <span className="text-[13px] font-semibold text-slate-800 tabular-nums">
                       {formatTime(slot.start_time)}
                     </span>
                     <Badge
@@ -1006,7 +1012,7 @@ function SlotsPanel() {
                       </>
                     )}
                     {slot.status === "booked" && (
-                      <span className="text-[11px] text-slate-500">booked</span>
+                      <span className="pr-2 text-xs text-slate-500">booked</span>
                     )}
                   </div>
                 ))}
@@ -1059,7 +1065,7 @@ function RequestsTopPanel({ onOpenRequests, onChanged }) {
 
   if (requests.length === 0) {
     return (
-      <div className="flex items-center gap-2 rounded-2xl border border-emerald-200/70 bg-emerald-50/60 px-4 py-3 text-sm text-emerald-900">
+      <div className="flex items-center gap-2 rounded-card border border-emerald-200/70 bg-emerald-50/60 px-4 py-3 text-sm text-emerald-900">
         <CheckCircleIcon className="h-4 w-4 shrink-0 text-emerald-600" />
         <p>No pending consultation requests — you&apos;re all caught up.</p>
       </div>
@@ -1082,7 +1088,7 @@ function RequestsTopPanel({ onOpenRequests, onChanged }) {
           return (
             <li
               key={booking.id}
-              className="rounded-2xl border border-accent-200/70 bg-accent-50/50 p-4"
+              className="surface-card border-accent-200/80 p-4"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -1094,12 +1100,12 @@ function RequestsTopPanel({ onOpenRequests, onChanged }) {
                     {booking.seeker_name}
                     {booking.seeker_email ? ` · ${booking.seeker_email}` : ""}
                   </p>
-                  <p className="mt-1.5 text-xs text-slate-500">
+                  <p className="mt-1.5 text-xs text-slate-500 tabular-nums">
                     {formatRange(booking.start_time, booking.end_time)} ·{" "}
                     {formatDuration(booking.duration_minutes)}
                   </p>
                   {awaitingSeeker && (
-                    <p className="mt-1.5 text-xs font-medium text-amber-800">
+                    <p className="mt-1.5 text-xs font-medium text-accent-800">
                       You proposed this time — waiting for {booking.seeker_name} to confirm.
                     </p>
                   )}
@@ -1171,10 +1177,8 @@ function RequestCard({ booking, busyId, onAct, onCounter, refresh }) {
 
   return (
     <li
-      className={`rounded-2xl border p-4 ${
-        awaitingSeeker
-          ? "border-amber-200/80 bg-amber-50/40"
-          : "border-accent-200/70 bg-accent-50/50"
+      className={`surface-card p-4 ${
+        awaitingSeeker ? "border-slate-200" : "border-accent-200/80"
       }`}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -1187,12 +1191,12 @@ function RequestCard({ booking, busyId, onAct, onCounter, refresh }) {
             {booking.seeker_name}
             {booking.seeker_email ? ` · ${booking.seeker_email}` : ""}
           </p>
-          <p className="mt-1.5 text-xs text-slate-500">
+          <p className="mt-1.5 text-xs text-slate-500 tabular-nums">
             {formatRange(booking.start_time, booking.end_time)} ·{" "}
             {formatDuration(booking.duration_minutes)}
           </p>
           {awaitingSeeker && (
-            <p className="mt-1.5 text-xs font-medium text-amber-800">
+            <p className="mt-1.5 text-xs font-medium text-accent-800">
               You proposed this time — waiting for {booking.seeker_name} to confirm.
             </p>
           )}
@@ -1240,14 +1244,14 @@ function RequestCard({ booking, busyId, onAct, onCounter, refresh }) {
       </div>
 
       {booking.notes && (
-        <p className="mt-3 rounded-xl border border-slate-200/70 bg-white px-3.5 py-2 text-xs leading-relaxed text-slate-600">
+        <p className="mt-3 rounded-control border border-slate-200/70 bg-white px-3.5 py-2 text-xs leading-relaxed text-slate-600">
           <span className="font-bold text-slate-500">Seeker notes: </span>
           {booking.notes}
         </p>
       )}
 
       {booking.meet_link && (
-        <p className="mt-3 rounded-xl border border-slate-200/70 bg-white px-3.5 py-2 text-xs leading-relaxed text-slate-600">
+        <p className="mt-3 rounded-control border border-slate-200/70 bg-white px-3.5 py-2 text-xs leading-relaxed text-slate-600">
           <span className="font-bold text-slate-500">Seeker&apos;s meeting link: </span>
           <a
             href={booking.meet_link}
@@ -1261,7 +1265,7 @@ function RequestCard({ booking, busyId, onAct, onCounter, refresh }) {
       )}
 
       {showCounter && (
-        <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3.5">
+        <div className="mt-3 rounded-control border border-slate-200 bg-white p-3.5">
           <p className="mb-2 text-xs font-semibold text-slate-600">
             Suggest a different time to {booking.seeker_name}
           </p>
@@ -1548,7 +1552,7 @@ function SessionNotesPanel({ bookings = [], target, onTargetChange, onChanged })
                 id="notes-booking"
                 value={booking.id}
                 onChange={(event) => onTargetChange?.(event.target.value)}
-                className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none sm:max-w-md"
+                className="mt-1.5 w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none sm:max-w-md"
               >
                 {bookings.map((item) => (
                   <option key={item.id} value={item.id}>
@@ -1566,16 +1570,16 @@ function SessionNotesPanel({ bookings = [], target, onTargetChange, onChanged })
               notes.map((note) => (
                 <li
                   key={note.id}
-                  className="rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3"
+                  className="rounded-card border border-slate-100 bg-slate-50/60 px-4 py-3"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-2">
-                    <p className="min-w-0 text-xs leading-relaxed text-slate-700">{note.body}</p>
+                    <p className="min-w-0 text-sm leading-relaxed text-slate-700">{note.body}</p>
                     <Badge tone={note.visibility === "shared" ? "emerald" : "slate"}>
                       {note.visibility === "shared" ? "Shared" : "Private"}
                     </Badge>
                   </div>
                   <div className="mt-2 flex flex-wrap items-center gap-2">
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-xs text-slate-500 tabular-nums">
                       {note.author_name} · {formatDateTime(note.created_at)}
                     </span>
                     <Button
@@ -1611,7 +1615,7 @@ function SessionNotesPanel({ bookings = [], target, onTargetChange, onChanged })
               rows={3}
               maxLength={4000}
               placeholder="What did you notice in this session? Symbols, themes, follow-ups…"
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+              className="w-full rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-sm leading-relaxed text-slate-900 placeholder:text-slate-500 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
             />
             <div className="flex flex-wrap items-center justify-between gap-3">
               <label className="flex items-center gap-2 text-xs text-slate-600">

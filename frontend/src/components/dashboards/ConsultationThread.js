@@ -34,7 +34,7 @@ function MessageBubble({ message }) {
           {ROLE_LABELS[message.sender_role] || message.sender_role || "Seeker"}
         </p>
         <p className="whitespace-pre-wrap">{message.body}</p>
-        <p className="mt-1 text-[10px] text-slate-500">
+        <p className="mt-1 text-[10px] text-slate-500 tabular-nums">
           {new Date(message.created_at).toLocaleString()}
         </p>
       </div>
@@ -107,7 +107,7 @@ export default function ConsultationThread({
   }
 
   return (
-    <div className="mt-3 rounded-2xl border border-slate-200/80 bg-white/70 p-3.5">
+    <div className="mt-3 rounded-panel border border-slate-200/80 bg-white/70 p-3.5">
       {messages === null ? (
         <SkeletonRow lines={3} />
       ) : messages.length === 0 ? (
@@ -142,7 +142,7 @@ export default function ConsultationThread({
           placeholder={composeLabel}
           rows={2}
           aria-label="Message"
-          className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs text-slate-800 transition placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+          className="w-full rounded-control border border-slate-200 px-3.5 py-2.5 text-xs text-slate-800 transition placeholder:text-slate-500 focus:border-primary-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
         />
         <Button
           size="sm"

@@ -411,19 +411,54 @@ def _clean_json_str(raw: str) -> str:
     return text
 
 
+def _rule_fallback_parts(response: LLMResponse) -> tuple[str, List[str]]:
+    """Extract the human-readable narrative and guidance from a rule-engine fallback.
+
+    The rule engine returns its own payload shape (narrative/guidance) rather than the
+    provider schema, so parsers must never treat its raw JSON as display text.
+    """
+    content = _clean_json_str(response.content)
+    try:
+        payload = json.loads(content)
+    except (json.JSONDecodeError, ValueError):
+        # Non-JSON fallback content is already human-readable prose.
+        return content, []
+    if not isinstance(payload, dict):
+        return content, []
+    narrative = payload.get("narrative")
+    guidance = payload.get("guidance")
+    return (
+        narrative if isinstance(narrative, str) and narrative else "",
+        [str(item) for item in guidance] if isinstance(guidance, list) else [],
+    )
+
+
 def _parse_interpretation_response(response: LLMResponse, palm_data: Dict[str, Any]) -> Dict[str, Any]:
     """Parse the LLM response into a structured interpretation result."""
-    try:
-        content = _clean_json_str(response.content)
-        # Try to find JSON in the response
-        json_start = content.find("{")
-        json_end = content.rfind("}") + 1
-        if json_start >= 0 and json_end > json_start:
-            parsed = json.loads(content[json_start:json_end])
-        else:
-            parsed = {"summary": "", "body": content, "guidance": [], "domain_insights": {}}
-    except (json.JSONDecodeError, ValueError):
-        parsed = {"summary": "", "body": response.content, "guidance": [], "domain_insights": {}}
+    if response.rule_based:
+        narrative, guidance = _rule_fallback_parts(response)
+        parsed = {
+            "summary": "A rule-based palm interpretation was generated.",
+            "body": narrative
+            or (
+                "The AI provider is unavailable right now, so this reading was interpreted "
+                "by the deterministic rule engine instead."
+            ),
+            "guidance": guidance,
+            "domain_insights": {},
+        }
+    else:
+        try:
+            content = _clean_json_str(response.content)
+            # Try to find JSON in the response
+            json_start = content.find("{")
+            json_end = content.rfind("}") + 1
+            if json_start >= 0 and json_end > json_start:
+                parsed = json.loads(content[json_start:json_end])
+            else:
+                parsed = {"summary": "", "body": content, "guidance": [], "domain_insights": {}}
+        except (json.JSONDecodeError, ValueError):
+            parsed = {"summary": "", "body": response.content, "guidance": [], "domain_insights": {}}
 
     meta = {
         "engine": ENGINE_NAME,
@@ -456,16 +491,29 @@ def _parse_interpretation_response(response: LLMResponse, palm_data: Dict[str, A
 
 def _parse_tarot_enhancement(response: LLMResponse, tarot_data: Dict[str, Any]) -> Dict[str, Any]:
     """Parse the LLM enhancement response into structured enhancement data."""
-    try:
-        content = _clean_json_str(response.content)
-        json_start = content.find("{")
-        json_end = content.rfind("}") + 1
-        if json_start >= 0 and json_end > json_start:
-            parsed = json.loads(content[json_start:json_end])
-        else:
-            parsed = {"deep_narrative": "", "wisdom_points": [], "action_plan": []}
-    except (json.JSONDecodeError, ValueError):
-        parsed = {"deep_narrative": response.content, "wisdom_points": [], "action_plan": []}
+    if response.rule_based:
+        narrative, guidance = _rule_fallback_parts(response)
+        parsed = {
+            "deep_narrative": narrative
+            or (
+                "The AI provider is unavailable right now, so this enhancement was generated "
+                "by the deterministic rule engine instead."
+            ),
+            "wisdom_points": guidance,
+            "action_plan": [],
+            "contextual_insight": "",
+        }
+    else:
+        try:
+            content = _clean_json_str(response.content)
+            json_start = content.find("{")
+            json_end = content.rfind("}") + 1
+            if json_start >= 0 and json_end > json_start:
+                parsed = json.loads(content[json_start:json_end])
+            else:
+                parsed = {"deep_narrative": "", "wisdom_points": [], "action_plan": []}
+        except (json.JSONDecodeError, ValueError):
+            parsed = {"deep_narrative": response.content, "wisdom_points": [], "action_plan": []}
 
     meta = {
         "engine": ENGINE_NAME,
@@ -500,16 +548,28 @@ def _parse_synthesis_response(
     response: LLMResponse, palm_data: Dict[str, Any], tarot_data: Dict[str, Any]
 ) -> Dict[str, Any]:
     """Parse the synthesis response into a unified reading result."""
-    try:
-        content = _clean_json_str(response.content)
-        json_start = content.find("{")
-        json_end = content.rfind("}") + 1
-        if json_start >= 0 and json_end > json_start:
-            parsed = json.loads(content[json_start:json_end])
-        else:
-            parsed = {"life_narrative": "", "cross_references": [], "integrated_guidance": []}
-    except (json.JSONDecodeError, ValueError):
-        parsed = {"life_narrative": response.content, "cross_references": [], "integrated_guidance": []}
+    if response.rule_based:
+        narrative, guidance = _rule_fallback_parts(response)
+        parsed = {
+            "life_narrative": narrative
+            or (
+                "The AI provider is unavailable right now, so this synthesis was generated "
+                "by the deterministic rule engine instead."
+            ),
+            "cross_references": [],
+            "integrated_guidance": guidance,
+        }
+    else:
+        try:
+            content = _clean_json_str(response.content)
+            json_start = content.find("{")
+            json_end = content.rfind("}") + 1
+            if json_start >= 0 and json_end > json_start:
+                parsed = json.loads(content[json_start:json_end])
+            else:
+                parsed = {"life_narrative": "", "cross_references": [], "integrated_guidance": []}
+        except (json.JSONDecodeError, ValueError):
+            parsed = {"life_narrative": response.content, "cross_references": [], "integrated_guidance": []}
 
     palm_conf = palm_data.get("metadata", {}).get("overall_confidence", 0.5)
     tarot_conf = tarot_data.get("metadata", {}).get("overall_relevance", 0.5)

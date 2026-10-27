@@ -1,8 +1,8 @@
 // Consultation reports: filter, view, download, or share.
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 import { FileTextIcon } from "@/components/icons";
+import Seo from "@/components/Seo";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { useAuth } from "@/hooks/useAuth";
 import { PageHeader, useToast } from "@/components/ui";
@@ -68,9 +68,10 @@ export default function ConsultantReportsPage() {
 
   return (
     <div className="animate-fade-in space-y-8">
-      <Head>
-        <title>Consultation Reports | Palmistry &amp; Tarot</title>
-      </Head>
+      <Seo
+        title="Reports"
+        description="Your consultation reports, ready to export as PDF or open beside the client's readings."
+      />
 
       <PageHeader
         icon={FileTextIcon}

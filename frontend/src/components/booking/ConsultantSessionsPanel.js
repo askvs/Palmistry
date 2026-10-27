@@ -41,7 +41,7 @@ function RequestRow({ booking, onResolved }) {
   }
 
   return (
-    <li className="rounded-2xl border border-accent-200/70 bg-accent-50/50 p-4">
+    <li className="surface-card border-accent-200/80 p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -52,7 +52,7 @@ function RequestRow({ booking, onResolved }) {
             from <span className="font-semibold">{booking.seeker_name}</span>
             {booking.seeker_email ? ` · ${booking.seeker_email}` : ""}
           </p>
-          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-slate-500 tabular-nums">
             <CalendarIcon className="h-3.5 w-3.5 text-slate-400" />
             {formatRange(booking.start_time, booking.end_time)}
           </p>
@@ -91,7 +91,7 @@ function RequestRow({ booking, onResolved }) {
       </div>
 
       {booking.notes && (
-        <p className="mt-3 rounded-xl border border-slate-200/70 bg-white px-3.5 py-2 text-xs leading-relaxed text-slate-600">
+        <p className="mt-3 rounded-control border border-slate-200/70 bg-white px-3.5 py-2 text-xs leading-relaxed text-slate-600">
           <span className="font-bold text-slate-500">Seeker notes: </span>
           {booking.notes}
         </p>
@@ -109,7 +109,7 @@ function RequestRow({ booking, onResolved }) {
 function ConfirmedSession({ booking, onSaved }) {
   const joinable = canJoinMeet(booking);
   return (
-    <li className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
+    <li className="surface-card p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -119,7 +119,7 @@ function ConfirmedSession({ booking, onSaved }) {
           <p className="mt-1 text-xs text-slate-600">
             with <span className="font-semibold">{booking.seeker_name}</span>
           </p>
-          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-slate-500 tabular-nums">
             <ClockIcon className="h-3.5 w-3.5 text-slate-400" />
             {formatRange(booking.start_time, booking.end_time)}
           </p>
@@ -232,7 +232,7 @@ export default function ConsultantSessionsPanel({ limit = 6 }) {
                     <p className="truncate text-sm font-medium text-slate-800">
                       {booking.subject}
                     </p>
-                    <p className="mt-0.5 text-xs text-slate-500">
+                    <p className="mt-0.5 text-xs text-slate-500 tabular-nums">
                       {booking.seeker_name} · {formatRange(booking.start_time, booking.end_time)}
                     </p>
                   </div>

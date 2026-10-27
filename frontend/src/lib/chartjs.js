@@ -31,6 +31,17 @@ export const CHART_COLORS = ["#7c3aed", "#f59e0b", "#c4b5fd", "#059669", "#e11d4
 
 const AXIS_TICK = { color: "#5b5675", font: { size: 11 } };
 
+// Charts animate into view once, unless the visitor asked for reduced motion.
+function motion() {
+  const reduced =
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return reduced
+    ? { animation: false }
+    : { animation: { duration: 650, easing: "easeOutQuart" } };
+}
+
 // Dataset-level defaults (tension .35, borderWidth 2, pointRadius 0,
 // pointHoverRadius 4) belong to the consuming dataset configs (W2.5/W4).
 
@@ -39,6 +50,7 @@ export function lineChartOptions({ max = 1, unit = "%", legend = true } = {}) {
   return {
     responsive: true,
     maintainAspectRatio: false,
+    ...motion(),
     interaction: { mode: "index", intersect: false },
     scales: {
       y: {
@@ -80,6 +92,7 @@ export function barChartOptions({ unit = "%" } = {}) {
   return {
     responsive: true,
     maintainAspectRatio: false,
+    ...motion(),
     scales: {
       y: {
         min: 0,

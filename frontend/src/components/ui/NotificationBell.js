@@ -29,12 +29,13 @@ function timeAgo(value) {
 // Header notification bell shown to every signed-in role.
 export default function NotificationBell() {
   const { user } = useAuth();
-  const { pathname, push } = useRouter();
+  const { pathname, push, events } = useRouter();
   const [unread, setUnread] = useState(0);
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([]);
   const [loadingItems, setLoadingItems] = useState(false);
   const wrapRef = useRef(null);
+  const bellRef = useRef(null);
 
   // Keep setState in promise callbacks, not the effect body.
   const refresh = useCallback(() => {
@@ -60,6 +61,13 @@ export default function NotificationBell() {
     refresh();
   }, [user, pathname, refresh]);
 
+  // Navigation always dismisses the panel, including keyboard-triggered links.
+  useEffect(() => {
+    const close = () => setOpen(false);
+    events.on("routeChangeStart", close);
+    return () => events.off("routeChangeStart", close);
+  }, [events]);
+
   // Dismiss the dropdown on outside click or Escape.
   useEffect(() => {
     if (!open) return undefined;
@@ -67,7 +75,10 @@ export default function NotificationBell() {
       if (wrapRef.current && !wrapRef.current.contains(event.target)) setOpen(false);
     };
     const onKey = (event) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") {
+        setOpen(false);
+        bellRef.current?.focus();
+      }
     };
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onKey);
@@ -127,6 +138,7 @@ export default function NotificationBell() {
   return (
     <div className="relative" ref={wrapRef}>
       <button
+        ref={bellRef}
         type="button"
         onClick={toggle}
         aria-haspopup="menu"
@@ -141,7 +153,7 @@ export default function NotificationBell() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 z-30 mt-2 w-80 max-w-[85vw] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-900/10"
+          className="absolute right-0 z-30 mt-2 w-80 max-w-[85vw] origin-top-right animate-menu-in overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-900/10"
         >
           <div className="flex items-center justify-between border-b border-slate-100 px-4 py-2.5">
             <span className="text-sm font-semibold text-slate-800">Notifications</span>
@@ -158,7 +170,18 @@ export default function NotificationBell() {
 
           <div className="max-h-96 overflow-y-auto">
             {loadingItems ? (
-              <p className="px-4 py-6 text-center text-sm text-slate-500">Loading…</p>
+              <div className="space-y-3.5 px-4 py-3.5" aria-busy="true">
+                <span className="sr-only">Loading notifications…</span>
+                {[0, 1, 2].map((row) => (
+                  <div key={row} className="flex items-start gap-3" aria-hidden="true">
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full skeleton-shimmer" />
+                    <span className="min-w-0 flex-1 space-y-1.5">
+                      <span className="block h-3 w-3/4 rounded-[4px] skeleton-shimmer" />
+                      <span className="block h-2.5 w-1/2 rounded-[4px] skeleton-shimmer" />
+                    </span>
+                  </div>
+                ))}
+              </div>
             ) : items.length === 0 ? (
               <p className="px-4 py-6 text-center text-sm text-slate-500">You&rsquo;re all caught up</p>
             ) : (

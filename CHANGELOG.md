@@ -2,6 +2,69 @@
 
 All notable implementation changes to the Palmistry & Tarot Intelligence Platform.
 
+## [Unreleased] — Seeker "My Sessions": confirmed sessions show a meeting card
+- **Every confirmed session now has a one-click "Join Google Meet" button at
+  the top of its row** in `frontend/src/pages/sessions.js`. It is always
+  visible for accepted sessions that have a Meet link — enabled inside the
+  30-minute join window, disabled before it. Previously the only Join button
+  appeared inside the window and the Meet link sat behind the collapsed
+  "Details" toggle, so a seeker could not see how to attend.
+- **New `frontend/src/components/booking/MeetingCard.js`** renders up-front for
+  accepted bookings: session date/time and duration, a live countdown
+  ("Starts in 2 h 15 min" → "Happening now" → "Session ended"), the full Google
+  Meet link with a Copy link button, and an "Add to Google Calendar" button.
+  When the consultant has not shared a link yet, the card says so instead of
+  showing nothing.
+- **New `frontend/src/hooks/useNow.js`** is a shared ticking clock (30 s) so the
+  Join button and the countdown stay live without a page reload.
+- **New `googleCalendarUrl()` and `countdownLabel()` helpers** in
+  `frontend/src/lib/datetime.js` build the calendar URL and the countdown text.
+- The duplicate Meet block inside "Details" was removed; "Details" keeps notes,
+  history, session notes, and feedback.
+
+## [Unreleased] — Consultants no longer get the seeker "My Sessions" hub
+- **The consultant header drops "My Sessions".** Consultants run their sessions
+  from Live Consultation / Consultant Studio and never book as seekers, so the
+  seeker session hub was permanently empty for them. `frontend/src/lib/roles.js`
+  removes the `sessions` nav key from the `spiritual_consultant` role and removes
+  `spiritual_consultant` from the `/sessions` `STAFF_ONLY_PREFIXES` allow-list.
+- **`/sessions` now enforces its access rule.** `frontend/src/pages/sessions.js`
+  never called `useRoleGuard`, so the `/sessions` prefix rule was inert; it now
+  renders the standard "Redirecting…" state and sends consultants (and admins,
+  matching the existing "session hub without admins" intent) to their dashboard.
+- **Consultant Studio header button removed.** The redundant "My sessions"
+  button in `frontend/src/pages/consultant-studio.js` is gone; the studio's own
+  Sessions tab already covers the consultant's sessions.
+
+## [Unreleased] — Notification Center crash on the signed-out state
+- **`/notifications` no longer throws "Element type is invalid".** The page
+  imported `Link` as a named import (`import { Link } from "next/link"`) while
+  `next/link` provides `Link` only as its default export — the other 23
+  importers in the app all use the default import — so `Link` was `undefined`
+  and React failed the whole tree ("expected a string (for built-in components)
+  or a class/function ... but got: undefined") as soon as the signed-out branch
+  rendered. One-line fix in `frontend/src/pages/notifications.js`; that branch
+  now renders its working `Log In` link.
+
+## [Unreleased] — Consultant "Live Consultation" inbox
+- **The consultant's "Find a Consultant" nav entry is replaced by "Live
+  Consultation".** In `frontend/src/lib/roles.js` the `spiritual_consultant`
+  role swaps its `consultants` nav key for the new `live_consultation` item, so
+  the consultant header reads Home / Live Consultation / My Sessions /
+  Consultant Studio. Seekers, readers and admins keep "Find a Consultant"
+  unchanged — the seeker portal is untouched.
+- **New page `frontend/src/pages/live-consultation.js`** holds the whole
+  post-request flow in one place: a "New requests" section (pending and
+  countered) with Accept, Decline, Propose time (counter-offer) and Chat, and a
+  "Confirmed sessions" section where each accepted card keeps its Google Meet
+  link editor, Join button, Chat, session Notes (private or shared) and
+  Mark complete / Cancel actions. Accepting a request moves the card in place
+  instead of sending the consultant to another tab.
+- **Access**: `/live-consultation` is consultant-only via a new
+  `STAFF_ONLY_PREFIXES` entry; any other signed-in role is redirected to
+  `/dashboard?blocked=…`. No backend change, and `/consultants`, `/sessions`
+  and `/consultant-studio` are untouched.
+
 ## [Unreleased] — Deploy-time migrations (entrypoint)
 - **Containers apply pending migrations before starting.** New
   `backend/entrypoint.sh` runs `alembic upgrade head` ahead of the server

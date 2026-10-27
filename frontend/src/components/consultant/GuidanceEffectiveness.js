@@ -6,6 +6,7 @@ import { ChartIcon, TargetIcon } from "@/components/icons";
 import {
   ChartFrame,
   ChartSkeleton,
+  EmptyState,
   SectionError,
   SourceBadge,
   GuidanceDisclaimer,
@@ -15,12 +16,12 @@ import { CHART_COLORS, barChartOptions, lineChartOptions } from "@/lib/chartjs";
 
 function OverallScore({ value, source }) {
   return (
-    <div className="flex flex-col items-start gap-4 rounded-3xl border border-primary-100 bg-primary-50/50 p-6 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col items-start gap-4 rounded-[20px] border border-primary-100 bg-primary-50/50 p-6 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-primary-700">
+        <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary-700">
           Overall guidance effectiveness
         </p>
-        <p className="mt-2 font-display text-5xl tracking-tight text-slate-900">
+        <p className="mt-2 font-display text-5xl tracking-tight text-slate-900 tabular-nums">
           {Math.round(value * 100)}%
         </p>
         <p className="mt-2 max-w-md text-sm leading-relaxed text-slate-600">
@@ -50,14 +51,13 @@ export default function GuidanceEffectiveness({ data, loading = false, error = n
         {
           label: "Effectiveness",
           data: rows.map((point) => point.value),
-          borderColor: CHART_COLORS[2],
-          backgroundColor: "rgba(245, 158, 11, 0.12)",
+          borderColor: CHART_COLORS[1],
+          backgroundColor: "rgba(245,158,11,0.12)",
           fill: true,
           tension: 0.35,
           borderWidth: 2,
-          pointRadius: 3,
-          pointBackgroundColor: "#ffffff",
-          pointBorderColor: CHART_COLORS[2],
+          pointRadius: 0,
+          pointHoverRadius: 4,
         },
       ],
     };
@@ -72,37 +72,40 @@ export default function GuidanceEffectiveness({ data, loading = false, error = n
         {
           label: "Consultations",
           data: rows.map((item) => item.count),
-          backgroundColor: CHART_COLORS[0],
-          borderRadius: 8,
+          backgroundColor: CHART_COLORS[1],
+          hoverBackgroundColor: "#d97706",
+          borderRadius: 6,
           maxBarThickness: 34,
         },
       ],
     };
   }, [data]);
 
-  const areaBarOptions = useMemo(
-    () => ({
-      ...barChartOptions({ unit: "" }),
+  // Session counts, not ratios — keep the shared porcelain chrome but swap the
+  // percentage ticks/tooltip callbacks for plain counts.
+  const areaBarOptions = useMemo(() => {
+    const base = barChartOptions();
+    return {
+      ...base,
       scales: {
         y: {
           min: 0,
-          ticks: { color: "#64748b", font: { size: 11 } },
-          grid: { color: "rgba(148, 163, 184, 0.2)" },
+          ticks: { color: "#5b5675", font: { size: 11 } },
+          grid: { color: "#f1eff9" },
         },
-        x: { ticks: { color: "#64748b", font: { size: 11 } }, grid: { display: false } },
+        x: base.scales.x,
       },
       plugins: {
-        legend: { display: false },
+        ...base.plugins,
         tooltip: {
-          enabled: true,
-          backgroundColor: "#0f172a",
-          padding: 10,
-          cornerRadius: 10,
+          ...base.plugins.tooltip,
+          callbacks: {
+            label: (context) => ` ${context.label}: ${context.parsed.y}`,
+          },
         },
       },
-    }),
-    []
-  );
+    };
+  }, []);
 
   return (
     <div className="space-y-5">
@@ -128,11 +131,13 @@ export default function GuidanceEffectiveness({ data, loading = false, error = n
                 <div className="mb-1.5 flex items-center justify-between gap-3 text-xs">
                   <span className="font-medium text-slate-600">
                     {row.area}
-                    <span className="ml-2 text-slate-500">{row.sessions} sessions</span>
+                    <span className="ml-2 text-slate-500 tabular-nums">{row.sessions} sessions</span>
                   </span>
-                  <span className="font-bold text-slate-900">{Math.round(row.value * 100)}%</span>
+                  <span className="font-bold text-slate-900 tabular-nums">
+                    {Math.round(row.value * 100)}%
+                  </span>
                 </div>
-                <MeterBar value={row.value} tone="emerald" label={`${row.area} effectiveness`} />
+                <MeterBar value={row.value} tone="accent" label={`${row.area} effectiveness`} />
               </li>
             ))}
           </ul>
@@ -152,13 +157,11 @@ export default function GuidanceEffectiveness({ data, loading = false, error = n
               <Line data={overTimeData} options={lineChartOptions({ max: 1 })} />
             </ChartFrame>
           ) : (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 px-6 py-10 text-center">
-              <ChartIcon className="h-6 w-6 text-slate-400" />
-              <p className="mt-3 text-sm font-medium text-slate-900">Not enough history yet</p>
-              <p className="mt-1 max-w-xs text-sm text-slate-500">
-                The trend line fills in as more of your consultations close.
-              </p>
-            </div>
+            <EmptyState
+              icon={ChartIcon}
+              title="Not enough history yet"
+              description="The trend line fills in as more of your consultations close."
+            />
           )}
         </Panel>
 
@@ -174,13 +177,11 @@ export default function GuidanceEffectiveness({ data, loading = false, error = n
               <Bar data={areasData} options={areaBarOptions} />
             </ChartFrame>
           ) : (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 px-6 py-10 text-center">
-              <ChartIcon className="h-6 w-6 text-slate-400" />
-              <p className="mt-3 text-sm font-medium text-slate-900">No guidance areas yet</p>
-              <p className="mt-1 max-w-xs text-sm text-slate-500">
-                Categories appear once your consultations start closing.
-              </p>
-            </div>
+            <EmptyState
+              icon={ChartIcon}
+              title="No guidance areas yet"
+              description="Categories appear once your consultations start closing."
+            />
           )}
         </Panel>
       </div>

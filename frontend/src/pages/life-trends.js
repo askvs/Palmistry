@@ -1,18 +1,9 @@
 // Life trends: momentum, domain history, reading log, and method metadata.
 import { useEffect, useMemo } from "react";
-import Head from "next/head";
+import Seo from "@/components/Seo";
 import { useRouter } from "next/router";
-import {
-  CategoryScale,
-  Chart as ChartJS,
-  Filler,
-  Legend,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Tooltip,
-} from "chart.js";
 import { Line } from "react-chartjs-2";
+import { CHART_COLORS, lineChartOptions } from "@/lib/chartjs";
 import {
   Badge,
   Button,
@@ -46,11 +37,6 @@ import {
   TrendingUpIcon,
 } from "@/components/icons";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler, Legend);
-
-// Data-viz colors for the per-domain history lines (overall stays violet).
-const DOMAIN_COLORS = ["#6366f1", "#f59e0b", "#10b981", "#3b82f6", "#f43f5e"];
-
 const LOG_DATE_FORMAT = {
   month: "short",
   day: "numeric",
@@ -83,17 +69,17 @@ function TrendDetailCard({ trend }) {
         <div className="flex items-center gap-2">
           <span className="w-20 shrink-0">Score</span>
           <Meter value={trend.score} />
-          <span className="w-10 text-right font-medium">{Math.round(trend.score * 100)}%</span>
+          <span className="w-10 text-right font-medium tabular-nums">{Math.round(trend.score * 100)}%</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-20 shrink-0">Strength</span>
           <Meter value={trend.strength} tone="indigo" />
-          <span className="w-10 text-right font-medium">{Math.round(trend.strength * 100)}%</span>
+          <span className="w-10 text-right font-medium tabular-nums">{Math.round(trend.strength * 100)}%</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-20 shrink-0">Confidence</span>
           <Meter value={trend.confidence} tone="accent" />
-          <span className="w-10 text-right font-medium">{Math.round(trend.confidence * 100)}%</span>
+          <span className="w-10 text-right font-medium tabular-nums">{Math.round(trend.confidence * 100)}%</span>
         </div>
       </div>
 
@@ -136,7 +122,7 @@ function DetailHistoryChart({ history }) {
     });
     const topDomains = [...domainTally.entries()]
       .sort((a, b) => b[1] - a[1])
-      .slice(0, DOMAIN_COLORS.length)
+      .slice(0, CHART_COLORS.length)
       .map(([key]) => key);
 
     return {
@@ -146,45 +132,30 @@ function DetailHistoryChart({ history }) {
           label: "Overall signal",
           data: points.map((p) => p.overall_signal),
           fill: true,
-          borderColor: "#8b5cf6",
-          backgroundColor: "rgba(139, 92, 246, 0.12)",
-          pointBackgroundColor: "#8b5cf6",
-          borderWidth: 2.5,
-          pointRadius: 3,
-          tension: 0.3,
+          borderColor: CHART_COLORS[0],
+          backgroundColor: "rgba(124, 58, 237, 0.12)",
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          tension: 0.35,
         },
         ...topDomains.map((key, i) => ({
           label: formatDomainLabel(key),
           data: points.map((p) => p.domains?.[key] ?? null),
           spanGaps: true,
-          borderColor: DOMAIN_COLORS[i % DOMAIN_COLORS.length],
+          borderColor: CHART_COLORS[(i + 1) % CHART_COLORS.length],
           backgroundColor: "transparent",
-          pointBackgroundColor: DOMAIN_COLORS[i % DOMAIN_COLORS.length],
           borderWidth: 1.5,
-          pointRadius: 2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
           borderDash: [6, 4],
-          tension: 0.3,
+          tension: 0.35,
         })),
       ],
     };
   }, [history]);
 
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: { min: 0, max: 1, ticks: { color: "#64748b" }, grid: { color: "rgba(148, 163, 184, 0.2)" } },
-      x: { ticks: { color: "#64748b" }, grid: { display: false } },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: "bottom",
-        labels: { color: "#475569", usePointStyle: true, boxWidth: 8, boxHeight: 8 },
-      },
-      tooltip: { enabled: true },
-    },
-  };
+  const options = lineChartOptions();
 
   return (
     <div className="h-72">
@@ -220,7 +191,7 @@ function ReadingLog({ history }) {
                 {new Date(p.date).toLocaleString("en-US", LOG_DATE_FORMAT)}
               </span>
             </div>
-            <span className="text-sm font-semibold text-slate-900">
+            <span className="text-sm font-semibold tabular-nums text-slate-900">
               {Math.round(p.overall_signal * 100)}%
             </span>
           </li>
@@ -285,16 +256,16 @@ export default function LifeTrendsPage() {
 
     if (loading || !trends) {
       return (
-        <div className="animate-pulse space-y-6" aria-hidden="true">
+        <div className="space-y-6" aria-hidden="true">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="h-32 rounded-3xl bg-slate-100" />
-            <div className="h-32 rounded-3xl bg-slate-100" />
-            <div className="h-32 rounded-3xl bg-slate-100" />
-            <div className="h-32 rounded-3xl bg-slate-100" />
+            <div className="skeleton-shimmer h-32 rounded-panel" />
+            <div className="skeleton-shimmer h-32 rounded-panel" />
+            <div className="skeleton-shimmer h-32 rounded-panel" />
+            <div className="skeleton-shimmer h-32 rounded-panel" />
           </div>
           <SkeletonRow lines={3} />
-          <div className="h-40 rounded-3xl bg-slate-100" />
-          <div className="h-64 rounded-3xl bg-slate-100" />
+          <div className="h-40 rounded-[20px] bg-slate-100" />
+          <div className="h-64 rounded-[20px] bg-slate-100" />
         </div>
       );
     }
@@ -440,9 +411,10 @@ export default function LifeTrendsPage() {
 
   return (
     <div className="animate-fade-in space-y-6">
-      <Head>
-        <title>Life Trend Analysis | MysticLens</title>
-      </Head>
+      <Seo
+        title="Life trends"
+        description="Momentum, domain history, and evidence-backed signals computed from your own palm and tarot readings."
+      />
 
       <PageHeader
         icon={TrendingUpIcon}

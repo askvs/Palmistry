@@ -137,23 +137,29 @@ export default function SecurityMonitor() {
             {items.map((entry) => (
               <li
                 key={entry.id}
-                className="-mx-2 flex flex-col gap-2 rounded-lg px-2 py-3 transition hover:bg-slate-50/60 sm:flex-row sm:items-start sm:justify-between"
+                className="-mx-2 flex flex-col gap-2 rounded-lg px-2 py-2.5 transition hover:bg-slate-50/60 sm:flex-row sm:items-start sm:justify-between"
               >
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
+                    <span
+                      className={`h-2 w-2 shrink-0 rounded-full ${
+                        entry.level === "security" ? "bg-accent-500" : "bg-rose-600"
+                      }`}
+                      aria-hidden="true"
+                    />
                     <Badge tone={entry.level === "security" ? "blue" : "rose"}>
                       {entry.level === "security" ? "Security" : "Error"}
                     </Badge>
                     <Badge tone="slate">{entry.kind.replace(/_/g, " ")}</Badge>
-                    <span className="font-mono text-xs font-semibold text-slate-700">
+                    <span className="font-mono text-[12px] font-semibold tabular-nums text-slate-700">
                       {entry.status_code}
                     </span>
-                    <span className="truncate text-xs font-medium text-slate-600">
+                    <span className="truncate text-[12.5px] font-medium text-slate-600">
                       {entry.method} {entry.path}
                     </span>
                   </div>
-                  <p className="mt-1 text-xs text-slate-600">{entry.message}</p>
-                  <p className="mt-0.5 text-xs text-slate-500">
+                  <p className="mt-1 text-[13px] leading-relaxed text-slate-600">{entry.message}</p>
+                  <p className="mt-0.5 text-[12.5px] tabular-nums text-slate-500">
                     {entry.occurrences} occurrence{entry.occurrences === 1 ? "" : "s"} · last seen{" "}
                     {new Date(entry.last_seen_at).toLocaleString()}
                     {entry.actor_email ? ` · ${entry.actor_email}` : ""}
@@ -163,7 +169,7 @@ export default function SecurityMonitor() {
 
                 <div className="shrink-0 self-start">
                   {entry.acknowledged_at ? (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700">
+                    <span className="inline-flex items-center gap-1.5 text-[12.5px] font-medium tabular-nums text-emerald-700">
                       <CheckCircleIcon className="h-3.5 w-3.5" />
                       Triaged {new Date(entry.acknowledged_at).toLocaleDateString()}
                     </span>
@@ -185,7 +191,7 @@ export default function SecurityMonitor() {
         )}
       </Panel>
 
-      <p className="text-xs text-slate-500">
+      <p className="text-[12.5px] leading-relaxed text-slate-500">
         Entries are deduplicated per (kind, method, path, status, message). The log is
         append-only: triaging records an audit entry and never deletes history.
       </p>

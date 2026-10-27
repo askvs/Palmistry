@@ -115,15 +115,15 @@ export default function RecommendationsSection({
         />
       ) : (
         <div>
-          <div className="mb-4 flex flex-wrap gap-2">
+          <div className="mb-4 inline-flex flex-wrap items-center gap-1 rounded-full border border-slate-200 bg-slate-100 p-1">
             <button
               type="button"
               onClick={() => setActiveCategory(null)}
               aria-pressed={!activeCategory}
-              className={`inline-flex cursor-pointer items-center rounded-full px-3 py-1.5 text-xs font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
+              className={`inline-flex cursor-pointer items-center rounded-full px-3 py-1.5 text-[12.5px] font-medium transition duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
                 !activeCategory
-                  ? "bg-primary-600 text-white shadow-sm shadow-primary-600/25"
-                  : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:text-primary-700"
+                  ? "bg-white text-primary-700 shadow-[0_1px_3px_rgba(30,24,54,0.12)]"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               All
@@ -134,10 +134,10 @@ export default function RecommendationsSection({
                 key={category}
                 onClick={() => setActiveCategory(category)}
                 aria-pressed={activeCategory === category}
-                className={`inline-flex cursor-pointer items-center rounded-full px-3 py-1.5 text-xs font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
+                className={`inline-flex cursor-pointer items-center rounded-full px-3 py-1.5 text-[12.5px] font-medium transition duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
                   activeCategory === category
-                    ? "bg-primary-600 text-white shadow-sm shadow-primary-600/25"
-                    : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:text-primary-700"
+                    ? "bg-white text-primary-700 shadow-[0_1px_3px_rgba(30,24,54,0.12)]"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 {categoryLabel(category)}

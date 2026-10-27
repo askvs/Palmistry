@@ -94,12 +94,12 @@ export default function AdminDashboard() {
         title="Admin Console"
         subtitle="Every governance surface lives in its own section"
       >
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {CONSOLE_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="group rounded-2xl border border-slate-200 bg-slate-50/50 p-4 transition hover:border-primary-200 hover:bg-primary-50/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+              className="group surface-card p-5 transition duration-200 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-lift focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
             >
               <div className="flex items-start gap-3">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
@@ -109,7 +109,9 @@ export default function AdminDashboard() {
                   <p className="text-sm font-semibold text-slate-900 transition group-hover:text-primary-700">
                     {link.label}
                   </p>
-                  <p className="mt-0.5 text-xs text-slate-500">{link.description}</p>
+                  <p className="mt-0.5 text-[12.5px] leading-relaxed text-slate-500">
+                    {link.description}
+                  </p>
                 </div>
               </div>
             </Link>

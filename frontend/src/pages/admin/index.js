@@ -14,6 +14,7 @@ import {
   SystemStatusPanel,
   UsersByRolePanel,
 } from "@/components/admin/AnalyticsPanels";
+import Seo from "@/components/Seo";
 import { InlineError, PageHeader } from "@/components/ui";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import {
@@ -36,6 +37,11 @@ export default function AdminOverviewPage() {
 
   return (
     <div className="space-y-6">
+      <Seo
+        title="Admin"
+        description="Administration overview: accounts, divination volume, system health and session activity across the platform."
+      />
+
       <PageHeader
         icon={ShieldIcon}
         eyebrow="Administration"

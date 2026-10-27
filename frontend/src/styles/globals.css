@@ -271,11 +271,11 @@ html::-webkit-scrollbar-track { background: #efebfa; }
 }
 
 .animate-riffle-left {
-  animation: riffle-left 0.75s ease-in-out infinite alternate;
+  animation: riffle-left 0.56s ease-in-out infinite alternate;
 }
 
 .animate-riffle-right {
-  animation: riffle-right 0.75s ease-in-out infinite alternate;
+  animation: riffle-right 0.56s ease-in-out infinite alternate;
 }
 
 .animate-deck-cascade {
@@ -313,6 +313,153 @@ html::-webkit-scrollbar-track { background: #efebfa; }
   box-shadow:
     0 10px 25px -5px rgba(15, 12, 41, 0.5),
     0 0 15px rgba(124, 58, 237, 0.18);
+}
+
+/* ------------------------- Component motion primitives --------------------
+   Opt-in helpers for non-landing surfaces. The landing page uses none of
+   these classes, so its existing reveal choreography stays untouched. */
+
+@keyframes menu-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes tab-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes skeleton-sweep {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes badge-pop {
+  0% { opacity: 0.35; transform: scale(0.72); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shutter-flash {
+  from { opacity: 0.92; }
+  to { opacity: 0; }
+}
+
+@keyframes drawer-in {
+  from { opacity: 0.6; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-menu-in {
+  transform-origin: top right;
+  animation: menu-in 180ms var(--ease-standard) both;
+}
+
+.animate-dialog-in {
+  animation: dialog-in 240ms var(--ease-standard) both;
+}
+
+.animate-backdrop-in {
+  animation: backdrop-in 180ms ease-out both;
+}
+
+.animate-tab-in {
+  animation: tab-in 240ms var(--ease-standard) both;
+}
+
+.animate-badge-pop {
+  animation: badge-pop 180ms var(--ease-celebrate) both;
+}
+
+.animate-shutter-flash {
+  animation: shutter-flash 260ms ease-out both;
+}
+
+.animate-drawer-in {
+  animation: drawer-in 220ms var(--ease-standard) both;
+}
+
+/* One shared skeleton treatment so loading states match everywhere. */
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: #f1eff9;
+}
+
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  animation: skeleton-sweep 1.6s ease-in-out infinite;
+}
+
+/* Consistent interactive-card lift. */
+.hover-lift {
+  transition:
+    transform 180ms var(--ease-standard),
+    box-shadow 180ms var(--ease-standard),
+    border-color 180ms var(--ease-standard);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  border-color: #ddd6fe;
+  box-shadow: var(--shadow-lift);
+}
+
+/* Disclosure that animates height without measuring JS. */
+.disclosure {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 240ms var(--ease-standard);
+}
+
+.disclosure[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+
+.disclosure > * {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.disclosure-inner {
+  opacity: 0;
+  transform: translateY(-2px);
+  transition:
+    opacity 180ms ease,
+    transform 240ms var(--ease-standard);
+}
+
+.disclosure[data-open="true"] .disclosure-inner {
+  opacity: 1;
+  transform: none;
+}
+
+/* Console table rows keep their density but acknowledge the pointer. */
+.row-hover {
+  transition: background-color 150ms var(--ease-standard);
+}
+
+.row-hover:hover {
+  background-color: #f8f7fd;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer::after {
+    animation: none;
+  }
 }
 
 

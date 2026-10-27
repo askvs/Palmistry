@@ -1,13 +1,13 @@
 // Consultant "Live Consultation" inbox: new requests plus every post-accept
 // tool (Meet link, chat, notes, completion) on one card.
 import { useCallback, useMemo, useState } from "react";
+import Seo from "@/components/Seo";
 import {
   Badge,
   Button,
   ConfirmDialog,
   ErrorState,
   InlineError,
-  Panel,
   PageHeader,
   SkeletonRow,
   useToast,
@@ -65,30 +65,30 @@ function RequestCard({ booking, busyId, onAct, onCounter }) {
 
   return (
     <li
-      className={`rounded-2xl border p-4 ${
+      className={`rounded-[16px] p-4 ring-1 ${
         awaitingSeeker
-          ? "border-amber-200/80 bg-amber-50/40"
-          : "border-accent-200/70 bg-accent-50/50"
+          ? "bg-accent-400/[0.06] ring-accent-400/25"
+          : "bg-white/[0.04] ring-white/[0.08]"
       }`}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h4 className="text-sm font-semibold text-slate-900">{booking.subject}</h4>
+            <h4 className="text-sm font-semibold text-[#ede9fe]">{booking.subject}</h4>
             <BookingStatusBadge status={booking.status} />
           </div>
-          <p className="mt-1 text-xs text-slate-600">
-            {booking.seeker_name}
+          <p className="mt-1 text-[13.5px] text-[#a79fc6]">
+            <span className="font-semibold text-[#ede9fe]">{booking.seeker_name}</span>
             {booking.seeker_email ? ` · ${booking.seeker_email}` : ""}
           </p>
-          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
-            <CalendarIcon className="h-3.5 w-3.5 text-slate-400" />
+          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[12.5px] tabular-nums text-[#a79fc6]">
+            <CalendarIcon className="h-3.5 w-3.5" />
             {formatRange(booking.start_time, booking.end_time)}
-            <span className="text-slate-300">·</span>
+            <span className="text-white/25">·</span>
             {formatDuration(booking.duration_minutes)}
           </p>
           {awaitingSeeker && (
-            <p className="mt-1.5 text-xs font-medium text-amber-800">
+            <p className="mt-1.5 text-[12.5px] font-medium text-accent-300">
               You proposed this time — waiting for {booking.seeker_name} to confirm.
             </p>
           )}
@@ -96,6 +96,7 @@ function RequestCard({ booking, busyId, onAct, onCounter }) {
         <div className="flex flex-wrap gap-2">
           {!awaitingSeeker && (
             <Button
+              variant="accent"
               size="sm"
               icon={CheckCircleIcon}
               loading={busyId === booking.id}
@@ -108,6 +109,7 @@ function RequestCard({ booking, busyId, onAct, onCounter }) {
           <Button
             variant="secondary"
             size="sm"
+            className="border-white/15 bg-white/5 text-violet-300 hover:border-white/25 hover:bg-white/10 active:bg-white/15"
             icon={ClockIcon}
             disabled={busyId !== null}
             onClick={() => setShowCounter((value) => !value)}
@@ -117,6 +119,7 @@ function RequestCard({ booking, busyId, onAct, onCounter }) {
           <Button
             variant="ghost"
             size="sm"
+            className="text-violet-300 hover:bg-white/10 hover:text-white active:bg-white/10"
             icon={ChatIcon}
             onClick={() => setShowChat((value) => !value)}
           >
@@ -136,20 +139,20 @@ function RequestCard({ booking, busyId, onAct, onCounter }) {
       </div>
 
       {booking.notes && (
-        <p className="mt-3 rounded-xl border border-slate-200/70 bg-white px-3.5 py-2 text-xs leading-relaxed text-slate-600">
-          <span className="font-bold text-slate-500">Seeker notes: </span>
+        <p className="mt-3 rounded-[10px] bg-white/[0.05] px-3.5 py-2.5 text-sm leading-relaxed text-[#a79fc6] ring-1 ring-white/[0.06]">
+          <span className="font-bold text-[#ede9fe]">Seeker notes: </span>
           {booking.notes}
         </p>
       )}
 
       {booking.meet_link && (
-        <p className="mt-3 rounded-xl border border-slate-200/70 bg-white px-3.5 py-2 text-xs leading-relaxed text-slate-600">
-          <span className="font-bold text-slate-500">Seeker&apos;s meeting link: </span>
+        <p className="mt-3 rounded-[10px] bg-white/[0.05] px-3.5 py-2.5 text-sm leading-relaxed text-[#a79fc6] ring-1 ring-white/[0.06]">
+          <span className="font-bold text-[#ede9fe]">Seeker&apos;s meeting link: </span>
           <a
             href={booking.meet_link}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary-600 hover:underline"
+            className="text-violet-300 underline underline-offset-2 hover:text-white"
           >
             {booking.meet_link}
           </a>
@@ -157,8 +160,8 @@ function RequestCard({ booking, busyId, onAct, onCounter }) {
       )}
 
       {showCounter && (
-        <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3.5">
-          <p className="mb-2 text-xs font-semibold text-slate-600">
+        <div className="mt-3 rounded-[16px] bg-white/[0.05] p-3.5 ring-1 ring-white/[0.08]">
+          <p className="mb-2 text-[12.5px] font-semibold text-[#a79fc6]">
             Suggest a different time to {booking.seeker_name}
           </p>
           <TimeProposalForm
@@ -230,9 +233,9 @@ function SessionNotes({ bookingId }) {
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-3.5">
-      <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Session notes</p>
-      <p className="mt-1 text-xs leading-relaxed text-slate-500">
+    <div className="rounded-[16px] bg-white/[0.05] p-3.5 ring-1 ring-white/[0.08]">
+      <p className="text-xs font-bold uppercase tracking-wide text-[#a79fc6]">Session notes</p>
+      <p className="mt-1 text-[12.5px] leading-relaxed text-[#a79fc6]">
         Keep private notes for yourself, or share a note with the seeker.
       </p>
 
@@ -247,26 +250,27 @@ function SessionNotes({ bookingId }) {
       ) : (
         <ul className="mt-3 space-y-2">
           {notes.length === 0 ? (
-            <li className="text-xs text-slate-500">No notes on this session yet.</li>
+            <li className="text-[12.5px] text-[#a79fc6]">No notes on this session yet.</li>
           ) : (
             notes.map((note) => (
               <li
                 key={note.id}
-                className="rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3"
+                className="rounded-[10px] bg-white/[0.04] px-4 py-3 ring-1 ring-white/[0.06]"
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
-                  <p className="min-w-0 text-xs leading-relaxed text-slate-700">{note.body}</p>
+                  <p className="min-w-0 text-sm leading-relaxed text-[#ede9fe]">{note.body}</p>
                   <Badge tone={note.visibility === "shared" ? "emerald" : "slate"}>
                     {note.visibility === "shared" ? "Shared" : "Private"}
                   </Badge>
                 </div>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <span className="text-[11px] text-slate-500">
+                  <span className="text-[12.5px] tabular-nums text-[#a79fc6]">
                     {note.author_name} · {formatDateTime(note.created_at)}
                   </span>
                   <Button
                     variant="ghost"
                     size="sm"
+                    className="text-violet-300 hover:bg-white/10 hover:text-white active:bg-white/10"
                     onClick={() => {
                       setEditingId(note.id);
                       setBody(note.body);
@@ -291,26 +295,26 @@ function SessionNotes({ bookingId }) {
         </ul>
       )}
 
-      <form onSubmit={submit} className="mt-3 space-y-2.5 border-t border-slate-100 pt-3">
+      <form onSubmit={submit} className="mt-3 space-y-2.5 border-t border-white/10 pt-3">
         <textarea
           value={body}
           onChange={(event) => setBody(event.target.value)}
           rows={3}
           maxLength={4000}
           placeholder="What did you notice in this session? Symbols, themes, follow-ups…"
-          className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 shadow-xs focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
+          className="w-full rounded-[10px] border border-white/10 bg-white/[0.06] px-3.5 py-2.5 text-sm text-[#ede9fe] placeholder:text-[#a79fc6] focus:border-violet-400/70 focus:ring-2 focus:ring-violet-500/25 focus:outline-none"
         />
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <label className="flex items-center gap-2 text-xs text-slate-600">
+          <label className="flex items-center gap-2 text-[12.5px] text-[#c4b5fd]">
             <input
               type="checkbox"
               checked={visibility === "shared"}
               onChange={(event) => setVisibility(event.target.checked ? "shared" : "private")}
-              className="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+              className="h-4 w-4 rounded border-white/20 accent-primary-600 focus:ring-primary-500"
             />
             Share this note with the seeker
           </label>
-          <Button type="submit" size="sm" loading={busy} disabled={busy || !body.trim()}>
+          <Button variant="accent" type="submit" size="sm" loading={busy} disabled={busy || !body.trim()}>
             {editingId ? "Update note" : "Add note"}
           </Button>
         </div>
@@ -357,29 +361,30 @@ function ConfirmedCard({ booking, onChanged }) {
   }
 
   return (
-    <li className="rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-4">
+    <li className="rounded-[16px] bg-white/[0.04] p-4 ring-1 ring-white/[0.08]">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h4 className="text-sm font-semibold text-slate-900">{booking.subject}</h4>
+            <h4 className="text-sm font-semibold text-[#ede9fe]">{booking.subject}</h4>
             <BookingStatusBadge status={booking.status} />
           </div>
-          <p className="mt-1 text-xs text-slate-600">
-            with <span className="font-semibold">{booking.seeker_name}</span>
+          <p className="mt-1 text-[13.5px] text-[#a79fc6]">
+            with <span className="font-semibold text-[#ede9fe]">{booking.seeker_name}</span>
             {booking.seeker_email ? ` · ${booking.seeker_email}` : ""}
           </p>
-          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
-            <CalendarIcon className="h-3.5 w-3.5 text-slate-400" />
+          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[12.5px] tabular-nums text-[#a79fc6]">
+            <CalendarIcon className="h-3.5 w-3.5" />
             {formatRange(booking.start_time, booking.end_time)}
-            <span className="text-slate-300">·</span>
+            <span className="text-white/25">·</span>
             {formatDuration(booking.duration_minutes)}
-            <span className="text-slate-300">·</span>
+            <span className="text-white/25">·</span>
             {relativeFromNow(booking.start_time)}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {joinable ? (
             <Button
+              variant="accent"
               href={booking.meet_link}
               target="_blank"
               rel="noopener noreferrer"
@@ -389,11 +394,16 @@ function ConfirmedCard({ booking, onChanged }) {
               Join Google Meet
             </Button>
           ) : (
-            booking.meet_link && <Badge tone="slate">Opens 30 min before</Badge>
+            booking.meet_link && (
+              <span className="inline-flex items-center rounded-full bg-white/5 px-2.5 py-[3px] text-[11px] font-semibold text-[#a79fc6] ring-1 ring-white/10">
+                Opens 30 min before
+              </span>
+            )
           )}
           <Button
             variant="ghost"
             size="sm"
+            className="text-violet-300 hover:bg-white/10 hover:text-white active:bg-white/10"
             icon={ChatIcon}
             onClick={() => setShowChat((value) => !value)}
           >
@@ -402,12 +412,20 @@ function ConfirmedCard({ booking, onChanged }) {
           <Button
             variant="ghost"
             size="sm"
+            className="text-violet-300 hover:bg-white/10 hover:text-white active:bg-white/10"
             icon={FileTextIcon}
             onClick={() => setShowNotes((value) => !value)}
           >
             {showNotes ? "Hide notes" : "Notes"}
           </Button>
-          <Button variant="secondary" size="sm" loading={busy} disabled={busy} onClick={complete}>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="border-white/15 bg-white/5 text-violet-300 hover:border-white/25 hover:bg-white/10 active:bg-white/15"
+            loading={busy}
+            disabled={busy}
+            onClick={complete}
+          >
             Mark complete
           </Button>
           <Button
@@ -427,8 +445,8 @@ function ConfirmedCard({ booking, onChanged }) {
       </div>
 
       {booking.notes && (
-        <p className="mt-3 rounded-xl border border-slate-200/70 bg-white px-3.5 py-2 text-xs leading-relaxed text-slate-600">
-          <span className="font-bold text-slate-500">Seeker notes: </span>
+        <p className="mt-3 rounded-[10px] bg-white/[0.05] px-3.5 py-2.5 text-sm leading-relaxed text-[#a79fc6] ring-1 ring-white/[0.06]">
+          <span className="font-bold text-[#ede9fe]">Seeker notes: </span>
           {booking.notes}
         </p>
       )}
@@ -503,21 +521,28 @@ function RequestsBoard() {
   }
 
   return (
-    <Panel
-      title="Live Consultation Requests"
-      subtitle="Accept new requests here — once confirmed, every tool to run the session stays on the same card."
-    >
+    <div>
+      <div className="border-b border-white/10 pb-4">
+        <h2 className="text-[15px] font-semibold tracking-tight text-[#ede9fe]">
+          Live Consultation Requests
+        </h2>
+        <p className="mt-0.5 text-[12.5px] text-[#a79fc6]">
+          Accept new requests here — once confirmed, every tool to run the session stays on the
+          same card.
+        </p>
+      </div>
+
       {loading ? (
-        <div className="space-y-3 py-2">
+        <div className="mt-6 space-y-3 py-2">
           <SkeletonRow lines={3} />
           <SkeletonRow lines={3} />
         </div>
       ) : error ? (
-        <ErrorState message={error.message} onRetry={refresh} />
+        <ErrorState className="mt-6" message={error.message} onRetry={refresh} />
       ) : (
-        <div className="space-y-6">
+        <div className="mt-6 space-y-6">
           <section>
-            <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-slate-500">
+            <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-[#a79fc6]">
               New requests {requests.length > 0 && `(${requests.length})`}
             </p>
             {requests.length === 0 ? (
@@ -538,7 +563,7 @@ function RequestsBoard() {
           </section>
 
           <section>
-            <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-slate-500">
+            <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-[#a79fc6]">
               Confirmed sessions {confirmed.length > 0 && `(${confirmed.length})`}
             </p>
             {confirmed.length === 0 ? (
@@ -556,7 +581,7 @@ function RequestsBoard() {
           </section>
         </div>
       )}
-    </Panel>
+    </div>
   );
 }
 
@@ -591,6 +616,10 @@ export default function LiveConsultationPage() {
 
   return (
     <div className="animate-fade-in space-y-8">
+      <Seo
+        title="Live consultation"
+        description="Manage live session requests, meeting links, and notes in one room."
+      />
       <PageHeader
         icon={CompassIcon}
         tileTone="emerald"
@@ -602,7 +631,11 @@ export default function LiveConsultationPage() {
         gradient="gold"
       />
 
-      {user && <RequestsBoard />}
+      {user && (
+        <section className="rounded-[20px] bg-gradient-to-b from-[#1e1836] to-[#0f0c29] p-6 sm:p-8 ring-1 ring-white/10 text-[#ede9fe]">
+          <RequestsBoard />
+        </section>
+      )}
     </div>
   );
 }
